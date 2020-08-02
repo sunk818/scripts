@@ -55,6 +55,27 @@ namespace NewScripts.PTCShare
             FailXPath="//div[@class='alert alert-danger']|//span[@id='ctl00_PageMainContent_CaptchaErrorLabel']";
             base.Start( );
         }
+
+        private void WaitForCloudFlare( )
+        {
+            DateTime timeout=DateTime.Now.AddSeconds(10);
+            bool logged=false;
+            while ( IsVisible(ElementByXPath("//a[contains(text(),'Cloudflare')]"))&&DateTime.Now<timeout )
+            {
+                if ( !logged )
+                {
+                    logged=true;
+                    Log("Waiting for cloudflare....");
+                }
+                Wait( );
+            }
+
+            if ( logged )
+            {
+                Log("Cloudflare is gone");
+                Wait(1);
+            }
+        }
         public override int BeforeCreateDriver( )
         {
             var Path=Directory.GetCurrentDirectory()+"\\data\\"+Name;
@@ -84,7 +105,7 @@ namespace NewScripts.PTCShare
             GoToUrl("https://litecoinads.com/login.aspx");
 
             Wait(4 , 5);
-
+            WaitForCloudFlare( );
 
             var CookiesBtn=ElementByXPath("//button[@mode='primary' and contains(text(),'Agree')]");
             if ( IsVisible(CookiesBtn) )
@@ -195,6 +216,7 @@ namespace NewScripts.PTCShare
                 Wait(2);
             }
 
+            WaitForCloudFlare( );
 
             return ElementByXPath("//a[@href='/logout.aspx']")!=null;
         }
@@ -207,6 +229,7 @@ namespace NewScripts.PTCShare
 
                 GoToUrl("https://litecoinads.com/user/earn/ads.aspx");
                 Wait(2);
+                WaitForCloudFlare( );
                 string AdsXpath="//div[contains(@class,'AboxActive Ad')]";
 
                 var ads=ElementsByXPath(AdsXpath).ToList();
@@ -304,10 +327,10 @@ namespace NewScripts.PTCShare
 
             //Go to faucet url
             GoToUrl("https://litecoinads.com/user/earn/faucet.aspx");
-
+            WaitForCloudFlare( );
             Wait(2 , 3);
             DateTime Timeout=DateTime.Now.AddSeconds(20);
-            while ( ElementByXPath("//select[@id='ctl00_PageMainContent_CaptchaList']")==null&&DateTime.Now<Timeout )
+            while ( !IsVisible(ElementByXPath("//select[@id='ctl00_PageMainContent_CaptchaList']"))&&DateTime.Now<Timeout )
             {
 
                 Wait( );
