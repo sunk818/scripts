@@ -1,8 +1,7 @@
 
-
 //==================//
 //script Written by: ••AviramDayan•• 30/07/2020 01:00PM - Version 1
-//Last Update: 01/08/2020 15:35PM - Version 3
+//Last Update: 02/08/2020 19:25PM - Version 4
 //==================//
 
 using System;
@@ -38,10 +37,13 @@ public class addoge : FaucetScript
             {
                 new FaucetSetting(){Name="Email",Display="UserName",Type=EditorType.TextBox,Required=true},
                 new FaucetSetting(){Name="Password",Display="Password",Type=EditorType.Password,Required=true},
+
+				new FaucetSetting(){Name="Label_1",Display="Recommended to set the 'Wait' General Setting, to 360min (every 3 hours - go to site to login to protect on your account)",Type=EditorType.Label,Default=false},	             
+				new FaucetSetting(){Name="StoreCookies",Display="StoreCookies - ON/OFF - Recommended to keep 'OFF' to not save Cookies - Because of a BUG issue on the site",Type=EditorType.CheckBox,Default=false},	
 				
                 new FaucetSetting(){Name="YouTubeClaim",Display="YouTubeClaim - wait 30sec between each video - claim unlimited - without captcha - note: the owner not give allways",Type=EditorType.CheckBox,Default=false},	
                 new FaucetSetting(){Name="DailymotionClaim",Display="DailymotionClaim - wait 30sec between each video - claim unlimited - without captcha",Type=EditorType.CheckBox,Default=true},	
-                new FaucetSetting(){Name="PTC_AutoSurf",Display="PTC_AutoSurf - wait 10sec between each AD - captcha available",Type=EditorType.CheckBox,Default=false},	
+                new FaucetSetting(){Name="PTC_AutoSurf",Display="PTC_AutoSurf - wait 10sec between each AD - captcha available",Type=EditorType.CheckBox,Default=true},	
                 new FaucetSetting(){Name="DailyBonus",Display="DailyBonus - after 10/15 actions - in each section (PTC ADS, OFFERWALLS, VIDEOS, SHORTLINKS, FAUCET, HCAPTCHA)",Type=EditorType.CheckBox,Default=true},	
 		              		
                 //insert user settings here
@@ -77,6 +79,16 @@ public class addoge : FaucetScript
         //After we did try to claim on the faucet we search for these elements to determine if it was a success or a fail
         SuccessXPath = "//*"; //*[text()='']
         FailXPath = "//*"; //*[text()='']
+
+        if (GetBoolSetting("StoreCookies"))            
+        {
+         StoreCookies = true;  //on
+        }
+
+        if (!GetBoolSetting("StoreCookies"))            
+        {
+         StoreCookies = false; //off
+        }	
 
         //Let Faucet Collector start up everything
         base.Start();
@@ -146,15 +158,15 @@ public class addoge : FaucetScript
 
         GoToUrl("https://ad-doge.com/login.aspx");
         Wait();		
-        Wait(2);
+        Wait(8);
 
         var Email_VAR = ElementByXPath("//input[contains(@id,'Username')]");      
-        if (IsVisible(Email_VAR))
-        {
+        //if (IsVisible(Email_VAR))
+        //{
          SetText(Email_VAR, GetSetting("Email"));
-        }
+        //}
         
-        Wait(2);
+        Wait(3);
 
         var Password_VAR = ElementByXPath("//input[contains(@id,'Password')]");      
         if (IsVisible(Password_VAR))
@@ -162,11 +174,11 @@ public class addoge : FaucetScript
          SetText(Password_VAR, GetPassword("Password"));
         }
 		
-		Wait(4);
+		Wait(3);
 		
 		VisualCaptcha_Function(); //call
 		
-		Wait(2);		
+		Wait(3);		
 		
         var ButtonLog = ElementByXPath("//input[contains(@type,'submit')]");  
         if (IsVisible(ButtonLog))
@@ -466,7 +478,7 @@ public class addoge : FaucetScript
      {		
 
          var TimeToWaitForBreak_1 = DateTime.Now.AddSeconds(360);	//main	  
-         var TimeToWaitForBreak_2 = DateTime.Now.AddSeconds(25);  //short
+         var TimeToWaitForBreak_2 = DateTime.Now.AddSeconds(90);  //short
          while (true)
          {
            Title = "Earn";             
@@ -478,14 +490,17 @@ public class addoge : FaucetScript
            var ADCheck = ElementByXPath("//div[contains(@class,'AboxActive Ad image')]");
            if (IsVisible(ADCheck))
            {
+
+             Driver.Navigate().Refresh(); //Refresh in each start
+             Wait(2); 			 
              Log("PTC_AutoSurf - here");
              CheckForPopups();    //call
-             CheckForPopupsEnabled = false;    //disable	
+             CheckForPopupsEnabled = false; //disable	
 			 
              Title = "Advertisement";  
              var AD_Click = ElementByXPath("//div[contains(@class,'AboxActive Ad image')]");
              Click(AD_Click);
-			 
+
              Wait(2);
 			 
              Driver.SwitchTo().Window(Driver.WindowHandles[1]);
@@ -495,23 +510,43 @@ public class addoge : FaucetScript
              Title = "Advertisement";  
              var Watch_Button = ElementByXPath("//input[contains(@value,'Watch')]");
              Click(Watch_Button);//click only one  
-			 
-             Wait();
-  
-             Driver.SwitchTo().Window(Driver.WindowHandles[1]);
 
-             Wait();
-  
+             Wait(1);
+			 
+             Driver.SwitchTo().Window(Driver.WindowHandles[1]);	
+			 
+             Wait(15);
+
              while (!IsVisible(ElementByXPath ("//div[contains(@id,'AfterCounterPanel')]") )) 
 		 	 {
 
-               VisualCaptcha_Function(); //call to solve     
+               VisualCaptcha_Function(); //call to solve 
 			   
-               if (!IsVisible(ElementByXPath ("//div[contains(@id,'AfterCounterPanel')]") )) 
+               Wait(3);
+
+               var Send_Button = ElementByXPath("//input[contains(@value,'Send')]");
+			   //if (IsVisible(ADCheck))
+               //{
+               Wait(2);					   
+               Click(Send_Button);//click only one  
+               Log("PTC_AutoSurf - click Send");  
+               Wait(4);					   
+			   //}	
+
+               if (IsVisible(ElementByXPath ("//div[contains(@id,'AfterCounterPanel')]") )) 
                {
-		       Log("PTC_AutoSurf - wait");  
-               Wait();				      
-			   }
+
+                 var SuccessCheck = ElementByXPath("//div[contains(@id,'AfterCounterPanel')]");
+                 Log(SuccessCheck.Text);
+                 ClaimSuccess();
+
+                 Wait(4);	
+			   
+                 Title = "Earn"; 
+                 Driver.SwitchTo().Window(Driver.WindowHandles[0]);
+                 CheckForPopupsEnabled = true;     //enable
+                 break; //break the wait loop
+               }	
 			     
                if (DateTime.Now > TimeToWaitForBreak_2) 
                {
@@ -522,28 +557,6 @@ public class addoge : FaucetScript
 
 		 	 } //end while
 
-             var Send_Button = ElementByXPath("//input[contains(@value,'Send')]");
-			 if (IsVisible(ADCheck))
-             {
-             Wait(2);					   
-             Click(Send_Button);//click only one  
-             Log("PTC_AutoSurf - click Send");  
-			 }	
-
-             if (IsVisible(ElementByXPath ("//div[contains(@id,'AfterCounterPanel')]") )) 
-             {
-
-               var SuccessCheck = ElementByXPath("//div[contains(@id,'AfterCounterPanel')]");
-               Log(SuccessCheck.Text);
-               ClaimSuccess();
-
-               Wait(4);	
-			   
-               Title = "Earn"; 
-               Driver.SwitchTo().Window(Driver.WindowHandles[0]);
-               CheckForPopupsEnabled = true;     //enable
-             }	
-		     
            }// end ADCheck
          
            if (!IsVisible(ADCheck))
@@ -639,7 +652,7 @@ public class addoge : FaucetScript
 
            if (IsVisible(MinVar))
            {
-	         Log("ClaimBTC - WaitTimerText apper - return to site time"); 
+	         Log("Time_Function - WaitTimerText apper - return to site time"); 
              int min,sec;
              min = Convert.ToInt32(MinVar.Text.Trim().Replace("m.", "").Replace("s.", "").Split(' ')[0])*60;
              sec = Convert.ToInt32(SecVar.Text.Trim().Replace("m.", "").Replace("s.", "").Split(' ')[1]);
@@ -648,7 +661,7 @@ public class addoge : FaucetScript
 
            if (!IsVisible(MinVar))
            {
-	            Log("ClaimBTC - return to your time"); 
+	            Log("Time_Function - return to your time"); 
 		        return GetWaitSetting();
            }
 
