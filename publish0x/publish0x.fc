@@ -1,5 +1,4 @@
-﻿using System;
-using FaucetCollector.Script;
+﻿using FaucetCollector.Script;
 
 public class PublishoxScript : FaucetScript
 {
@@ -33,26 +32,26 @@ public class PublishoxScript : FaucetScript
     /// <summary>
     /// This method gets called when the faucet is enabled and the GO button is clicked
     /// </summary>
-    public override void Start()
+    public override void Start( )
     {
         //Title that shows in the browser. Is used to identify and close popup windows
-        Title = "Publish0x";
+        Title="Publish0x";
 
         //After we did try to claim on the faucet we search for these elements to determine if it was a success or a fail
-        SuccessXPath = "//div[@class='col text-center']//p";
-        FailXPath = "//div[@class='fail']//p";
+        SuccessXPath="//div[@class='col text-center']//p";
+        FailXPath="//div[@class='fail']//p";
 
         //Let Faucet Collector start up everything
-        base.Start();
+        base.Start( );
     }
 
     /// <summary>
     /// This is the first method to run after the browser is opened and the first page is loaded.
     /// </summary>
-    public override int DoInit()
+    public override int DoInit( )
     {
         //Let Faucet Collector continue.
-        return base.DoInit();
+        return base.DoInit( );
     }
 
     /// <summary>
@@ -61,26 +60,26 @@ public class PublishoxScript : FaucetScript
     /// After those Login methods are called it will call this IsLoggedIn method again to see if the login did succeed.
     /// If you return true Faucet Collector will store all cookies so it will probably be already logged in on the next attempt.
     /// </summary>
-    public override bool IsLoggedIn()
+    public override bool IsLoggedIn( )
     {
         //In here we can check for the presence of an element that is only present when you are logged in.
         //In this case we check for en element with the class "loggedIn"
-        return ElementByXPath("//a[contains(text(),'Logout')]") != null;
+        return ElementByXPath("//a[contains(text(),'Logout')]")!=null;
     }
 
     /// <summary>
     /// This method gets called if IsLoggedIn returned false, right before the DoLogin method is called.
     /// </summary>
-    public override int BeforeLogin()
+    public override int BeforeLogin( )
     {
         var LoginButton = ElementByXPath("//a[text()='Login']");
-        if (IsVisible(LoginButton))
+        if ( IsVisible(LoginButton) )
         {
             Click(LoginButton);
             Wait(1);
         }
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.BeforeLogin();
+        return base.BeforeLogin( );
     }
 
     /// <summary>
@@ -88,59 +87,66 @@ public class PublishoxScript : FaucetScript
     /// It can be used to actually login the user/enter wallet details in the faucet
     /// </summary>
     /// <returns></returns>
-    public override int DoLogin()
+    public override int DoLogin( )
     {
-        if (!Driver.Url.Contains("https://www.publish0x.com/login"))
+        if ( !Driver.Url.Contains("https://www.publish0x.com/login") )
         {
             GoToUrl("https://www.publish0x.com/login");
             Wait(1);
         }
 
         var EmailBox = ElementByXPath("//input[@id='email']");
-        if (!IsVisible(EmailBox))
+        if ( !IsVisible(EmailBox) )
         {
             return Fail("Email box is not visible");
         }
-        SetText(EmailBox, GetSetting("User"));
+        SetText(EmailBox , GetSetting("User"));
 
         var PasswordBox = ElementByXPath("//input[@id='password']");
-        if (!IsVisible(PasswordBox))
+        if ( !IsVisible(PasswordBox) )
         {
             return Fail("Password box is not visible");
         }
-        SetText(PasswordBox, GetPassword("Pass"));
+        SetText(PasswordBox , GetPassword("Pass"));
+
+        var result=DoSolveCaptcha();
+        if ( result>0 )
+        {
+            return result;
+        }
 
         var ButtonLogin = ElementByXPath("//button[@class='btn btn-primary']");
-        if (!IsVisible(ButtonLogin))
+        if ( !IsVisible(ButtonLogin) )
         {
             return Fail("Button login is not visible");
         }
         Click(ButtonLogin);
         Wait(1);
         var Error = ElementByXPath("//div[@class='alert alert-danger alert-dismissible fade show']");
-        if (IsVisible(Error))
+        if ( IsVisible(Error) )
         {
 
             Log(Error.Text);
-            if(IsVisible(ElementByXPath("//li[contains(text(),'These credentials do not match our records.')]"))) { 
+            if ( IsVisible(ElementByXPath("//li[contains(text(),'These credentials do not match our records.')]")) )
+            {
 
-             Disable();
-            return Fail("Credentials incorrectly entered");
-               
+                Disable( );
+                return Fail("Credentials incorrectly entered");
+
             }
         }
 
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.DoLogin();
+        return base.DoLogin( );
     }
 
     /// <summary>
     /// This method gets called after the DoLogin method.
     /// </summary>
-    public override int AfterLogin()
+    public override int AfterLogin( )
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.AfterLogin();
+        return base.AfterLogin( );
     }
 
     /// <summary>
@@ -149,20 +155,20 @@ public class PublishoxScript : FaucetScript
     /// This is used to pause the script while the faucet its timer runs out.
     /// Return the number of seconds the bot should wait.
     /// </summary>
-    public override int GetFaucetWaitTime()
+    public override int GetFaucetWaitTime( )
     {
         //let Faucet Collector continue.
-        return base.GetFaucetWaitTime();
+        return base.GetFaucetWaitTime( );
     }
 
     /// <summary>
     /// This method is called right before a captcha will be solved. 
     /// If you call SolveCaptcha() in other methods it will start this flow and tries to solve the captcha on the page.
     /// </summary>
-    public override int BeforeSolveCaptcha()
+    public override int BeforeSolveCaptcha( )
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.BeforeSolveCaptcha();
+        return base.BeforeSolveCaptcha( );
     }
 
     /// <summary>
@@ -170,77 +176,77 @@ public class PublishoxScript : FaucetScript
     /// It will automatically try to see if there is a SolveMedia captcha active or a reCAPTCHA active. 
     /// If it finds either one it will then use the selected method on the Captcha tab of FaucetCollector to solve the Captcha.
     /// </summary>
-    public override int DoSolveCaptcha()
+    public override int DoSolveCaptcha( )
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.DoSolveCaptcha();
+        return base.DoSolveCaptcha( );
     }
 
     /// <summary>
     /// This method will get called after DoSolveCaptcha returned it was a success.
     /// </summary>
     /// <returns></returns>
-    public override int AfterSolveCaptcha()
+    public override int AfterSolveCaptcha( )
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.AfterSolveCaptcha();
+        return base.AfterSolveCaptcha( );
     }
 
     /// <summary>
     /// This method is called right before we attempt to claim on the faucet. So we are logged in and good to go.
     /// Next methods that will be called are DoSolveFaucet, AfterSolveFaucet and CheckFaucetResult.
     /// </summary>
-    public override int BeforeSolveFaucet()
+    public override int BeforeSolveFaucet( )
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.BeforeSolveCaptcha();
+        return base.BeforeSolveCaptcha( );
     }
 
     /// <summary>
     /// This method gets called after the BeforeSolveFaucet. You can do the actual claiming of the faucet in here.
     /// </summary>
     /// <returns></returns>
-    public override int DoSolveFaucet()
+    public override int DoSolveFaucet( )
     {
-       
-        SelectArticle();
-        if (!IsVisible(ElementByXPath("//p[contains(text(),'Thanks for your continued support of the site!')]")))
-        {
-            base.CheckFaucetResult();
-        }
-        
 
-        return GetWaitSetting();
+        SelectArticle( );
+        if ( !IsVisible(ElementByXPath("//p[contains(text(),'Thanks for your continued support of the site!')]")) )
+        {
+            base.CheckFaucetResult( );
+        }
+
+
+        return GetWaitSetting( );
 
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-     
+
     }
-    public void SelectArticle()
+    public void SelectArticle( )
     {
         GoToUrl("https://www.publish0x.com/newposts");
         var Articles = ElementsByXPath("//a[@class='blogname']");
-        if (Articles.Count > 0)
+        if ( Articles.Count>0 )
         {
             int NArticle = Random(0, Articles.Count - 1);
             Click(Articles[NArticle]);
-            Wait();
-            if (IsVisible(ElementByXPath("//p[contains(text(),'You’ve now got to wait until the timer expires before you') and contains(text(),'another tip')]")))
+            Wait( );
+            if ( IsVisible(ElementByXPath("//p[contains(text(),'You’ve now got to wait until the timer expires before you') and contains(text(),'another tip')]")) )
             {
                 Log("Article already used");
-                SelectArticle();
+                SelectArticle( );
             }
             var TipSlider = ElementByXPath("//input[@id='tipslider']");
-            if (IsVisible(TipSlider))
+            if ( IsVisible(TipSlider) )
             {
                 int Set = GetIntSetting("Tip");
-                ExecuteScript("arguments[0].value=" + Set.ToString(), TipSlider);
-                Wait();
+                ExecuteScript("arguments[0].value="+Set.ToString( ) , TipSlider);
+                Wait( );
                 var ButtonC = ElementByXPath("//button[@class='btn btn-info btn-claim']");
-                if (IsVisible(ButtonC))
+                if ( IsVisible(ButtonC) )
                 {
                     Click(ButtonC);
-                    Wait(2,4);
-                    
+                    Wait(2 , 4);
+
                 }
             }
         }
@@ -249,10 +255,10 @@ public class PublishoxScript : FaucetScript
     /// This method will get called after the DoSolveFaucet is completed and returned it was a success.
     /// For example you can wait for a processing popup to go away until actual faucet claim result is on the page.
     /// </summary>
-    public override int AfterSolveFaucet()
+    public override int AfterSolveFaucet( )
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.AfterSolveFaucet();
+        return base.AfterSolveFaucet( );
     }
 
     /// <summary>
@@ -262,9 +268,9 @@ public class PublishoxScript : FaucetScript
     /// For example if it finds one of the elements from the SuccessXPath, and it is visible, then it will flag the claim attempt as a success.
     /// Or if it finds one of the elements from the FailXPath, and it is visible, then it will flag the claim attempt as a failure.
     /// </summary>
-    public override int CheckFaucetResult()
+    public override int CheckFaucetResult( )
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.CheckFaucetResult();
+        return base.CheckFaucetResult( );
     }
 }
