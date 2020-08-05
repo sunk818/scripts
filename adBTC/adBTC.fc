@@ -34,27 +34,27 @@ namespace Adbtc
         }
 
         private FaucetCollector.Captcha.DoubleMathCaptchaCuter cuter;
-        public override void Start()
+        public override void Start( )
         {
 
-            Title ="adbtc.top|DO|YOUH|You|Please solve the|satoshi|Bitcoin|Just a moment";
+            Title="adbtc.top|DO|YOUH|You|Please solve the|satoshi|Bitcoin|Just a moment";
 
-            SuccessXPath = "//p[@class='white-text flow-text']";
-            FailXPath = "//a[@class='btn-large light-blue darken-4']";
+            SuccessXPath="//p[@class='white-text flow-text']";
+            FailXPath="//a[@class='btn-large light-blue darken-4']";
             ErrorCount=0;
-          
-            base.Start();
+
+            base.Start( );
         }
 
-        public override int DoInit ( )
+        public override int DoInit( )
         {
-            cuter=new FaucetCollector.Captcha.DoubleMathCaptchaCuter ( true );
-            return base.DoInit ( );
+            cuter=new FaucetCollector.Captcha.DoubleMathCaptchaCuter(true);
+            return base.DoInit( );
         }
-        public override bool IsLoggedIn()
+        public override bool IsLoggedIn( )
         {
 
-           bool Logged= ElementByXPath("//a[contains(@href,'logout')]") != null;
+            bool Logged= ElementByXPath("//a[contains(@href,'logout')]") != null;
             if ( Logged )
             {
                 ErrorCount=0;
@@ -64,30 +64,30 @@ namespace Adbtc
         }
 
 
-        public override int BeforeLogin()
+        public override int BeforeLogin( )
         {
-            if (Driver.Url != "https://adbtc.top/")
+            if ( Driver.Url!="https://adbtc.top/" )
             {
                 GoToUrl("https://adbtc.top/");
-                Wait();
+                Wait( );
             }
-          
-            CheckCloudFlare ( );
+
+            CheckCloudFlare( );
 
             var GotoLogin = ElementByXPath("//a[@class='btn-large lime accent-2 black-text']");
-            if (!IsVisible(GotoLogin))
+            if ( !IsVisible(GotoLogin) )
             {
                 return Fail("Go to login is not visible");
             }
             Click(GotoLogin);
-            Wait();
+            Wait( );
 
-            return base.BeforeLogin();
+            return base.BeforeLogin( );
         }
-          
-        private void CheckCloudFlare ( )
-         {
-            if(IsVisible(ElementByXPath( "//h1[@data-translate='challenge_headline']" ) ))
+
+        private void CheckCloudFlare( )
+        {
+            if ( IsVisible(ElementByXPath("//h1[@data-translate='challenge_headline']")) )
             {
 
                 var result=DoSolveCaptcha();
@@ -97,80 +97,80 @@ namespace Adbtc
                 }
 
                 FaucetCollector.Captcha.RecaptchaUtility recaptchaUtility=new FaucetCollector.Captcha.RecaptchaUtility(this);
-                recaptchaUtility.DoSolve ( );
-                Wait ( 1 );
+                recaptchaUtility.DoSolve( );
+                Wait(1);
 
             }
         }
-        public override int DoLogin()
+        public override int DoLogin( )
         {
 
-            var AddressBox = ElementByXPath("//input[@id='email']");
-            if (!IsVisible(AddressBox))
+            var AddressBox = ElementByXPath("//input[@id='name']");
+            if ( !IsVisible(AddressBox) )
             {
                 return Fail("Fail To login address box is not visible");
             }
             var PasswordBox = ElementByXPath("//input[@id='password']");
-            if (!IsVisible(PasswordBox))
+            if ( !IsVisible(PasswordBox) )
             {
-                return Fail( "Fail login Password box not visible" );
+                return Fail("Fail login Password box not visible");
             }
 
             int result = SolveCapt();
-            if (result > 0)
+            if ( result>0 )
             {
                 return Fail("Fail Solving captcha");
             }
             //Captcha probably changed and site refreshed so we need to update the elements and check if it's visible
 
-            AddressBox=ElementByXPath ( "//input[@id='email']" );
-            if ( !IsVisible ( AddressBox ) )
+            AddressBox=ElementByXPath("//input[@id='name']");
+            if ( !IsVisible(AddressBox) )
             {
-                return Fail ( "Fail To login address box is not visible  after solve login captcha" );
+                return Fail("Fail To login address box is not visible  after solve login captcha");
             }
-            PasswordBox = ElementByXPath("//input[@id='password']");
-            if ( !IsVisible ( PasswordBox ) )
+            PasswordBox=ElementByXPath("//input[@id='password']");
+            if ( !IsVisible(PasswordBox) )
             {
-                return Fail ( "Fail login Password box not visible after solve login captcha" );
+                return Fail("Fail login Password box not visible after solve login captcha");
             }
-            SetText (AddressBox, GetSetting("User"));
-            SetText(PasswordBox, GetPassword("Pass"));
+            SetText(AddressBox , GetSetting("User"));
+            SetText(PasswordBox , GetPassword("Pass"));
             Wait(1);
 
             var ButtonLogin = ElementByXPath("//input[@class='btn light-blue darken-4']");
-            if (!IsVisible(ButtonLogin))
+            if ( !IsVisible(ButtonLogin) )
             {
                 return Fail("Fail, button login is not visible");
             }
             Click(ButtonLogin);
 
-            
+
             var ErrorBox = ElementByXPath("//div[@class='col s12 red']//p");
-            if (IsVisible(ErrorBox))
+            if ( IsVisible(ErrorBox) )
             {
                 Log(ErrorBox.Text);
                 ErrorCount++;
                 if ( ErrorCount>3 )
                 {
-                    Log ( "Cookies/cache problem detected, the browser will be closed" );
-                    Driver.Manage ( ).Cookies.DeleteAllCookies ( );
-                    Quit ( );
-                    Context.CleanBrowserDataNow ( );
+                    Log("Cookies/cache problem detected, the browser will be closed");
+                    Driver.Manage( ).Cookies.DeleteAllCookies( );
+                    Quit( );
+                    Context.CleanBrowserDataNow( );
                 }
             }
             //This faucet has nothing to do here. We will let Faucet Collector handle it.
-            return base.DoLogin();
+            return base.DoLogin( );
         }
         public int ErrorCount { get; set; }
         public static string ConvertImageToBase64String(Bitmap image_)
         {
-            using (MemoryStream ms = new MemoryStream())
+            using ( MemoryStream ms = new MemoryStream( ) )
             {
-                image_.Save(ms, ImageFormat.Jpeg);
-                return Convert.ToBase64String(ms.ToArray());
+                image_.Save(ms , ImageFormat.Jpeg);
+                return Convert.ToBase64String(ms.ToArray( ));
             }
         }
-        public bool Solve_MathCaptcha_()
+        public bool Solve_MathCaptcha_( )
         {
 
             bool IsSolved = true;
@@ -180,110 +180,110 @@ namespace Adbtc
                 if ( Captchas.Count==2 )
                 {
 
-                    using ( Bitmap Part1 = TakeScreenshot ( Base.Captcha.CaptchaService.Manual , Captchas[0] ) )
+                    using ( Bitmap Part1 = TakeScreenshot(Base.Captcha.CaptchaService.Manual , Captchas[0]) )
                     {
-                        using ( Bitmap Part2 = TakeScreenshot ( Base.Captcha.CaptchaService.Manual , Captchas[1] ) )
+                        using ( Bitmap Part2 = TakeScreenshot(Base.Captcha.CaptchaService.Manual , Captchas[1]) )
                         {
                             if ( cuter==null )
                             {
-                                cuter=new FaucetCollector.Captcha.DoubleMathCaptchaCuter ( true);
+                                cuter=new FaucetCollector.Captcha.DoubleMathCaptchaCuter(true);
                             }
 
 
                             string Base64 = ConvertImageToBase64String(cuter.DoInitCut(Part1,Part2));
                             string Fullbase = "data:image/png;base64,";
-                            ExecuteScript ( "arguments[0].setAttribute('src','"+Fullbase+Base64+"');" , Captchas[0] );
-                            
-                            Wait ( );
+                            ExecuteScript("arguments[0].setAttribute('src','"+Fullbase+Base64+"');" , Captchas[0]);
+
+                            Wait( );
                             var TextBoxCaptcha = ElementsByXPath("//input[@type='number']").Where(x => IsVisible(x)).LastOrDefault();
-                            if ( IsVisible ( TextBoxCaptcha ) )
+                            if ( IsVisible(TextBoxCaptcha) )
                             {
 
                                 // Returning base.dosolve
                                 int result = DoSolveImageCaptcha(Captchas[0], TextBoxCaptcha);
                                 if ( result>0 )
                                 {
-                                    Log ( "Captcha Incorrectly resolved" );
-                                    Driver.Navigate ( ).Refresh ( );
-                                    Wait ( 2 );
-                                    return Solve_MathCaptcha_ ( );
+                                    Log("Captcha Incorrectly resolved");
+                                    Driver.Navigate( ).Refresh( );
+                                    Wait(2);
+                                    return Solve_MathCaptcha_( );
                                 }
-                                else if ( !IsANumber ( Context.CaptchaResult.Result ) )
+                                else if ( !IsANumber(Context.CaptchaResult.Result) )
                                 {
-                                    Log ( "Captcha is not a digit trying again" );
-                                    FlagCaptchaAsInvalid ( );
-                                    Driver.Navigate ( ).Refresh ( );
-                                    Wait ( 2 );
-                                    return Solve_MathCaptcha_ ( );
+                                    Log("Captcha is not a digit trying again");
+                                    FlagCaptchaAsInvalid( );
+                                    Driver.Navigate( ).Refresh( );
+                                    Wait(2);
+                                    return Solve_MathCaptcha_( );
 
                                 }
                             }
                             else
                             {
-                                Log ( "TextBox captcha is not visible" );
+                                Log("TextBox captcha is not visible");
                                 return false;
                             }
                         }
                     }
 
-                    }
+                }
                 else
-                    {
-                        Log ( "Double captcha is not visible" );
-                        Driver.Navigate ( ).Refresh ( );
-                        return false;
-                    }
-                
+                {
+                    Log("Double captcha is not visible");
+                    Driver.Navigate( ).Refresh( );
+                    return false;
+                }
+
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
-                Log(ex.ToString());
-                IsSolved = false;
+                Log(ex.ToString( ));
+                IsSolved=false;
             }
             return IsSolved;
 
         }
 
-        public override int GetFaucetWaitTime()
+        public override int GetFaucetWaitTime( )
         {
             var finish = ElementByXPath("//*[contains(text(),'You watched all websites for now.')]");
-            if (IsVisible(finish))
+            if ( IsVisible(finish) )
             {
                 if ( cuter!=null )
                 {
-                    cuter.Dispose ( );
+                    cuter.Dispose( );
                 }
-                return GetWaitSetting();
+                return GetWaitSetting( );
             }
             return 0;
         }
-        public override int BeforeSolveFaucet()
+        public override int BeforeSolveFaucet( )
         {
             var surf = ElementByXPath("//a[contains(@href,'https://adbtc.top/surf/browse')]//li[contains(@class,'collection-item')]");
-            if (!IsVisible(surf))
+            if ( !IsVisible(surf) )
             {
                 return Fail("Go to ad area button is not visible");
             }
             Click(surf);
-            return base.BeforeSolveFaucet();
+            return base.BeforeSolveFaucet( );
         }
-        public override int DoSolveFaucet()
+        public override int DoSolveFaucet( )
         {
             bool Finished = false;
             Wait(3);
             int ErrorCount = 0;
             do
             {
-                Wait(2, 3);
+                Wait(2 , 3);
                 var b = ElementByXPath("//h5[@class='red-text']");
-                if (IsVisible(b))
+                if ( IsVisible(b) )
                 {
                     Log(b.Text);
 
                 }
                 // View for the site failed , skipping it.
                 var ButtonSkip = ElementByXPath("//a[contains(@href,'/surf/skip') and contains(@class,'valign-wrapper red white-text btn center animated btn-large jello')]");
-                if (IsVisible(ButtonSkip))
+                if ( IsVisible(ButtonSkip) )
                 {
                     Log("Add Skiped, Refreshing site");
                     Click(ButtonSkip);
@@ -291,28 +291,28 @@ namespace Adbtc
                 }
                 // We need to solve captcha
                 var ButtonSubmitCaptcha = ElementByXPath("//input[@type='submit']");
-                if (IsVisible(ButtonSubmitCaptcha))
+                if ( IsVisible(ButtonSubmitCaptcha) )
                 {
                     var result = SolveCapt();
-                    if (result > 0)
+                    if ( result>0 )
                     {
                         ErrorCount++;
-                        if (ErrorCount > 3)
+                        if ( ErrorCount>3 )
                         {
                             break;
                         }
-                        Driver.Navigate().Refresh();
+                        Driver.Navigate( ).Refresh( );
                         Wait(1);
                         continue;
                     }
                     else
                     {
-                        ErrorCount = 0;
+                        ErrorCount=0;
                     }
-                    Wait();
+                    Wait( );
                     // Since that when we switch the captcha the site is refreshed we will need to update the element before click the button.
-                    ButtonSubmitCaptcha = ElementByXPath("//input[@type='submit']");
-                    if (IsVisible(ButtonSubmitCaptcha))
+                    ButtonSubmitCaptcha=ElementByXPath("//input[@type='submit']");
+                    if ( IsVisible(ButtonSubmitCaptcha) )
                     {
                         Click(ButtonSubmitCaptcha);
                     }
@@ -323,37 +323,37 @@ namespace Adbtc
 
                     // We finished viewing all ads
                     var finish = ElementByXPath("//*[contains(text(),'You watched all websites for now.')]");
-                    if (IsVisible(finish))
+                    if ( IsVisible(finish) )
                     {
-                        Finished = true;
-                        CheckFaucetResult();
+                        Finished=true;
+                        CheckFaucetResult( );
 
                     }
                     //We  are ready to see the ad
                     else
                     {
                         var bt = ElementByXPath("//a[contains(@class,'pulse animated') and contains(@class,'valign-wrapper')]");
-                        if (IsVisible(bt))
+                        if ( IsVisible(bt) )
                         {
                             try
                             {
-                                ErrorCount = 0;
-                                CheckForPopupsEnabled = false;
+                                ErrorCount=0;
+                                CheckForPopupsEnabled=false;
                                 // Unique .click 
                                 var Reward = ElementsByXPath("//b[contains(text(),'satoshi')]").Where(x => IsVisible(x)).LastOrDefault();
-                                if (Reward != null)
+                                if ( Reward!=null )
                                 {
-                                    Log("Viewing ad you will be credited with " + Reward.Text);
+                                    Log("Viewing ad you will be credited with "+Reward.Text);
                                 }
 
-                                Click(bt, false);
-                                Driver.SwitchTo().Window(Driver.WindowHandles[0]);
+                                Click(bt , false);
+                                Driver.SwitchTo( ).Window(Driver.WindowHandles[0]);
                                 DateTime t1 = DateTime.Now.AddMinutes(3);
                                 Wait(5);
-                                while (IsVisible(ElementByXPath("//div[@class='preloader-wrapper big active']")))
+                                while ( IsVisible(ElementByXPath("//div[@class='preloader-wrapper big active']")) )
                                 {
-                                    Wait();
-                                    if (DateTime.Now > t1)
+                                    Wait( );
+                                    if ( DateTime.Now>t1 )
                                     {
                                         break;
 
@@ -363,8 +363,8 @@ namespace Adbtc
                             finally
                             {
                                 Wait(2);
-                                CheckForPopupsEnabled = true;
-                                CheckForPopups();
+                                CheckForPopupsEnabled=true;
+                                CheckForPopups( );
                             }
                         }
                         else
@@ -372,7 +372,7 @@ namespace Adbtc
                             ErrorCount++;
                             Log("Something is wrong Button to see ad isn't visible, Probably there is a problem with the site or we already have finished view the ads");
                             Wait(5);
-                            if (ErrorCount >= 2)
+                            if ( ErrorCount>=2 )
                             {
                                 Log("We finished view of the ads");
                                 break;
@@ -382,7 +382,7 @@ namespace Adbtc
                     }
 
                 }
-            } while (!Finished);
+            } while ( !Finished );
 
             if ( GetBoolSetting("Faucet") )
             {
@@ -406,30 +406,31 @@ namespace Adbtc
                 {
                     Log("Faucet is not ready yet");
                 }
-                else {
+                else
+                {
 
                     // We init shortlink
                     FaucetCollector.Utilities.ShortLinkBypasser  bypasser=new FaucetCollector.Utilities.ShortLinkBypasser(this);
                     Click(ClaimFaucetBtn);
 
-                        bool claimed=bypasser.DoShortLink( );
-                        if ( claimed )
+                    bool claimed=bypasser.DoShortLink( );
+                    if ( claimed )
+                    {
+                        var headerClaim=ElementByXPath("//h5[@class='header']");
+                        if ( IsVisible(headerClaim) )
                         {
-                            var headerClaim=ElementByXPath("//h5[@class='header']");
-                            if ( IsVisible(headerClaim) )
-                            {
-                                Log(headerClaim.Text);
-                            }
+                            Log(headerClaim.Text);
                         }
+                    }
 
 
-                  }
+                }
             }
 
-            if (GetBoolSetting("SA"))
+            if ( GetBoolSetting("SA") )
             {
                 var GotoSurfAds = ElementByXPath("//a[@href='http://adbtc.top/surftab/inf']");
-                if (IsVisible(GotoSurfAds))
+                if ( IsVisible(GotoSurfAds) )
                 {
                     Click(GotoSurfAds);
                 }
@@ -439,83 +440,83 @@ namespace Adbtc
                 }
                 Wait(2);
                 var ads = ElementsByXPath("//a[@class='open']").Where(x => IsVisible(x)).ToList();
-                Log(ads.Count.ToString() + " Active ads detected");
+                Log(ads.Count.ToString( )+" Active ads detected");
                 int n = 0;
                 int CountErrors = 0;
-                while (ads.Count > n && CountErrors <= 3)
+                while ( ads.Count>n&&CountErrors<=3 )
                 {
                     try
                     {
 
 
-                        CheckForPopupsEnabled = false;
-                        Click(ads[n], false);
-                        Driver.SwitchTo().Window(Driver.WindowHandles[1]);
-                        Wait();
+                        CheckForPopupsEnabled=false;
+                        Click(ads[n] , false);
+                        Driver.SwitchTo( ).Window(Driver.WindowHandles[1]);
+                        Wait( );
                         DateTime t1 = DateTime.Now.AddSeconds(60);
                         var Icons=ElementsByXPath("//img[contains(@src,'/icons/')]");
-                        while (!Icons.All(x=>IsVisible(x)) || Icons.Count==0)
+                        while ( !Icons.All(x => IsVisible(x))||Icons.Count==0 )
                         {
                             Wait(4);
-                            if (t1 < DateTime.Now)
+                            if ( t1<DateTime.Now )
                             {
                                 break;
                             }
                             var Tmr = ElementByXPath("//span[@id='tmr']");
-                            if (IsVisible(Tmr) && !string.IsNullOrWhiteSpace(Tmr.Text))
+                            if ( IsVisible(Tmr)&&!string.IsNullOrWhiteSpace(Tmr.Text) )
                             {
                                 Log(Tmr.Text);
                             }
                         }
-                        Wait();
+                        Wait( );
                         bool solved = SolveIcons();
-                        if (!solved)
+                        if ( !solved )
                         {
                             CountErrors++;
                         }
                         Wait(3);
-                        if (IsVisible(ElementByXPath("//span[@id='tmr']")))
+                        if ( IsVisible(ElementByXPath("//span[@id='tmr']")) )
                         {
                             n++;
                         }
                     }
-                    catch (Exception)
+                    catch ( Exception )
                     {
-                        CheckForPopupsEnabled = true;
-                        CheckForPopups();
-                        Driver.SwitchTo().Window(Driver.WindowHandles[0]);
+                        CheckForPopupsEnabled=true;
+                        CheckForPopups( );
+                        Driver.SwitchTo( ).Window(Driver.WindowHandles[0]);
                         CountErrors++;
                         n++;
                     }
                     finally
                     {
-                        CheckForPopupsEnabled = true;
-                        CheckForPopups();
-                        Driver.SwitchTo().Window(Driver.WindowHandles[0]);
-                        if (Driver.Url.Contains("http://adbtc.top/surftab/inf"))
+                        CheckForPopupsEnabled=true;
+                        CheckForPopups( );
+                        Driver.SwitchTo( ).Window(Driver.WindowHandles[0]);
+                        if ( Driver.Url.Contains("http://adbtc.top/surftab/inf") )
                         {
-                            Driver.Navigate().Refresh();
+                            Driver.Navigate( ).Refresh( );
                         }
                         else
                         {
                             GoToUrl("http://adbtc.top/surftab/inf");
                         }
                         Wait(3);
-                        ads = ElementsByXPath("//a[@class='open']").Where(x => IsVisible(x)).ToList(); ;
+                        ads=ElementsByXPath("//a[@class='open']").Where(x => IsVisible(x)).ToList( ); ;
                     }
                 }
             }
 
-            Wait();
-            if (GetBoolSetting("AS"))
+            Wait( );
+            if ( GetBoolSetting("AS") )
             {
                 try
                 {
                     var GotoAutoSurf = ElementByXPath("//a[@href='http://adbtc.top/autosurf/inf']");
-                    if (IsVisible(GotoAutoSurf))
+                    if ( IsVisible(GotoAutoSurf) )
                     {
                         Click(GotoAutoSurf);
-                        Wait ( 3 );
+                        Wait(3);
                     }
                     else
                     {
@@ -523,20 +524,20 @@ namespace Adbtc
 
 
                     }
-                    Wait();
+                    Wait( );
                     var button = ElementByXPath("//a[@id='start']");
-                    if (IsVisible(button))
+                    if ( IsVisible(button) )
                     {
-                        CheckForPopupsEnabled = false;
-                        Click(button, false);
-                        Driver.SwitchTo().Window(Driver.WindowHandles[1]);
+                        CheckForPopupsEnabled=false;
+                        Click(button , false);
+                        Driver.SwitchTo( ).Window(Driver.WindowHandles[1]);
                     }
                     Wait(1);
                     DateTime t1 = DateTime.Now.AddMinutes(5);
-                    while (IsVisible(ElementByXPath("//span[@id='tmr']")) && !IsVisible(ElementByXPath("//h5[contains(text(),'You watched all websites for now. Please, come bac')]")))
+                    while ( IsVisible(ElementByXPath("//span[@id='tmr']"))&&!IsVisible(ElementByXPath("//h5[contains(text(),'You watched all websites for now. Please, come bac')]")) )
                     {
-                        Wait(4, 6);
-                        if (DateTime.Now > t1)
+                        Wait(4 , 6);
+                        if ( DateTime.Now>t1 )
                         {
                             break;
                         }
@@ -544,92 +545,92 @@ namespace Adbtc
                     Wait(5);
 
                 }
-                catch (Exception)
+                catch ( Exception )
                 {
 
                 }
                 finally
                 {
-                    CheckForPopupsEnabled = true;
-                    CheckForPopups();
+                    CheckForPopupsEnabled=true;
+                    CheckForPopups( );
                 }
 
             }
             if ( cuter!=null )
             {
-                cuter.Dispose ( );
+                cuter.Dispose( );
             }
-            if (GetBoolSetting("D"))
+            if ( GetBoolSetting("D") )
             {
                 Log("Ads finished");
-                Disable();
+                Disable( );
             }
-            return GetWaitSetting();
+            return GetWaitSetting( );
 
         }
 
-        
+
 
         private bool UseMath
         {
             get
             {
-                return GetBoolSetting ( "UseMath" );
+                return GetBoolSetting("UseMath");
             }
         }
         private bool NeedChange
         {
             get
             {
-                return (!( VisibleMath==UseMath ) || ElementByXPath( "//li[@class='selected']//span[contains(text(),'hCaptcha')]")!=null);
+                return ( !( VisibleMath==UseMath )||ElementByXPath("//li[@class='selected']//span[contains(text(),'hCaptcha')]")!=null );
             }
         }
         private bool VisibleMath
         {
             get
             {
-                return ( IsVisible ( ElementByXPath ( "//img[contains(@src,'adbtc.top/1captcha')]" ) )  ||  IsVisible ( ElementByXPath ( "//img[contains(@src,'data:image/png;base64,')]" ) ) );
+                return ( IsVisible(ElementByXPath("//img[contains(@src,'adbtc.top/1captcha')]"))||IsVisible(ElementByXPath("//img[contains(@src,'data:image/png;base64,')]")) );
             }
         }
-      
-        public bool CheckConditions ( IWebElement element)
+
+        public bool CheckConditions(IWebElement element)
         {
             if ( element==null )
             {
                 return false;
             }
-            return !element.Text.ToLower().Contains ( "hcaptcha" );
+            return !element.Text.ToLower( ).Contains("hcaptcha");
         }
-        public int SolveCapt ( )
+        public int SolveCapt( )
         {
             var SwitchCaptcha = NeedChange?ElementByXPath("//input[contains(@class,'select-dropdown')]"):null;
-            if ( IsVisible ( SwitchCaptcha ) )
+            if ( IsVisible(SwitchCaptcha) )
             {
-                Click ( SwitchCaptcha );
-                Wait ( 1 );
+                Click(SwitchCaptcha);
+                Wait(1);
                 FaucetCollector.Utilities.HtmlFilter.HtmlElement filter =new FaucetCollector.Utilities.HtmlFilter.HtmlElement();
-               
-                
+
+
                 var SelectCaptcha=ElementsByXPath("//li[not(contains(@class,'selected')) and contains(@id,'select')]").FirstOrDefault(x=>CheckConditions(filter.GetFirstChild(x,this))) ;
                 if ( SelectCaptcha!=null )
                 {
-                    Click ( SelectCaptcha );
+                    Click(SelectCaptcha);
                 }
             }
 
             if ( VisibleMath )
             {
-                return Solve_MathCaptcha_ ( ) ? 0 : 1;
+                return Solve_MathCaptcha_( ) ? 0 : 1;
             }
 
-            return base.DoSolveCaptcha ( );
+            return base.DoSolveCaptcha( );
 
         }
-        public bool SolveIcons()
+        public bool SolveIcons( )
         {
             try
             {
-             var capt = ElementsByXPath("//a[@class='res']");
+                var capt = ElementsByXPath("//a[@class='res']");
 
                 if ( capt.Count==0 )
                 {
@@ -638,22 +639,22 @@ namespace Adbtc
 
                 return GetSolutionAndClickCaptcha(capt);
 
-               
+
             }
-            catch (Exception ex)
+            catch ( Exception ex )
             {
-                Log("There is a problem solving icon captcha: "+ex.ToString());
+                Log("There is a problem solving icon captcha: "+ex.ToString( ));
             }
             return false;
         }
 
-            private bool CompareImage(Bitmap image1, Bitmap image2)
+        private bool CompareImage(Bitmap image1 , Bitmap image2)
         {
-            for (int i = 0; i < image1.Height; i++)
+            for ( int i = 0 ; i<image1.Height ; i++ )
             {
-                for (int j = 0; j < image1.Width; j++)
+                for ( int j = 0 ; j<image1.Width ; j++ )
                 {
-                    if (!SameColor(image1.GetPixel(j, i), image2.GetPixel(j, i), 100))
+                    if ( !SameColor(image1.GetPixel(j , i) , image2.GetPixel(j , i) , 100) )
                     {
                         return false;
                     }
@@ -662,7 +663,7 @@ namespace Adbtc
             return true;
         }
 
-        public bool GetSolutionAndClickCaptcha( List<IWebElement> capt )
+        public bool GetSolutionAndClickCaptcha(List<IWebElement> capt)
         {
 
             Bitmap[] icons = new Bitmap[capt.Count];
@@ -676,9 +677,9 @@ namespace Adbtc
                 Wait( );
                 int result = 0;
                 bool enc = false;
-                for ( int i = 0 ; i<capt.Count-1 && !enc ; i++ )
+                for ( int i = 0 ; i<capt.Count-1&&!enc ; i++ )
                 {
-                    for ( int j = i+1 ; j<capt.Count && !enc ; j++ )
+                    for ( int j = i+1 ; j<capt.Count&&!enc ; j++ )
                     {
                         bool result_ = CompareImage(icons[i], icons[j]);
                         if ( result_ )
@@ -693,26 +694,26 @@ namespace Adbtc
             }
             finally
             {
-                DisposeIEnumerable( icons);
+                DisposeIEnumerable(icons);
             }
-         
+
             return true;
         }
         public void DisposeIEnumerable(IEnumerable<IDisposable> DisposableElements)
         {
 
-           foreach(var disposable in DisposableElements )
+            foreach ( var disposable in DisposableElements )
             {
-                disposable.Dispose( );    
+                disposable.Dispose( );
             }
 
         }
-        private bool SameColor(Color c1, Color c2, double thre)
+        private bool SameColor(Color c1 , Color c2 , double thre)
         {
             int r = c1.R - c2.R;
             int g = c1.G - c2.G;
             int b = c1.B - c2.B;
-            if (r * r + g * g + b * b > thre * thre)
+            if ( r*r+g*g+b*b>thre*thre )
             {
                 return false;
             }
