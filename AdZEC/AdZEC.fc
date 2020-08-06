@@ -1,7 +1,7 @@
 ﻿using FaucetCollector.Script;
 using System;
 using System.Linq;
-//css_ref Faucetcollector.Utilites
+//css_ref FaucetCollector.Utilities
 public class AdZecScript : FaucetScript
 {
     /// <summary>
@@ -279,6 +279,7 @@ public class AdZecScript : FaucetScript
 
         if ( GetBoolSetting("Shortlink") )
         {
+            GoToUrl(Url+"/shortlinks");
             var availableShortlinks=ElementsByXPath("//a[@title='View Links']").Where(x=>IsVisible(x)).ToList();
 
             Log("there are "+availableShortlinks.Count+" available shortlinks");
