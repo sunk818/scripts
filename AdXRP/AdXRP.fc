@@ -1,7 +1,8 @@
-﻿using System;
-using FaucetCollector.Script;
-
-public class TemplateScript : FaucetScript
+﻿using FaucetCollector.Script;
+using System;
+using System.Linq;
+//css_ref Faucetcollector.Utilites
+public class AdXrpScript : FaucetScript
 {
     /// <summary>
     /// List of Settings that will be shown in the bot when selecting this Faucet in the bot.
@@ -16,6 +17,7 @@ public class TemplateScript : FaucetScript
             {
                 new FaucetSetting(){Display="Username",Type=EditorType.TextBox,Required=true,Name="User"},
                 new FaucetSetting(){Name="Pass",Display="Password",Type=EditorType.Password,Required=true},
+                new FaucetSetting( ){ Name="Shortlink",Display="Do Shortlink",Type=EditorType.CheckBox,Default=false }
                 //insert user settings here
                 //new FaucetSetting { 
                 //    Name = "Name of your setting", 
@@ -32,26 +34,26 @@ public class TemplateScript : FaucetScript
     /// <summary>
     /// This method gets called when the faucet is enabled and the GO button is clicked
     /// </summary>
-    public override void Start()
+    public override void Start( )
     {
         //Title that shows in the browser. Is used to identify and close popup windows
-        Title = "adXRP";
+        Title="adXRP";
 
         //After we did try to claim on the faucet we search for these elements to determine if it was a success or a fail
-        SuccessXPath = "//*[text()='']";
-        FailXPath = "//*[text()='']";
+        SuccessXPath="//*[text()='']";
+        FailXPath="//*[text()='']";
 
         //Let Faucet Collector start up everything
-        base.Start();
+        base.Start( );
     }
 
     /// <summary>
     /// This is the first method to run after the browser is opened and the first page is loaded.
     /// </summary>
-    public override int DoInit()
+    public override int DoInit( )
     {
         //Let Faucet Collector continue.
-        return base.DoInit();
+        return base.DoInit( );
     }
 
     /// <summary>
@@ -60,20 +62,20 @@ public class TemplateScript : FaucetScript
     /// After those Login methods are called it will call this IsLoggedIn method again to see if the login did succeed.
     /// If you return true Faucet Collector will store all cookies so it will probably be already logged in on the next attempt.
     /// </summary>
-    public override bool IsLoggedIn()
+    public override bool IsLoggedIn( )
     {
         //In here we can check for the presence of an element that is only present when you are logged in.
         //In this case we check for en element with the class "loggedIn"
-        return ElementByXPath("//*[contains(@href,'logout')]") != null;
+        return ElementByXPath("//*[contains(@href,'logout')]")!=null;
     }
 
     /// <summary>
     /// This method gets called if IsLoggedIn returned false, right before the DoLogin method is called.
     /// </summary>
-    public override int BeforeLogin()
+    public override int BeforeLogin( )
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.BeforeLogin();
+        return base.BeforeLogin( );
     }
 
     /// <summary>
@@ -81,47 +83,47 @@ public class TemplateScript : FaucetScript
     /// It can be used to actually login the user/enter wallet details in the faucet
     /// </summary>
     /// <returns></returns>
-    public override int DoLogin()
+    public override int DoLogin( )
     {
         GoToUrl("https://adxrp.cc/login");
         Wait(1);
 
         var UserBox = ElementByXPath("//input[@placeholder='enter username']");
-        if (!IsVisible(UserBox))
+        if ( !IsVisible(UserBox) )
         {
             return Fail("User box is not visible");
         }
-        SetText(UserBox, GetSetting("User"));
+        SetText(UserBox , GetSetting("User"));
         var PasswordBox = ElementByXPath("//input[@type='password']");
-        if (!IsVisible(PasswordBox))
+        if ( !IsVisible(PasswordBox) )
         {
             return Fail("Password Box is not visible");
         }
-        SetText(PasswordBox, GetPassword("Pass"));
+        SetText(PasswordBox , GetPassword("Pass"));
         Wait(1);
         var result = DoSolveCaptcha();
-        if (result > 0)
+        if ( result>0 )
         {
             return Fail("Fail solving captcha");
         }
         var ButtonLogin = ElementByXPath("//input[@value='login']");
-        if (!IsVisible(ButtonLogin))
+        if ( !IsVisible(ButtonLogin) )
         {
             return Fail("Button login is not visible");
         }
         Click(ButtonLogin);
 
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.DoLogin();
+        return base.DoLogin( );
     }
 
     /// <summary>
     /// This method gets called after the DoLogin method.
     /// </summary>
-    public override int AfterLogin()
+    public override int AfterLogin( )
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.AfterLogin();
+        return base.AfterLogin( );
     }
 
     /// <summary>
@@ -130,20 +132,20 @@ public class TemplateScript : FaucetScript
     /// This is used to pause the script while the faucet its timer runs out.
     /// Return the number of seconds the bot should wait.
     /// </summary>
-    public override int GetFaucetWaitTime()
+    public override int GetFaucetWaitTime( )
     {
         //let Faucet Collector continue.
-        return base.GetFaucetWaitTime();
+        return base.GetFaucetWaitTime( );
     }
 
     /// <summary>
     /// This method is called right before a captcha will be solved. 
     /// If you call SolveCaptcha() in other methods it will start this flow and tries to solve the captcha on the page.
     /// </summary>
-    public override int BeforeSolveCaptcha()
+    public override int BeforeSolveCaptcha( )
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.BeforeSolveCaptcha();
+        return base.BeforeSolveCaptcha( );
     }
 
     /// <summary>
@@ -151,69 +153,70 @@ public class TemplateScript : FaucetScript
     /// It will automatically try to see if there is a SolveMedia captcha active or a reCAPTCHA active. 
     /// If it finds either one it will then use the selected method on the Captcha tab of FaucetCollector to solve the Captcha.
     /// </summary>
-    public override int DoSolveCaptcha()
+    public override int DoSolveCaptcha( )
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.DoSolveCaptcha();
+        return base.DoSolveCaptcha( );
     }
 
     /// <summary>
     /// This method will get called after DoSolveCaptcha returned it was a success.
     /// </summary>
     /// <returns></returns>
-    public override int AfterSolveCaptcha()
+    public override int AfterSolveCaptcha( )
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.AfterSolveCaptcha();
+        return base.AfterSolveCaptcha( );
     }
 
     /// <summary>
     /// This method is called right before we attempt to claim on the faucet. So we are logged in and good to go.
     /// Next methods that will be called are DoSolveFaucet, AfterSolveFaucet and CheckFaucetResult.
     /// </summary>
-    public override int BeforeSolveFaucet()
+    public override int BeforeSolveFaucet( )
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.BeforeSolveCaptcha();
+        return base.BeforeSolveCaptcha( );
     }
 
     /// <summary>
     /// This method gets called after the BeforeSolveFaucet. You can do the actual claiming of the faucet in here.
     /// </summary>
     /// <returns></returns>
-    public override int DoSolveFaucet()
+    public override int DoSolveFaucet( )
     {
         GoToUrl("https://adxrp.cc/surf");
-        Wait();
+        Wait( );
         var DivCaptcha = ElementByXPath("//div[@class='g-recaptcha']");
         var ButtonAd = ElementByXPath("//input[@value='View']");
         int NClaims = 0;
         string BalanceText = string.Empty;
-        while(IsVisible(DivCaptcha) || IsVisible(ButtonAd)){
+        while ( IsVisible(DivCaptcha)||IsVisible(ButtonAd) )
+        {
 
             var Balance = ElementByXPath("//p[@class='white-text flow-text' and contains(text(),'Account Balance')]//b");
-            if (Balance != null)
+            if ( Balance!=null )
             {
-                BalanceText = Balance.Text;
+                BalanceText=Balance.Text;
             }
-            if (IsVisible(DivCaptcha))
+            if ( IsVisible(DivCaptcha) )
             {
                 var result = DoSolveCaptcha();
-                if (result > 0)
+                if ( result>0 )
                 {
-                    Driver.Navigate().Refresh();
+                    Driver.Navigate( ).Refresh( );
                     Log("Something is wrong with the captcha");
-                    Wait();
-                
+                    Wait( );
+
                 }
                 var ButtonSendCaptcha = ElementByXPath("//input[@value='Enter']");
-                if (IsVisible(ButtonSendCaptcha))
+                if ( IsVisible(ButtonSendCaptcha) )
                 {
                     Click(ButtonSendCaptcha);
                 }
                 Wait(2);
-                DivCaptcha = ElementByXPath("//div[@class='g-recaptcha']");
-                ButtonAd = ElementByXPath("//input[@value='View']");
+                DivCaptcha=ElementByXPath("//div[@class='g-recaptcha']");
+                ButtonAd=ElementByXPath("//input[@value='View']");
                 continue;
 
             }
@@ -221,72 +224,98 @@ public class TemplateScript : FaucetScript
             {
                 try
                 {
-                    CheckForPopupsEnabled = false;
-                    Click(ButtonAd, false);
+                    CheckForPopupsEnabled=false;
+                    Click(ButtonAd , false);
                     Wait(1);
-                    Driver.SwitchTo().Window(Driver.WindowHandles[0]);
+                    Driver.SwitchTo( ).Window(Driver.WindowHandles[0]);
 
                     var Timer = ElementByXPath("//h5[@id='timer']");
                     DateTime Timeout = DateTime.Now.AddSeconds(135);
-                    while (IsVisible(Timer))
+                    while ( IsVisible(Timer) )
                     {
                         Wait(1);
-                        if (DateTime.Now > Timeout)
+                        if ( DateTime.Now>Timeout )
                         {
                             Log("TIMEOUT REACHED");
                             break;
                         }
-                        Timer = ElementByXPath("//h5[@id='timer']");
+                        Timer=ElementByXPath("//h5[@id='timer']");
                     }
 
                 }
                 finally
                 {
-                    CheckForPopupsEnabled = true;
-                    Driver.SwitchTo().Window(Driver.WindowHandles[0]);
-                    CheckForPopups();
+                    CheckForPopupsEnabled=true;
+                    Driver.SwitchTo( ).Window(Driver.WindowHandles[0]);
+                    CheckForPopups( );
                 }
             }
-            Balance = ElementByXPath("//p[@class='white-text flow-text' and contains(text(),'Account Balance')]//b");
-            if(Balance!=null && Balance.Text != BalanceText)
+            Balance=ElementByXPath("//p[@class='white-text flow-text' and contains(text(),'Account Balance')]//b");
+            if ( Balance!=null&&Balance.Text!=BalanceText )
             {
 
                 NClaims++;
             }
 
 
-            Driver.Navigate().Refresh();
-            Wait();
-           DivCaptcha = ElementByXPath("//div[@class='g-recaptcha']");
-           ButtonAd = ElementByXPath("//input[@value='View']");
+            Driver.Navigate( ).Refresh( );
+            Wait( );
+            DivCaptcha=ElementByXPath("//div[@class='g-recaptcha']");
+            ButtonAd=ElementByXPath("//input[@value='View']");
 
         }
-        if (NClaims == 0)
+        if ( NClaims==0 )
         {
-            ClaimFailed();
-            IsSuccess = false;
+            ClaimFailed( );
+            IsSuccess=false;
             Log("0 Ads Viewed , probably there is not ads.");
         }
         else
         {
-            IsSuccess = true;
-            ClaimSuccess();
-            Log(NClaims.ToString() + " Ads Viewed.");
+            IsSuccess=true;
+            ClaimSuccess( );
+            Log(NClaims.ToString( )+" Ads Viewed.");
         }
-        return GetWaitSetting();
 
-    
-     
+
+        if ( GetBoolSetting("Shortlink") )
+        {
+            var availableShortlinks=ElementsByXPath("//a[@title='View Links']").Where(x=>IsVisible(x)).ToList();
+
+            Log("there are "+availableShortlinks.Count+" available shortlinks");
+            if ( availableShortlinks.Count>0 )
+            {
+                FaucetCollector.Utilities.ShortLinkBypasser bypasser =new FaucetCollector.Utilities.ShortLinkBypasser(this);
+                Click(availableShortlinks[Random(0 , availableShortlinks.Count-1)]);
+
+                bool solved=bypasser.DoShortLink();
+                if ( solved )
+                {
+                    Log("Shortlink has been solved successfully");
+                }
+                else
+                {
+                    Log("there is a problem solving the shortlink, please see the log");
+                }
+
+            }
+
+        }
+
+        return GetWaitSetting( );
+
+
+
     }
 
     /// <summary>
     /// This method will get called after the DoSolveFaucet is completed and returned it was a success.
     /// For example you can wait for a processing popup to go away until actual faucet claim result is on the page.
     /// </summary>
-    public override int AfterSolveFaucet()
+    public override int AfterSolveFaucet( )
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.AfterSolveFaucet();
+        return base.AfterSolveFaucet( );
     }
 
     /// <summary>
@@ -296,9 +325,9 @@ public class TemplateScript : FaucetScript
     /// For example if it finds one of the elements from the SuccessXPath, and it is visible, then it will flag the claim attempt as a success.
     /// Or if it finds one of the elements from the FailXPath, and it is visible, then it will flag the claim attempt as a failure.
     /// </summary>
-    public override int CheckFaucetResult()
+    public override int CheckFaucetResult( )
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.CheckFaucetResult();
+        return base.CheckFaucetResult( );
     }
 }
