@@ -1,8 +1,7 @@
 
-
 //==================//
 //script Written by: ••AviramDayan•• 26/05/2019 04:00PM
-//Last Update: 17/07/2020 12:40AM - Version 7
+//Last Update: 08/08/2020 19:50PM - Version 8
 //==================//
 
 using System;
@@ -128,8 +127,20 @@ public class primedice : FaucetScript
 	 {
 
 		//GoToUrl("https://primedice.com/?modal=login");
+
+        Driver.Navigate().Refresh(); //that not enter multiple content in input
 		Wait();		
-		Wait(2);
+		Wait(6);
+		
+        var PopUp = ElementByXPath("//div[contains(@class,'styles__Card')]");
+	    if (IsVisible(PopUp))
+	    {
+         var ClosePopUp = ElementByXPath("//button[contains(@class,'styles__CloseButton')]");
+         Click(ClosePopUp);
+		 Log("ClosePopUp");
+        }
+
+        Wait(5);
 
         var LogInButton = ElementByXPath("//span[contains(text(),'Login')]");
 	    if (IsVisible(LogInButton))
@@ -137,7 +148,7 @@ public class primedice : FaucetScript
          Click(LogInButton);
         }
 
-        Driver.Navigate().Refresh(); //that not enter multiple content in input
+        Wait(3);
 
         var box_user = ElementByXPath("//input[contains(@name,'email')]");
         SetText(box_user, GetSetting("Email"));
