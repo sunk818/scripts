@@ -279,7 +279,7 @@ public class AdDashScript : FaucetScript
 
         if ( GetBoolSetting("Shortlink") )
         {
-            GoToUrl(Url+"/shortlinks");
+            GoToUrl("https://addash.cc/shortlinks");
             var availableShortlinks=ElementsByXPath("//a[@title='View Links']").Where(x=>IsVisible(x)).ToList();
 
             Log("there are "+availableShortlinks.Count+" available shortlinks");

@@ -280,7 +280,7 @@ public class AdLtcScript : FaucetScript
 
         if ( GetBoolSetting("Shortlink") )
         {
-            GoToUrl(Url+"/shortlinks");
+            GoToUrl("https://adltc.cc/shortlinks");
             var availableShortlinks=ElementsByXPath("//a[@title='View Links']").Where(x=>IsVisible(x)).ToList();
 
             Log("there are "+availableShortlinks.Count+" available shortlinks");
