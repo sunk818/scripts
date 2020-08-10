@@ -1,8 +1,8 @@
-﻿
+
 
 //============================================//
 //script Written first by: cgerabit
-//last update by: AviramDayan 08/07/2019 06:35AM - Version: 2
+//last update by: AviramDayan 10/08/2020 06:00AM - Version: 3
 //============================================//
 
 using System;
@@ -14,7 +14,7 @@ using System.Globalization;
 //css_inc RecaptchaUtilities
 
 
-public class FreeCardanoScript : FaucetScript
+public class FreeCardano : FaucetScript
 {
     /// <summary>
     /// List of Settings that will be shown in the bot when selecting this Faucet in the bot.
@@ -25,7 +25,7 @@ public class FreeCardanoScript : FaucetScript
     {
         get
         {
-            return new FaucetSettings("https://freecardano.com/")
+            return new FaucetSettings("https://FreeCardano.com/")
             {
                 new FaucetSetting() { Name = "Email", Display = "Email", Type = EditorType.TextBox, Required = true },
                 new FaucetSetting() { Name = "Password", Display = "Password", Type = EditorType.Password, Required = true },
@@ -52,7 +52,10 @@ public class FreeCardanoScript : FaucetScript
     }
 
 	
-	
+    //My DomainName
+    string DomainName_String = "https://FreeCardano.com";
+	//example - GoToUrl(DomainName_String);
+    //==========//
 	
 	
 	
@@ -118,7 +121,7 @@ public class FreeCardanoScript : FaucetScript
     public override int BeforeLogin()
     {
 		
-        GoToUrl("https://freecardano.com//free"); //go to faucet first
+        GoToUrl(DomainName_String+"/free"); //go to faucet first
 		
 		
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
@@ -234,9 +237,9 @@ public class FreeCardanoScript : FaucetScript
  public override int GetFaucetWaitTime()
  {
 
-        if (!Driver.Url.Contains("https://freecardano.com//free"))
+        if (!Driver.Url.Contains(DomainName_String+"/free"))
         {
-            GoToUrl("https://freecardano.com//free");
+            GoToUrl(DomainName_String+"/free");
             Wait();
         }
         
@@ -307,7 +310,7 @@ public class FreeCardanoScript : FaucetScript
         {			
 
 		   Log("AutoSetWithdraw");
-           GoToUrl("https://freecardano.com//settings");	
+           GoToUrl(DomainName_String+"/settings");	
 		   Wait();
 		
            var setwallet = ElementByXPath("//input[@class='form-control wallet-address']");
@@ -393,26 +396,31 @@ public class FreeCardanoScript : FaucetScript
         if (GetBoolSetting("FaucetClaim"))
         {
 
-            if (!Driver.Url.Contains("https://freecardano.com//free"))
+            GoToUrl(DomainName_String+"/free-rolls"); //first go to here to avoid BOT use 
+            Wait(4,7);
+
+            GoToUrl(DomainName_String+"/free");
+            Wait(2,8);
+
+		    Log("FaucetClaim - try");
+            Faucet_Roll_Function(); //call to try
+
+            Wait(8);
+
+            var TimeToCheck = ElementByXPath("//div[contains(@class,'timeout-wrapper') and @style ]"); 
+			if (TimeToCheck !=null) //if after that we click on Roll There is Alert that need to "Refresh" - do it 2 times and call again to do Roll to times
             {
-                GoToUrl("https://freecardano.com//free");
-                Wait();
+				Log("FaucetClaim - Alert appear - need to Refresh the Page");
+                Driver.Navigate().Refresh(); //Refresh
+				Wait(3,6);
+                Faucet_Roll_Function(); //call again
+				Wait(4,7);
+                Driver.Navigate().Refresh(); //Refresh
+				Wait(3,6);
+                Faucet_Roll_Function(); //call again
+				Wait(4,7);
             }
 
-            var ButtonClaim = ElementByXPath("//button[@class='main-button-2 roll-button bg-2']");
-            if (!IsVisible(ButtonClaim))
-            {
-                return Fail("Button claim not visible");
-            }
-            //var result = DoSolveCaptcha();
-            //if (result > 0)
-            //{
-            //    return Fail("Fail solving captcha");
-            //}
-            Click(ButtonClaim);
-            Wait();
-        
-				
         }//end FaucetClaim
 
     //==============//
@@ -426,7 +434,7 @@ public class FreeCardanoScript : FaucetScript
 
 
             Log("DoShortLink");
-            GoToUrl("https://freecardano.com//free-rolls");
+            GoToUrl(DomainName_String+"/free-rolls");
 	        Wait();	  
 			
             int N = CheckIfShortLinkIsAvailable();
@@ -514,7 +522,30 @@ public class FreeCardanoScript : FaucetScript
         return base.CheckFaucetResult();
     }
 	
-	
+
+        //=================//
+       //Faucet_Roll_Function
+        //=================//
+
+        public int Faucet_Roll_Function()
+        {
+			
+            var ButtonClaim = ElementByXPath("//button[@class='main-button-2 roll-button bg-2']");
+            if (!IsVisible(ButtonClaim))
+            {
+            return Fail("Button claim not visible");
+            }
+			
+            if (IsVisible(ButtonClaim))
+            {
+            Click(ButtonClaim);
+            Wait(5);
+            }
+
+		return 0;
+        }//end Faucet_Roll_Function
+        //=================//	
+		
 
     public int CheckIfShortLinkIsAvailable()
     {
