@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 05/12/2018 06:00AM 
-//Last Update: 06/07/2020 05:40AM - Version 60
+//Last Update: 11/08/2020 04:35AM - Version 61
 //==================//
 
 using System;
@@ -459,8 +459,6 @@ public class discordapp_ : FaucetScript
 		
         inviteServer_Elements_Function(); //call
 		
-        while (true)
-        {
 		Wait();
         Wait(5);
         Title = "#giveaways";		
@@ -468,32 +466,34 @@ public class discordapp_ : FaucetScript
 		Log("Discordtip_FaucetCollector: go to to claim in channel  | FaucetCollector "); 	
 		Wait();
 		Wait(15);
-
-        Scroll_Function(); //call to scroll down
+		  
+         while (true)
+         {	
+		   Wait(2);
+		   
+           Scroll_Function(); //call to scroll down
+		   
+		   Wait(4);
+		   
+		   var ReactionButton_Clean = ElementByXPath("//div[contains(@class,'reactionInner') and @aria-pressed='false' ]//img[contains(@src,'assets/b052a4bef57')]");
+           
+		   if (!IsVisible(ReactionButton_Clean)) 
+           {
+            Log("Reaction - already claimed full");
+            Notification("Reaction - already claimed full");
+		    break; //after break the while
+           } 
+ 	       
+		   if (IsVisible(ReactionButton_Clean))
+           {
+		   Log("Reaction is now Clean - call to function - to click"); 
+		   Reaction_Function(); //call to Reaction_Function
+		   }
+		   
+           Wait(3);
+		 
+         } //end while - true
 		
-		Wait(3);
-		
-		var ReactionButton_Clean = ElementByXPath("//div[contains(@class,'reactionInner') and @aria-pressed='false' ]//img[contains(@src,'assets/b052a4bef57')]");
-        
-		if (!IsVisible(ReactionButton_Clean)) 
-        {
-         Log("Reaction - already claimed full - OR - problem with button");
-         Notification("Reaction - already claimed full - OR - problem with button");
-        } 
- 	    
-		if (IsVisible(ReactionButton_Clean))
-        {
-		Log("Reaction is now Clean - call to function - to click"); 
-		Reaction_Function(); //call to Reaction_Function
-		}
-
-        Wait(2);
-
-        break; //after break the while
-
-        } // end while - true
-		
-        Wait();
         Wait(3);
 
      }	 //end Discordtip_FaucetCollector_OnOff
