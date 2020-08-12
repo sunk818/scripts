@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using FaucetCollector.Script;
 using OpenQA.Selenium;
 
@@ -17,8 +16,9 @@ class FreeDgbScript : FaucetScript
         {
             return new FaucetSettings("https://freedgb.com")
             {
-                new FaucetSetting(){Name="User",
-                    Display ="WalletAddress",
+                new FaucetSetting(){
+                    Name="User",
+                    Display ="ExpressCrypto Unique Id",
                     Type =EditorType.TextBox,
                     Required =true
                 },
@@ -40,8 +40,8 @@ class FreeDgbScript : FaucetScript
         Title = "FreeDGB";
 
 
-        SuccessXPath = "//div[@class='alert alert-success']";
-        FailXPath = "//div[@class='alert alert-danger']";
+        SuccessXPath ="//div[@class='alert alert-success fade show']";
+        FailXPath ="//div[@class='alert alert-danger fade show']";
 
         base.Start();
     }
@@ -57,7 +57,7 @@ class FreeDgbScript : FaucetScript
     public override bool IsLoggedIn()
     {
         // See if the element is visible;
-        return ElementByXPath("//input[@type='text']") ==null;
+        return ElementByXPath("//div[@id='captchaModal']") !=null;
     }
 
 
@@ -70,14 +70,14 @@ class FreeDgbScript : FaucetScript
 
     public override int DoLogin()
     {
-        var UserBox = ElementByXPath("//input[@type='text']");
+        var UserBox = ElementByXPath("//input[@id='address']");
         if (!IsVisible(UserBox))
         {
             return Fail("UserBox not found");
         }
         SetText(UserBox, GetSetting("User"));
 
-        var ButtonLogin = ElementByXPath("//input[@type='submit']");
+        var ButtonLogin = ElementByXPath("//button[@class='btn btn-block btn-primary my-2']");
         if (!IsVisible(ButtonLogin))
         {
             return Fail("Button login not visible");
@@ -107,24 +107,37 @@ class FreeDgbScript : FaucetScript
         return base.AfterLogin();
     }
 
+    private string GetTextWithJavascript(IWebElement element)
+    {
+        if ( element==null )
+        {
+            return string.Empty;
+        }
 
+        return ExecuteScript("return arguments[0].textContent.trim();" , element).ToString();
+
+    }
     public override int GetFaucetWaitTime()
     {
 
-        var ElementTime = ElementByXPath("//div[@id='claim_again']");
-        if (IsVisible(ElementTime))
-        {   
-            // Make convertion;
-            int Min, seg;
-            var SplitedTime = ElementTime.Text.Split(' ')[4].Split(':');
-            if (SplitedTime.Length == 2)
+        var timeElement=ElementByXPath("//div[@class='alert alert-danger fade show']");
+
+        if (  IsVisible(timeElement) )
+        {
+            // we need to get the text with javacscript since .text of IWebElement is not working
+            string timeText=GetTextWithJavascript(timeElement);
+
+            if ( !string.IsNullOrEmpty(timeText) && timeText.Contains("You have to wait"))
             {
-                int.TryParse(SplitedTime[0], out Min);
-                int.TryParse(SplitedTime[1], out seg);
-                Min *= 60;
-                return Min + seg;
+                var splitedTimetext=timeText.Split(' ');
+                int minutes;
+                if ( splitedTimetext.Length>=5 && int.TryParse(splitedTimetext[4],out minutes)  )
+                {
+                    return minutes*60;
+                }
+
             }
-         
+
         }
         Log("Timer is not visible, Trying to claim");
 
@@ -162,7 +175,7 @@ class FreeDgbScript : FaucetScript
 
     public override int DoSolveFaucet()
     {
-        var ButtonSubmitCaptcha = ElementByXPath("//input[@id='anti_bot_submit']");
+        var ButtonSubmitCaptcha = ElementByXPath("//input[@value='Verify Captcha']");
         if (IsVisible(ButtonSubmitCaptcha))
         {
             var result = DoSolveCaptcha();
@@ -181,9 +194,6 @@ class FreeDgbScript : FaucetScript
 
         }
         
-
-       
-
        
         return DoSolveFaucet();
     }
