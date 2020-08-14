@@ -24,6 +24,7 @@ public class ContractMiner : FaucetScript
                 new FaucetSetting(){Name="TimedlyHour",Display="ClaimTimedlyHour",Type=EditorType.CheckBox,Default=true},
                 new FaucetSetting(){Name="MinersTap",Display="MinersTap",Type=EditorType.CheckBox,Default=true},
                 new FaucetSetting(){Name="AutoMiner",Display="AutoMiner_(0 Disabled)",Type=EditorType.Numeric,Default=0},
+                new FaucetSetting(){Name="Coinflip", Type=EditorType.CheckBox,Display="RP Coinflip", Default=true}
            
                 //insert user settings here
                 //new FaucetSetting { 
@@ -306,6 +307,33 @@ public class ContractMiner : FaucetScript
     /// <returns></returns>
     public override int DoSolveFaucet()
     {
+        if(GetBoolSetting("Coinflip") )
+        {
+            GoToUrl("https://www.contract-miner.com/");
+            Wait(2);
+
+            var openCoinflipBtn=ElementByXPath("//a[@href='#tab_home_cf']");
+            if ( IsVisible(openCoinflipBtn) )
+            {
+                Click(openCoinflipBtn);
+                Wait(2);
+
+                var playCoinflipBtn=ElementByXPath("//button[@name='play_cf']");
+                // if the butotn is visible , so probably coinflip is available to claim
+                if ( IsVisible(playCoinflipBtn) )
+                {
+                    Click(playCoinflipBtn);
+                    Wait( );
+
+                    var successMessage=ElementByXPath("//div[@class='toast-message']");
+                    if ( IsVisible(successMessage ))
+                    {
+                        Log(successMessage.Text);
+                    }
+                }
+            }
+        }
+
         int Number = GetIntSetting("AutoMiner");
         if ( Number!=0 )
         {
