@@ -47,65 +47,16 @@ class FreeDgbScript : FaucetScript
     }
 
 
-    public override int DoInit()
-    {
-
-        return base.DoInit();
-    }
-
 
     public override bool IsLoggedIn()
     {
         // See if the element is visible;
-        return ElementByXPath("//div[@id='captchaModal']") !=null;
+        return true;
     }
 
 
-    public override int BeforeLogin()
-    {
-
-        return base.BeforeLogin();
-    }
 
 
-    public override int DoLogin()
-    {
-        var UserBox = ElementByXPath("//input[@id='address']");
-        if (!IsVisible(UserBox))
-        {
-            return Fail("UserBox not found");
-        }
-        SetText(UserBox, GetSetting("User"));
-
-        var ButtonLogin = ElementByXPath("//button[@class='btn btn-block btn-primary my-2']");
-        if (!IsVisible(ButtonLogin))
-        {
-            return Fail("Button login not visible");
-
-        }
-        Click(ButtonLogin);
-
-        Wait();
-        var ErrorElement = ElementByXPath("//div[@class='alert alert-danger']");
-        if (IsVisible(ErrorElement))
-        {
-            Log(ErrorElement.Text);
-            if (ErrorElement.Text.ToLower().Contains("invalid username") || ErrorElement.Text.ToLower().Contains("invalid Password"))
-            {
-                Disable();
-                return Fail("You need to put correct credentials ");
-            }
-        }
-
-        return base.DoLogin();
-    }
-
-
-    public override int AfterLogin()
-    {
-
-        return base.AfterLogin();
-    }
 
     private string GetTextWithJavascript(IWebElement element)
     {
@@ -119,6 +70,8 @@ class FreeDgbScript : FaucetScript
     }
     public override int GetFaucetWaitTime()
     {
+        Driver.Navigate( ).Refresh( );
+        Wait(2);
 
         var timeElement=ElementByXPath("//div[@class='alert alert-danger fade show']");
 
@@ -145,36 +98,22 @@ class FreeDgbScript : FaucetScript
     }
 
 
-    public override int BeforeSolveCaptcha()
-    {
-
-        return base.BeforeSolveCaptcha();
-    }
-
-    public override int DoSolveCaptcha()
-    {
-
-        return base.DoSolveCaptcha();
-    }
-
-
-    public override int AfterSolveCaptcha()
-    {
-
-        return base.AfterSolveCaptcha();
-    }
-
-
-    public override int BeforeSolveFaucet()
-    {
-        
-
-        return base.BeforeSolveCaptcha();
-    }
-
-
     public override int DoSolveFaucet()
     {
+        var UserBox = ElementByXPath("//input[@id='address']");
+        if ( !IsVisible(UserBox) )
+        {
+            return Fail("UserBox not found");
+        }
+        SetText(UserBox , GetSetting("User"));
+
+        var GetModalBtn = ElementByXPath("//button[@class='btn btn-block btn-primary my-2']");
+        if ( !IsVisible(GetModalBtn) )
+        {
+            return Fail("Button login not visible");
+
+        }
+        Click(GetModalBtn);
         var ButtonSubmitCaptcha = ElementByXPath("//input[@value='Verify Captcha']");
         if (IsVisible(ButtonSubmitCaptcha))
         {
@@ -187,6 +126,13 @@ class FreeDgbScript : FaucetScript
             Click(ButtonSubmitCaptcha);
             Wait();
 
+            var success=ElementByXPath("//div[@class='alert alert-success fade show']");
+            if ( IsVisible(success) )
+            {
+                IsSuccess=true;
+                ClaimSuccess( );
+                Log(success.Text);
+            }
         }
         else {
 
@@ -196,19 +142,6 @@ class FreeDgbScript : FaucetScript
         
        
         return DoSolveFaucet();
-    }
-
-
-    public override int AfterSolveFaucet()
-    {
-        return base.AfterSolveFaucet();
-    }
-
-
-    public override int CheckFaucetResult()
-    {
-        Reload = true;
-        return base.CheckFaucetResult();
     }
 
 }
