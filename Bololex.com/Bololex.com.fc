@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 14/08/2020 11:00AM - Version 1
-//Last Update: 14/08/2020 11:00AM - Version 1
+//Last Update: 15/08/2020 01:35PM - Version 2
 //==================//
 
 using System;
@@ -38,8 +38,9 @@ public class Bololex : FaucetScript
                 new FaucetSetting(){Name="Email",Display="UserName",Type=EditorType.TextBox,Required=true},
                 new FaucetSetting(){Name="Password",Display="Password",Type=EditorType.Password,Required=true},
 				
-                new FaucetSetting(){Name="FaucetClaim",Display="FaucetClaim",Type=EditorType.CheckBox,Default=true},	
-                new FaucetSetting(){Name="VoteAllCoin",Display="VoteAllCoin",Type=EditorType.CheckBox,Default=true},		
+                new FaucetSetting(){Name="FaucetCollect",Display="FaucetCollect - ON/OFF - note: before you can use that feature you need to do trade only 'one' time (you can use BOLO) and after you can do claim always. ",Type=EditorType.CheckBox,Default=false},
+                new FaucetSetting(){Name="AirDrop_Wheel",Display="AirDrop_Wheel - ON/OFF ",Type=EditorType.CheckBox,Default=true},	
+                new FaucetSetting(){Name="VoteAllCoin",Display="VoteAllCoin - ON/OFF - i don't recommend to do this, because it cost you some amount",Type=EditorType.CheckBox,Default=false},		
 			
                 //insert user settings here
                 //new FaucetSetting { 
@@ -266,6 +267,62 @@ public class Bololex : FaucetScript
     public override int DoSolveFaucet()
     {
 
+    //============//
+    //FaucetCollect
+    //=============//
+    if (GetBoolSetting("FaucetCollect"))
+    { 
+
+		//go to faucet
+        GoToUrl("https://bololex.com/trading/wallets");
+		Log("FaucetCollect: Collect All" );
+	    Wait();		
+	    Wait(5);	
+		
+        var TimeToWaitForBreak = DateTime.Now.AddSeconds(360);
+        while (true)
+        {
+        
+          var FaucetCheck = ElementByXPath("//span[contains(text(),'Claim')]");
+          if (IsVisible(FaucetCheck))
+          {
+        
+            Wait(5);
+        
+            var FaucetButton = ElementByXPath("//span[contains(text(),'Claim')]");
+            Click(FaucetButton);
+            Log("FaucetClaim - click");
+        
+            Wait(2);
+        
+            var SuccessMessage = ElementByXPath("//div[contains(@role,'alertdialog')]");
+            if (IsVisible(SuccessMessage))
+            {
+            Log(SuccessMessage.Text);
+            ClaimSuccess(); //Success
+            }
+        
+            Wait(2);
+        
+          }// end FaucetCheck
+        
+          if (!IsVisible(FaucetCheck))
+          {
+          Log("FaucetClaim - break - not Available");
+          break;
+          }
+        
+          if (DateTime.Now > TimeToWaitForBreak) //if the time above 65 sec 
+          {
+          Log("FaucetClaim - break - TimeToWaitForBreak");
+          break; //break the wait loop
+          }
+        
+        } //end while true	
+	
+    } // end FaucetCollect
+    //=============//
+	
 	
       //=============//
       //VoteAllCoin
@@ -288,18 +345,18 @@ public class Bololex : FaucetScript
 		  
       } //end VoteAllCoin
       //=============//	   
-	  
-	
+
+
       //=============//
-      //FaucetClaim
+      //AirDrop_Wheel
       //=============//
-      if (GetBoolSetting("FaucetClaim"))
+      if (GetBoolSetting("AirDrop_Wheel"))
       {
 
 		GoToUrl("https://bololex.com/game/airdrop");
 	    Wait();
 	    Wait(4);
-		Log("FaucetClaim - try");  
+		Log("AirDrop_Wheel - try");  
 
         //mouse position click switch - good for "canvas" TagName flash/Games
         var canvas_VAR = Driver.FindElement(By.ClassName("game-canvas")); //ctx - was     
@@ -312,11 +369,12 @@ public class Bololex : FaucetScript
         var Success_Claim = ElementByXPath("//div[@class='alert alert-success']");
         if (IsVisible(Success_Claim))
 		{
-		Log("FaucetClaim - Success_Claim ");  
+		Log("AirDrop_Wheel - Success_Claim ");  
 		ClaimSuccess(); //Marks the claim as a success
 		}
 		
-      } //end FaucetClaim
+      } //end AirDrop_Wheel
+      //=============//	  
 
 		return Time_Function(); //call to function time
 	
