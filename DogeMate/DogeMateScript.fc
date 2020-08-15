@@ -125,7 +125,11 @@ public class DogeMateScript: FaucetScript
             Click(availableShortlinks[Random(0 , availableShortlinks.Count-1)]);
             // We solve the shortlink
             bool res=bypasser.DoShortLink( );
-            
+            var successOrFailMessage=ElementByXPath("//div[@class='toast-message']");
+            if ( IsVisible(successOrFailMessage) )
+            {
+                Log(successOrFailMessage.Text);
+            }
             if ( res )
             {
                 // Shortlink was succesfully solved
