@@ -1,0 +1,154 @@
+﻿using FaucetCollector.Captcha;
+using FaucetCollector.Script;
+using FaucetCollector.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+//css_ref FaucetCollector.Utilities
+//css_ref FaucetCollector.Captcha
+
+public class DogeMateScript: FaucetScript
+{
+
+    public override FaucetSettings Settings
+    {
+
+        get
+        {
+
+            return new FaucetSettings("https://dogemate.com/")
+            {
+                new FaucetSetting(){Name="User",Type=EditorType.TextBox,Required=true,Display="Username"},
+                new FaucetSetting(){Name="Pass",Type=EditorType.Password,Required=true,Display="Password"}
+            };
+        }
+    }
+
+    public override void Start( )
+    {
+        Title="DogeMate";
+
+        SuccessXPath="//div[@class='toast-message']";
+
+        FailXPath="//div[@class='toast-message-warning']";
+        base.Start( );  
+    }
+
+    public override int DoLogin( )
+    {
+
+        GoToUrl("https://dogemate.com/login");
+
+        Wait(3);
+        
+        // We check for the user box and password box
+        var userBox=ElementByXPath("//input[@id='username']");
+        if ( !IsVisible(userBox) )
+        {
+            return Fail("userBox not visible or not found");
+        }
+        SetText(userBox , GetSetting("User"));
+
+        var passwordBox=ElementByXPath("//input[@id='password']");
+        if ( !IsVisible(passwordBox) )
+        {
+            return Fail("password box not visible or not found");
+        }
+        SetText(passwordBox , GetPassword("Pass"));
+
+        // we solve the captcha
+        var result=DoSolveCaptcha();
+        if ( result>0 )
+        {
+            return result;
+        }
+
+        var signInBtn=ElementByXPath("//button[@name='login']");
+        if ( !IsVisible(signInBtn ))
+        {
+            return Fail("signInBtn not found or not visible");
+        }
+
+        // click on the sign in button
+        Click(signInBtn);
+
+        // if there is a posible error we log it 
+        var errorLogin=ElementByXPath("//div[@class='toast-message']");
+        if ( IsVisible(errorLogin) )
+        {
+            Log(errorLogin.Text);
+        }
+
+
+        return base.DoLogin( );
+    }
+
+
+    public override int DoSolveCaptcha( )
+    {
+
+        var result= base.DoSolveCaptcha( );
+
+        if ( result>0 ) 
+        { 
+            return result; 
+        }
+        // We need to call the callback of the recaptcha to avoid the message of "This field is required" 
+        RecaptchaUtility utility =new RecaptchaUtility(this);
+        utility.DoSolve( );
+
+        return result;
+    }
+
+    public override bool IsLoggedIn( )
+    {
+        return ElementByXPath("//a[contains(@href,'logout')]")!=null;
+    }
+
+    public override int DoSolveFaucet( )
+    {
+        // We go to the shortlink site 
+        GoToUrl("https://dogemate.com/shortlinks");
+
+        Wait(2);
+
+        // get the available visbile shortlinks
+        var availableShortlinks=ElementsByXPath("//input[@value='Visit Now!']").Where(x=>IsVisible(x)).ToList();
+
+        if ( availableShortlinks.Count>0 )
+        {
+            // construct the bypasser before go to the shortlink,  so we got some filters
+            ShortLinkBypasser bypasser=new ShortLinkBypasser(this);
+            // We go to the shortlink
+            Click(availableShortlinks[Random(0 , availableShortlinks.Count-1)]);
+            // We solve the shortlink
+            bool res=bypasser.DoShortLink( );
+            var successOrFailMessage=ElementByXPath("//div[@class='toast-message']");
+            if ( IsVisible(successOrFailMessage) )
+            {
+                Log(successOrFailMessage.Text);
+            }
+            if ( res )
+            {
+                // Shortlink was succesfully solved
+                IsSuccess=true;
+                ClaimSuccess( );
+            }
+            else
+            {
+                Log("there is a problem with shortlink");
+                IsSuccess=false;
+                ClaimFailed( );
+            }
+
+
+        }
+
+
+        return GetWaitSetting( );
+    }
+
+}
+
