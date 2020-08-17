@@ -395,7 +395,7 @@ public class Bololex : FaucetScript
 		
           if (DateTime.Now > TimeToWaitForBreak) //if the time above 65 sec 
           {
-          Log("FaucetClaim - break - TimeToWaitForBreak");
+          Log("AirDrop_Wheel - break - TimeToWaitForBreak");
           break; //break the wait loop
           }
 		
