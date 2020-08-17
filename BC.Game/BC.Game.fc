@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 30/04/2019 21:09PM - Version 1
-//Last Update: 21/07/2020 04:20AM - Version 33
+//Last Update: 18/08/2020 06:30AM - Version 34
 //==================//
 
 using System;
@@ -316,10 +316,10 @@ public class bcgame : FaucetScript
             Click(OpenLuckySpin_Button);
 		    Wait(4);
 		    
-            // mouse position click switch - good for "canvas" TagName flash/Games
-            var canvas_VAR = Driver.FindElement(By.ClassName("spin-canvas")); //ctx - was             
+            //MoveToElement ONLY - x/y mouse position click switch - good for "canvas" TagName flash/Games
+            var canvas_VAR = Driver.FindElement(By.ClassName("spin-canvas"));  
             var size = canvas_VAR.Size;
-            new Actions(Driver).MoveToElement(canvas_VAR, 800, 246).Click().MoveByOffset(size.Width / 800, size.Height / 246).Release().Perform(); //800 - was
+            new Actions(Driver).MoveToElement(canvas_VAR, 242, 273).Click().Release().Perform(); // on 67% //MoveToElement 196,210 | 196 = X (from left to right) 210 = Y (from top to bottom)
             //=======//
 		    
 		    Wait(6);
