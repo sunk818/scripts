@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 14/08/2020 11:00AM - Version 1
-//Last Update: 15/08/2020 01:35PM - Version 2
+//Last Update: 17/08/2020 06:00AM - Version 2
 //==================//
 
 using System;
@@ -358,23 +358,52 @@ public class Bololex : FaucetScript
 	    Wait(4);
 		Log("AirDrop_Wheel - try");  
 
-        //mouse position click switch - good for "canvas" TagName flash/Games
-        var canvas_VAR = Driver.FindElement(By.ClassName("game-canvas")); //ctx - was     
-        var size = canvas_VAR.Size;
-        new Actions(Driver).MoveToElement(canvas_VAR, 435, 414).Click().MoveByOffset(size.Width / 756, size.Height / 756).Release().Perform(); //800 - was //246
-        //=======//
+        var TimeToWaitForBreak = DateTime.Now.AddSeconds(90);
+        while (true)
+        {
 
-	    Wait(7);
-
-        var Success_Claim = ElementByXPath("//div[@class='alert alert-success']");
-        if (IsVisible(Success_Claim))
-		{
-		Log("AirDrop_Wheel - Success_Claim ");  
-		ClaimSuccess(); //Marks the claim as a success
-		}
+          var Energies_Available = ElementByXPath("//div[@class='energies_capsules' and contains(@style,'width:40%') or contains(@style,'width:50%') ] ");
+          
+		  if (!IsVisible(Energies_Available))
+		  {
+		    Log("AirDrop_Wheel - Energies NOT here - try next time");   
+            break;
+		  }
+		  
+		  if (IsVisible(Energies_Available))
+		  {
+	        Wait(5,8);
+			
+		    Log("AirDrop_Wheel - Energies Available - do stuff");  
+			
+            //MoveToElement ONLY - x/y mouse position click switch - good for "canvas" TagName flash/Games
+            var canvas_VAR = Driver.FindElement(By.ClassName("game-canvas"));   //was  game-canvas  
+            var size = canvas_VAR.Size;
+            new Actions(Driver).MoveToElement(canvas_VAR, 364, 374).Click().Release().Perform(); //MoveToElement 100,50 | 100 = X (from left to right) 50 = Y (from top to bottom)
+            //=======//
+		    
+	        Wait(3);
+		   
+            var Success_Claim = ElementByXPath("//div[contains(@class,'toast-success')]/div[@class='toast-title']");
+            if (IsVisible(Success_Claim))
+		    {
+		    Log("AirDrop_Wheel - Success_Claim ");  
+		    ClaimSuccess(); //Marks the claim as a success
+		    }
+		
+		  } //end Energies_Available
+		
+          if (DateTime.Now > TimeToWaitForBreak) //if the time above 65 sec 
+          {
+          Log("FaucetClaim - break - TimeToWaitForBreak");
+          break; //break the wait loop
+          }
+		
+		} //end while
 		
       } //end AirDrop_Wheel
       //=============//	  
+
 
 		return Time_Function(); //call to function time
 	
