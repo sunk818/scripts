@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 14/08/2020 11:00AM - Version 1
-//Last Update: 17/08/2020 06:00AM - Version 2
+//Last Update: 18/08/2020 02:07AM - Version 3
 //==================//
 
 using System;
@@ -127,7 +127,6 @@ public class Bololex : FaucetScript
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
         return base.BeforeLogin();
     }
-	
 	
 	
 
@@ -264,8 +263,8 @@ public class Bololex : FaucetScript
 //=============//
 //DoSolveFaucet
 //=============//
-    public override int DoSolveFaucet()
-    {
+  public override int DoSolveFaucet()
+  {
 
     //============//
     //FaucetCollect
@@ -354,64 +353,86 @@ public class Bololex : FaucetScript
       {
 
 		GoToUrl("https://bololex.com/game/airdrop");
-	    Wait();
-	    Wait(4);
+	    Wait(5);
 		Log("AirDrop_Wheel - try");  
 
-        var TimeToWaitForBreak = DateTime.Now.AddSeconds(90);
-        while (true)
-        {
+        var ExitButton = ElementByXPath ("//div[@class='logout']"); 
 
-          var Energies_Available = ElementByXPath("//div[@class='energies_capsules' and contains(@style,'width:40%') or contains(@style,'width:50%') ] ");
-          
-		  if (!IsVisible(Energies_Available))
-		  {
-		    Log("AirDrop_Wheel - Energies NOT here - try next time");   
-            break;
-		  }
-		  
-		  if (IsVisible(Energies_Available))
-		  {
-	        Wait(5,8);
-			
-		    Log("AirDrop_Wheel - Energies Available - do stuff");  
-			
-            //MoveToElement ONLY - x/y mouse position click switch - good for "canvas" TagName flash/Games
-            var canvas_VAR = Driver.FindElement(By.ClassName("game-canvas"));   //was  game-canvas  
-            var size = canvas_VAR.Size;
-            new Actions(Driver).MoveToElement(canvas_VAR, 364, 374).Click().Release().Perform(); //MoveToElement 100,50 | 100 = X (from left to right) 50 = Y (from top to bottom)
-            //=======//
-		    
-	        Wait(3);
+        if (!IsVisible(ExitButton))
+        {
+	       Log("AirDrop_Wheel - you are NOT login - we do logout to clean the cookies - and after do login again");  
+
+		   GoToUrl("https://bololex.com/voting?order=trending");
+	       Wait(4);
 		   
-            var Success_Claim = ElementByXPath("//div[contains(@class,'toast-success')]/div[@class='toast-title']");
-            if (IsVisible(Success_Claim))
-		    {
-		    Log("AirDrop_Wheel - Success_Claim ");  
-		    ClaimSuccess(); //Marks the claim as a success
-		    }
+           var LogoutVAR = ElementByXPath("//a[contains(@href,'/logout')]"); 
+           Click(LogoutVAR);
+	       Wait(5);
+		   
+		   return 1*60;
+  		} //end ExitButton not visible
 		
-		  } //end Energies_Available
-		
-          if (DateTime.Now > TimeToWaitForBreak) //if the time above 65 sec 
+			
+        if (IsVisible(ExitButton))
+        {
+		  Log("AirDrop_Wheel - you are login");  
+
+          var TimeToWaitForBreak = DateTime.Now.AddSeconds(90);
+          while (true)
           {
-          Log("AirDrop_Wheel - break - TimeToWaitForBreak");
-          break; //break the wait loop
-          }
-		
-		} //end while
+		  
+            var Energies_Available = ElementByXPath("//div[@class='energies_capsules' and contains(@style,'width:40%') or contains(@style,'width:50%') ] ");
+            
+		    if (!IsVisible(Energies_Available))
+		    {
+		      Log("AirDrop_Wheel - Energies NOT here - try next time");   
+              break;
+		    }
+		    
+		    if (IsVisible(Energies_Available))
+		    {
+	          Wait(5,8);
+		  	
+		      Log("AirDrop_Wheel - Energies Available - do stuff");  
+		  	
+              //MoveToElement ONLY - x/y mouse position click switch - good for "canvas" TagName flash/Games
+              var canvas_VAR = Driver.FindElement(By.ClassName("game-canvas"));   //was  game-canvas  
+              var size = canvas_VAR.Size;
+              new Actions(Driver).MoveToElement(canvas_VAR, 364, 374).Click().Release().Perform(); //MoveToElement 100,50 | 100 = X (from left to right) 50 = Y (from top to bottom)
+              //=======//
+		      
+	          Wait(3);
+		     
+              var Success_Claim = ElementByXPath("//div[contains(@class,'toast-success')]/div[@class='toast-title']");
+              if (IsVisible(Success_Claim))
+		      {
+		      Log("AirDrop_Wheel - Success_Claim ");  
+		      ClaimSuccess(); //Marks the claim as a success
+		      }
+		  
+		    } //end Energies_Available
+		  
+            if (DateTime.Now > TimeToWaitForBreak) //if the time above 65 sec 
+            {
+            Log("AirDrop_Wheel - break - TimeToWaitForBreak");
+            break; //break the wait loop
+            }
+		  
+		  } //end while
+
+        } //end ExitButton
 		
       } //end AirDrop_Wheel
       //=============//	  
 
+	  return Time_Function(); //call to function time
+	
+      //This faucet has nothing to do here. We will let Faucet Collector handle it.
+      return base.DoSolveFaucet();
+  }
+	
+	
 
-		return Time_Function(); //call to function time
-	
-        //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.DoSolveFaucet();
-    }
-	
-	
 
 
     public override int AfterSolveFaucet()
