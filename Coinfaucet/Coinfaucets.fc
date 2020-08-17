@@ -86,7 +86,13 @@ class Coinfaucets : FaucetScript
             Url="https://free-tron.com/",
             MinWithdraw=1
         }
-        }
+        },
+        {"DASH",new Coinfaucet
+        {
+            Url="https://freedash.io/",
+            MinWithdraw=1
+
+        } }
 
 
     };
