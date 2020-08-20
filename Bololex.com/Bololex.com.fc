@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 14/08/2020 11:00AM - Version 1
-//Last Update: 18/08/2020 02:07AM - Version 3
+//Last Update: 20/08/2020 04:45AM - Version 4
 //==================//
 
 using System;
@@ -381,7 +381,7 @@ public class Bololex : FaucetScript
           while (true)
           {
 		  
-            var Energies_Available = ElementByXPath("//div[@class='energies_capsules' and contains(@style,'width:40%') or contains(@style,'width:50%') ] ");
+            var Energies_Available = ElementByXPath("//div[@class='energies_capsules' and contains(@style,'width:30%') or contains(@style,'width:40%') or contains(@style,'width:50%') ] ");
             
 		    if (!IsVisible(Energies_Available))
 		    {
@@ -398,10 +398,13 @@ public class Bololex : FaucetScript
               //MoveToElement ONLY - x/y mouse position click switch - good for "canvas" TagName flash/Games
               var canvas_VAR = Driver.FindElement(By.ClassName("game-canvas"));   //was  game-canvas  
               var size = canvas_VAR.Size;
-              new Actions(Driver).MoveToElement(canvas_VAR, 364, 374).Click().Release().Perform(); //MoveToElement 100,50 | 100 = X (from left to right) 50 = Y (from top to bottom)
+              new Actions(Driver).MoveToElement(canvas_VAR, 364, 374).Click().Release().Perform(); //SPIN - start - 100% width 100% height
+	          Wait(5);	
+              new Actions(Driver).MoveToElement(canvas_VAR, 593, 483).Click().Release().Perform(); //OK - after - 100% width 100% height	
+			  ClaimSuccess(); //do success
               //=======//
 		      
-	          Wait(3);
+	          Wait(3,5);
 		     
               var Success_Claim = ElementByXPath("//div[contains(@class,'toast-success')]/div[@class='toast-title']");
               if (IsVisible(Success_Claim))
