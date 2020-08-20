@@ -1,0 +1,141 @@
+﻿using FaucetCollector.Script;
+using OpenQA.Selenium.Internal;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+   public class HourlyAdsScript: FaucetScript
+    
+    {
+
+
+    public override FaucetSettings Settings { get
+        {
+
+            return new FaucetSettings(BaseUrl)
+            {
+                new FaucetSetting(){ Name="User",Type=EditorType.TextBox,Required=true,Display="E-mail Address"},
+                new FaucetSetting(){Name="Pass",Type=EditorType.Password,Required=true,Display="Password"}
+
+            };
+
+
+        }
+    
+    }
+
+    private const string BaseUrl="https://hourly-ads.com/";
+    private const string LoginUrl=BaseUrl+"login.php";
+    private const string FaucetUrl=BaseUrl+"2-free-btc.php";
+    public override void Start( )
+    {
+        Title="hourly";
+        SuccessXPath="//*[@class='fluid wait']";
+        FailXPath="//span[contains(@style,'color: red')]";
+        base.Start( );
+    }
+
+
+    public override int DoLogin( )
+    {
+        GoToUrl(LoginUrl);
+        Wait(2);
+        var userBox=ElementByXPath("//input[@id='email']");
+        if ( !IsVisible(userBox) )
+        {
+            return Fail("User box is not visible");
+        }
+        SetText(userBox , GetSetting("User"));
+
+        var passwordBox=ElementByXPath("//input[@name='password']");
+        if ( !IsVisible(passwordBox) )
+        {
+            return Fail("Password box is not visible");
+        }
+        SetText(passwordBox , GetPassword("Pass"));
+
+        var result=DoSolveCaptcha();
+        if ( result>0 )
+        {
+            return result;
+        }
+
+        var loginBtn=ElementByXPath("//input[@name='submit']");
+        if ( !IsVisible(loginBtn) )
+        {
+            return Fail("login button not visible or not found");
+        }
+
+        Click(loginBtn);
+
+        var errorLogin=ElementByXPath("//span[contains(@style,'color: red')]");
+        if ( IsVisible(errorLogin) )
+        {
+            Log(errorLogin.Text);
+        }
+
+        return base.DoLogin( );
+    }
+
+    public override bool IsLoggedIn( )
+    {
+        return ElementByXPath("//a[@href='logout.php']")!=null;
+    }
+
+    public override int DoSolveFaucet( )
+    {
+        if ( Driver.Url!=FaucetUrl )
+        {
+            GoToUrl(FaucetUrl);
+            Wait(2);
+        }
+
+        var claimBtn=ElementByXPath("//button[@id='claim-button']");
+        if ( !IsVisible(claimBtn) )
+        {
+            return Fail("claim Button is not visible or not found");
+        }
+
+        var result=DoSolveCaptcha();
+        if ( result>0 )
+        {
+            return result;
+        }
+
+
+        Click(claimBtn);
+
+
+        return base.DoSolveFaucet( );
+    }
+
+
+    public override int GetFaucetWaitTime( )
+    {
+        if ( Driver.Url!=FaucetUrl )
+        {
+            GoToUrl(FaucetUrl);
+            Wait(2);
+        }
+
+        var timer=ElementByXPath("//div[@id='timer']");
+        if ( IsVisible(timer) )
+        {
+            int min,seg;
+
+            var splitedTimer=timer.Text.Trim().Split(':');
+
+            if(splitedTimer.Length==2 && int.TryParse(splitedTimer[0], out min) && int.TryParse(splitedTimer[1],out seg) )
+            {
+                return min*60+seg;
+            }
+        }
+
+
+        return base.GetFaucetWaitTime( );
+    }
+
+}
+
