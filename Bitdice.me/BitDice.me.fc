@@ -1,4 +1,9 @@
 
+//==================//
+//script Written by: ••AviramDayan•• 11/09/2018 10:30AM - Version 1
+//Last Update: 22/08/2020 10:30AM - Version 5
+//==================//
+
 using System;
 using FaucetCollector.Script;
 using OpenQA.Selenium;
@@ -81,7 +86,6 @@ public class BitDice : FaucetScript
 //==================//
     public override bool IsLoggedIn()
     {
-		
 	   //save Login Cookies - Check if the image of balance is there
        return ElementByXPath("//div[contains(@class,'deposit')]//a[contains(text(),'Sign Out') ]") != null;
 
@@ -90,10 +94,7 @@ public class BitDice : FaucetScript
 //save Login Cookies 
 //==================//	
 
-	
-	
-	
-	
+
 	
     /// <summary>
     /// This method gets called if IsLoggedIn returned false, right before the DoLogin method is called.
@@ -122,32 +123,43 @@ public class BitDice : FaucetScript
 		Log("Login: go to Login page");
         GoToUrl("https://www.bitdice.me/");
 
-        Wait(2);
-		
-		Log("Login: set Email");
-		var GetIn =ElementByXPath("//button[contains(text(),'Get In')] ");
-	    if (IsVisible(LogoutButton))
+        Wait(6);
+	
+		var GetIn = ElementByXPath("//button[contains(text(),'Get In')]"); 
+	    if (IsVisible(GetIn))
 	    {
         Click(GetIn);
+        Wait(6);
 		}
+		
+		
+		var Lightbox = ElementByXPath("//div[@class='modal-mask' and @style='display: none;']");
+	    if (IsVisible(Lightbox))
+	    {	
+		  Log("Lightbox - none - NOT visible");
+		}
+		
+		if (!IsVisible(Lightbox)) //if is NOT visible mean if the style of Lightbox "block" and not "none" do stuff 
+	    {
+		  Log("Lightbox - block - visible");
+          Wait(2);
+		  
+          var Email_Box =ElementByXPath("//input[@placeholder='Email']");
+          SetText(Email_Box, GetSetting("Email"));
+		  
+          Wait(2);
+		  
+          var Password_Box = ElementByXPath("//input[@placeholder='Password']");
+          SetText(Password_Box, GetPassword("Pass"));
+		  
+          Wait(2);
+		  
+          //Click on LoginButtonVar
+          var LoginButtonVar = ElementByXPath("//button[@class='btn btn-index btn-block']"); //button[text()='Sign In']
+          Click(LoginButtonVar);
+		} //end Lightbox
 
-        Wait(2);
-
-        var Email_Box =ElementByXPath("//input[@placeholder='Email']");
-        SetText(Email_Box, GetSetting("Email"));
-		
-        Wait(2);
-		
-        var Password_Box = ElementByXPath("//input[@placeholder='Password']");
-        SetText(Password_Box, GetPassword("Pass"));
-		
-        Wait(2);
-		
-        //Click on LoginButtonVar
-        var LoginButtonVar = ElementByXPath("//button[@class='btn btn-index btn-block']"); //button[text()='Sign In']
-        Click(LoginButtonVar);
-
-	 }	
+	 } //end LogoutButton	
 		
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
         return base.DoLogin();
@@ -192,7 +204,7 @@ public class BitDice : FaucetScript
     /// </summary>
     public override int GetFaucetWaitTime()
     {
-		//wait 36 min
+		
         if (cs)
         {
             return GetWaitSetting(); 
@@ -278,10 +290,6 @@ public class BitDice : FaucetScript
 	
 public override int DoSolveFaucet()
 {
-	
-//===================//
-//DailyTreasureChest
-//==================//
 
 	if (GetBoolSetting("DailyTreasureChest"))
     {
@@ -295,8 +303,9 @@ public override int DoSolveFaucet()
 		var ImageCheckVar = ElementByXPath("//img[contains(@src,'dashboard/daily_chest')] ");
 		if (IsVisible(ImageCheckVar))
         {		
+        Log("DailyTreasureChest - visible");	
         Click(ImageCheckVar);	
-        Wait(2);		
+        Wait(2);	
         }
 		
 		//if is not visible		
@@ -308,12 +317,10 @@ public override int DoSolveFaucet()
 	
     } // end DailyTreasureChest
 
-
-		return GetWaitSetting(); 
+	return GetWaitSetting(); 
 		
-
-        //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.DoSolveFaucet();
+    //This faucet has nothing to do here. We will let Faucet Collector handle it.
+    return base.DoSolveFaucet();
 }
 //==============//
 //DoSolveFaucet
@@ -355,4 +362,6 @@ public override int DoSolveFaucet()
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
         return base.CheckFaucetResult();
     }
-}
+	
+	
+} //end class
