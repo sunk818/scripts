@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 30/04/2019 21:09PM - Version 1
-//Last Update: 18/08/2020 06:30AM - Version 34
+//Last Update: 22/08/2020 09:35AM - Version 35
 //==================//
 
 using System;
@@ -319,15 +319,62 @@ public class bcgame : FaucetScript
             //MoveToElement ONLY - x/y mouse position click switch - good for "canvas" TagName flash/Games
             var canvas_VAR = Driver.FindElement(By.ClassName("spin-canvas"));  
             var size = canvas_VAR.Size;
-            new Actions(Driver).MoveToElement(canvas_VAR, 242, 273).Click().Release().Perform(); // on 67% //MoveToElement 196,210 | 196 = X (from left to right) 210 = Y (from top to bottom)
+
+			var Timer_ON_2 = ElementByXPath("//div[@id='spin-enter' and @class='countdown']");		
+            var Timer_OFF_2 = ElementByXPath("//div[@id='spin-enter' and @class='enter']");				
+
+			if (IsVisible(Timer_OFF_2))
+		    {	
+		    Log("FaucetClaim - try LuckySpin - 50% zoom");
+		    Wait(3);
+            new Actions(Driver).MoveToElement(canvas_VAR, 241, 259).Click().Release().Perform(); // 50% zoom
+			}
+
+			if (IsVisible(Timer_OFF_2))
+		    {	
+		    Log("FaucetClaim - try LuckySpin - 67% zoom");
+		    Wait(3);
+            new Actions(Driver).MoveToElement(canvas_VAR, 242, 273).Click().Release().Perform(); // 67% zoom
+			}
+
+			if (IsVisible(Timer_OFF_2))
+		    {	
+		    Log("FaucetClaim -try LuckySpin - 75% zoom");	
+		    Wait(3);
+            new Actions(Driver).MoveToElement(canvas_VAR, 245, 271).Click().Release().Perform(); // 75% zoom
+			}
+			
+			if (IsVisible(Timer_OFF_2))
+		    {	
+		    Log("FaucetClaim - try LuckySpin - 80% zoom");		
+		    Wait(3);
+            new Actions(Driver).MoveToElement(canvas_VAR, 242, 272).Click().Release().Perform(); // 80% zoom
+			}
+
+			if (IsVisible(Timer_OFF_2))
+		    {	
+		    Log("FaucetClaim - try LuckySpin - 90% zoom");		
+		    Wait(3);
+            new Actions(Driver).MoveToElement(canvas_VAR, 240, 269).Click().Release().Perform(); // 90% zoom
+			}
+
+			if (IsVisible(Timer_OFF_2))
+		    {	
+		    Log("FaucetClaim - try LuckySpin - 100% zoom");		
+		    Wait(3);
+            new Actions(Driver).MoveToElement(canvas_VAR, 237, 267).Click().Release().Perform(); // 100% zoom
+			}		
             //=======//
 		    
-		    Wait(6);
-		    
+		    Wait(4);
+
+			if (IsVisible(Timer_ON_2)) 
+		    {	
 		    Log("FaucetClaim - LuckySpin - Success");
             Notification("FaucetClaim - LuckySpin - Success");
             ClaimSuccess(); //Marks the claim as a success
-	
+			}
+			
 		}//end Timer_OFF
 		
      } //end FaucetClaim
