@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 05/01/2020 00:05PM - Version 1
-//Last Update: 05/01/2020 00:10PM - Version 1
+//Last Update: 23/08/2020 00:35PM - Version 2
 //==================//
 
 using System;
@@ -91,7 +91,7 @@ public class ExpressCrypto : FaucetScript
     {
 
         //In this case we check for en element with the class "loggedIn"
-		return ElementByXPath("//a[contains(@href,'/logout?logout')] ")!= null;
+		return ElementByXPath("//i[contains(@class,'fa-power-off')] ")!= null;
 		//return true;
     }
 //==================//
@@ -125,7 +125,7 @@ public class ExpressCrypto : FaucetScript
 
 
 	 //var checks login or exit
-     var ExitButton = ElementByXPath("//a[contains(@href,'/logout?logout')] "); //SIGN OUT
+     var ExitButton = ElementByXPath("//i[contains(@class,'fa-power-off')] "); //SIGN OUT
 
 		 
 	 //if i NOT Login - go to Login Page
