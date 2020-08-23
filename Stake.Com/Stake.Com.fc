@@ -2,7 +2,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 26/05/2019 04:00PM
-//Last Update: 17/07/2020 12:40AM - Version 12
+//Last Update: 23/08/2020 03:15AM - Version 13
 //==================//
 
 using System;
@@ -87,7 +87,7 @@ public class stake : FaucetScript
     public override bool IsLoggedIn()
     {
 	    //save Login Cookies - Check if the "Logout" exist
-		return ElementByXPath("//span[contains(text(),'Deposit')]") != null;
+		return ElementByXPath("//span[contains(text(),'Deposit')] | //span[contains(text(),'Wallet')]") != null;
 	    //return true;
     }
 //==================//
@@ -122,7 +122,7 @@ public class stake : FaucetScript
     public override int DoLogin()
     {
 	
-      var ExitButton = ElementByXPath("//span[contains(text(),'Deposit')]");
+      var ExitButton = ElementByXPath("//span[contains(text(),'Deposit')] | //span[contains(text(),'Wallet')]");
 	
 	 //if i NOT Login - go to Login Page
 	 if (!IsVisible(ExitButton))
