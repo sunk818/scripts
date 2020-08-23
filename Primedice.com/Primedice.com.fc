@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 26/05/2019 04:00PM
-//Last Update: 08/08/2020 19:50PM - Version 8
+//Last Update: 23/08/2020 03:15PM - Version 9
 //==================//
 
 using System;
@@ -86,7 +86,7 @@ public class primedice : FaucetScript
     public override bool IsLoggedIn()
     {
 	    //save Login Cookies - Check if the "Logout" exist
-		return ElementByXPath("//span[contains(text(),'Deposit')]") != null;
+		return ElementByXPath("//span[contains(text(),'Deposit')] | //span[contains(text(),'Wallet')]") != null;
 	    //return true;
     }
 //==================//
@@ -120,7 +120,7 @@ public class primedice : FaucetScript
     {
 
 	
-      var ExitButton = ElementByXPath("//span[contains(text(),'Deposit')]");
+      var ExitButton = ElementByXPath("//span[contains(text(),'Deposit')] | //span[contains(text(),'Wallet')]");
 	
 	 //if i NOT Login - go to Login Page
 	 if (!IsVisible(ExitButton))
