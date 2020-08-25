@@ -74,7 +74,7 @@ namespace Adbtc
 
             CheckCloudFlare( );
 
-            var GotoLogin = ElementByXPath("//a[@class='btn-large lime accent-2 black-text']");
+            var GotoLogin = ElementByXPath("//a[contains(@href,'/index/authorize')]");
             if ( !IsVisible(GotoLogin) )
             {
                 return Fail("Go to login is not visible");
@@ -105,7 +105,7 @@ namespace Adbtc
         public override int DoLogin( )
         {
 
-            var AddressBox = ElementByXPath("//input[@id='thefir5tfi3ld']");
+            var AddressBox = ElementByXPath("//input[@type='text' and contains(@name,'the')]");
             if ( !IsVisible(AddressBox) )
             {
                 return Fail("Fail To login address box is not visible");
@@ -123,7 +123,7 @@ namespace Adbtc
             }
             //Captcha probably changed and site refreshed so we need to update the elements and check if it's visible
 
-            AddressBox=ElementByXPath("//input[@id='thefir5tfi3ld']");
+            AddressBox=ElementByXPath("//input[@type='text' and contains(@name,'the')]");
             if ( !IsVisible(AddressBox) )
             {
                 return Fail("Fail To login address box is not visible  after solve login captcha");
