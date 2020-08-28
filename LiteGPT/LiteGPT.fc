@@ -47,7 +47,7 @@ using System.Linq;
 
         public override void Start( )
         {
-            Title="litecoinads";
+            Title="liteGPT";
 
             SuccessXPath="//div[@class='alert alert-success']";
             FailXPath="//div[@class='alert alert-danger']|//span[@id='ctl00_PageMainContent_CaptchaErrorLabel']";
