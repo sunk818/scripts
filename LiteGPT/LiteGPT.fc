@@ -1,0 +1,454 @@
+﻿using FaucetCollector.Script;
+using System;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+
+    public class LiteGPTScript : FaucetScript
+    {
+        public override FaucetSettings Settings
+        {
+            get
+            {
+
+
+                return new FaucetSettings("https://litegpt.com/")
+                        {
+                            new FaucetSetting()
+                            {
+                                Name="User",
+                                Display="Username",
+                                Type=EditorType.TextBox,
+                                Required=true
+
+                            },
+                            new FaucetSetting( )
+                            {
+                                Name="Pass",
+                                Display="Password",
+                                Type=EditorType.Password,
+                                Required=true
+                            },
+                            new FaucetSetting( )
+                            {
+                               Name="Ads",
+                               Type=EditorType.CheckBox,
+                               Default=true,
+                               Display="Check Ads"
+
+                            }
+                        };
+
+
+            }
+
+
+        }
+
+        public override void Start( )
+        {
+            Title="litecoinads";
+
+            SuccessXPath="//div[@class='alert alert-success']";
+            FailXPath="//div[@class='alert alert-danger']|//span[@id='ctl00_PageMainContent_CaptchaErrorLabel']";
+            base.Start( );
+        }
+
+        private void WaitForCloudFlare( )
+        {
+            DateTime timeout=DateTime.Now.AddSeconds(10);
+            bool logged=false;
+            while ( IsVisible(ElementByXPath("//a[contains(text(),'Cloudflare')]"))&&DateTime.Now<timeout )
+            {
+                if ( !logged )
+                {
+                    logged=true;
+                    Log("Waiting for cloudflare....");
+                }
+                Wait( );
+            }
+
+            if ( logged )
+            {
+                Log("Cloudflare is gone");
+                Wait(1);
+            }
+        }
+        public override int BeforeCreateDriver( )
+        {
+            var Path=Directory.GetCurrentDirectory()+"\\data\\"+Name;
+            if ( Directory.Exists(Path) )
+            {
+                try
+                {
+                    Directory.Delete(Path , true);
+                }
+                catch ( Exception ex )
+                {
+                    Log("Fail to delete the data  "+ex.Message);
+                }
+            }
+            return base.BeforeCreateDriver( );
+        }
+        public override int DoInit( )
+        {
+            // Delete all cookies 
+            Driver.Manage( ).Cookies.DeleteAllCookies( );
+
+            return base.DoInit( );
+        }
+        private bool TryingLoginAgain=false;
+        public override int DoLogin( )
+        {
+            GoToUrl("https://litegpt.com/login.aspx");
+
+            Wait(4 , 5);
+            WaitForCloudFlare( );
+
+            var CookiesBtn=ElementByXPath("//button[@mode='primary' and contains(text(),'Agree')]");
+            if ( IsVisible(CookiesBtn) )
+            {
+
+                Click(CookiesBtn);
+                Wait(2);
+                Log("Cookies btn clicked");
+            }
+
+            var UserBox=ElementByXPath("//input[@id='ctl02_Username']");
+            if ( !IsVisible(UserBox) )
+            {
+                if ( !TryingLoginAgain )
+                {
+                    TryingLoginAgain=true;
+                    return DoLogin( );
+                }
+                else
+                {
+                    TryingLoginAgain=false;
+                    return Fail("User box not found");
+                }
+
+            }
+            else if ( TryingLoginAgain )
+            {
+                TryingLoginAgain=false;
+            }
+            var PasswordBox=ElementByXPath("//input[@id='ctl02_Password']");
+            if ( !IsVisible(PasswordBox) )
+            {
+                return Fail("Password bot not found");
+            }
+            SetText(UserBox , GetSetting("User"));
+            SetText(PasswordBox , GetPassword("Pass"));
+
+            var result=DoSolveCaptcha();
+            if ( result>0 )
+            {
+                return result;
+
+            }
+            var loginBtn=ElementByXPath("//input[@id='ctl02_LoginButton']");
+            if ( !IsVisible(loginBtn) )
+            {
+                return Fail("login button not found");
+            }
+            Click(loginBtn);
+
+            var ErrorLogin=ElementByXPath("//div[@class='alert alert-danger");
+            if ( IsVisible(ErrorLogin) )
+            {
+                return Fail(ErrorLogin.Text);
+            }
+
+
+            return base.DoLogin( );
+        }
+        public override int DoSolveCaptcha( )
+        {
+            var CaptchaSelector=ElementByXPath("//select[@id='ctl00_PageMainContent_CaptchaList']");
+            if ( CaptchaSelector!=null )
+            {
+                SelectOptionByValue(CaptchaSelector , "Solvemedia");
+                // Site need to load again so we wait 4 - 6 seconds
+                Wait(2 , 3);
+                DateTime Timeout=DateTime.Now.AddSeconds(20);
+                while ( ElementByXPath("//input[@id='adcopy_response']")==null&&DateTime.Now<Timeout )
+                {
+
+                    Wait( );
+
+                }
+                Wait( );
+                if ( ElementByXPath("//input[@id='adcopy_response']")!=null )
+                {
+                    return DoSolveMediaCaptcha(ElementByXPath("//input[@id='adcopy_response']"));
+                }
+            }
+
+            else if ( IsVisible(ElementByXPath("//p[@class='visualCaptcha-explanation']//strong")) )
+            {
+                bool captcha_solved = false;
+                while ( !captcha_solved )
+                {
+                    var name_ = ElementByXPath("//p[@class='visualCaptcha-explanation']//strong");
+                    captcha_solved=SolveVisualCaptcha(name_.Text);
+                    Wait( );
+                    if ( !captcha_solved )
+                    {
+                        var refresh = ElementByXPath("//div[@class='visualCaptcha-refresh-button']");
+                        Click(refresh);
+                        Wait(2 , 3);
+                    }
+                }
+            }
+
+
+
+            return base.DoSolveCaptcha( );
+        }
+        public override bool IsLoggedIn( )
+        {
+            if ( Driver.Url!="https://litegpt.com/user/default.aspx" )
+            {
+                GoToUrl("https://litegpt.com/user/default.aspx");
+                Wait(2);
+            }
+
+            WaitForCloudFlare( );
+
+            return ElementByXPath("//a[@href='/logout.aspx']")!=null;
+        }
+
+        public override int DoSolveFaucet( )
+        {
+            if ( GetBoolSetting("Ads") )
+            {
+                Log("We are going to see if there are available ads");
+
+                GoToUrl("https://litegpt.com/user/earn/ads.aspx");
+                Wait(2);
+                WaitForCloudFlare( );
+                string AdsXpath="//div[contains(@class,'AboxActive Ad')]";
+
+                var ads=ElementsByXPath(AdsXpath).ToList();
+                // sometimes cloudflare appear so we wait for it
+                DateTime timeout=DateTime.Now.AddSeconds(20);
+                while ( ads.Count==0&&DateTime.Now<timeout )
+                {
+                    Wait(2 , 3);
+                    ads=ElementsByXPath(AdsXpath).ToList( );
+                }
+                int n=0;
+                int NAds = ads.Count;
+                while ( ads.Count>n )
+                {
+
+                    CheckForPopupsEnabled=false;
+                    Log("There are "+ads.Count);
+
+                    Click(ads[n] , false);
+
+                    Wait(3);
+
+                    Driver.SwitchTo( ).Window(Driver.WindowHandles[1]);
+
+                    Wait(3);
+
+                    var Vbutton = ElementByXPath("//input[@id='WatchAdButton']");
+                    if ( Vbutton!=null )
+                    {
+                        Click(Vbutton , false);
+                        Wait( );
+                        try
+                        {
+                            Driver.SwitchTo( ).Window(Driver.WindowHandles[1]);
+                            Log("Seeing ad Nº "+( n+1 ).ToString( ));
+                            DateTime t1 = DateTime.Now.AddSeconds(75);
+                            while ( !IsVisible(ElementByXPath("//div[@id='CaptchaPanel']")) )
+                            {
+                                Wait( );
+                                if ( DateTime.Now>t1 )
+                                {
+                                    break;
+                                }
+                            }
+                            Wait( );
+
+                            var result=DoSolveCaptcha();
+
+                            Wait( );
+                            var Credit = ElementByXPath("//input[@id='CreditAfterCaptcha']");
+                            if ( IsVisible(Credit) )
+                            {
+                                Click(Credit);
+                            }
+                            Wait(2 , 3);
+                            CheckFaucetResult( );
+                            Wait(1);
+                            Driver.SwitchTo( ).Window(Driver.WindowHandles[0]);
+                        }
+                        catch ( Exception )
+                        {
+                            CheckForPopupsEnabled=true;
+                        }
+                    }
+
+                    CheckForPopupsEnabled=true;
+                    CheckForPopups( );
+                    Wait( );
+
+
+                    if ( Driver.Url!="https://litegpt.com/user/earn/ads.aspx" )
+                    {
+                        GoToUrl("https://litegpt.com/user/earn/ads.aspx");
+                    }
+                    else
+                    {
+                        Driver.Navigate( ).Refresh( );
+                    }
+
+                    Wait(2 , 3);
+                    ads=ElementsByXPath(AdsXpath).ToList( ); ;
+
+
+                    if ( ads.Count==NAds )
+                    {
+                        n++;
+
+                        NAds=ads.Count;
+                    }
+
+                }
+            }
+
+            Log("See if the faucet Claim is available");
+
+            //Go to faucet url
+            GoToUrl("https://litegpt.com/user/earn/faucet.aspx");
+            WaitForCloudFlare( );
+            Wait(2 , 3);
+            DateTime Timeout=DateTime.Now.AddSeconds(20);
+            while ( !IsVisible(ElementByXPath("//select[@id='ctl00_PageMainContent_CaptchaList']"))&&DateTime.Now<Timeout )
+            {
+
+                Wait( );
+
+            }
+            Wait(1);
+            // Solve the captcha of the faucet
+            var res=DoSolveCaptcha( );
+            if ( res>0 )
+            {
+
+                return res;
+            }
+
+            var btnClaim=ElementByXPath("//input[@id='ctl00_PageMainContent_SolvemediaBtn']");
+            if ( !IsVisible(btnClaim) )
+            {
+                return Fail("Btn claim faucet not visible");
+            }
+            Click(btnClaim);
+
+            return base.DoSolveFaucet( );
+        }
+
+        public override int GetFaucetWaitTime( )
+        {
+            if ( !Driver.Url.Contains("https://litegpt.com/user/earn/faucet.aspx") )
+            {
+                GoToUrl("https://litegpt.com/user/earn/faucet.aspx");
+                Wait(2);
+            }
+
+            var Timer=ElementByXPath("//span[@id='countdown']");
+            if ( Timer!=null )
+            {
+                var TimerText=ExecuteScript("return arguments[0].textContent;",Timer).ToString().
+                    Replace("minutes","").Replace("and","").Replace("seconds","").Trim().Split(' ');
+                int min, seg;
+
+                if ( TimerText.Length==2&&
+                    int.TryParse(TimerText[0] , out min)&&int.TryParse(TimerText[1] , out seg) )
+                {
+                    return min*60+seg;
+                }
+                else
+                {
+                    return 3600;
+                }
+            }
+
+
+            return base.GetFaucetWaitTime( );
+        }
+        private bool SolveVisualCaptcha(string name)
+        {
+            Wait( );
+            var dir = AssetDir("Other");
+            dir+="\\VisualCaptchaPictures\\"+name+".png";
+            try
+            {
+
+                using ( Stream ImgStream = new FileStream(dir , FileMode.Open) )
+                {
+                    using ( Bitmap SolutionTemplate = new Bitmap(Image.FromStream(ImgStream)) )
+                    {
+                        ImgStream.Close( );
+
+
+                        var PosibleSolutions=ElementsByXPath("//img[contains(@id,'visual')]");
+
+
+                        var PosibleSolutionsPixels=PosibleSolutions.Select(x=>GetDifferentPixels(SolutionTemplate,TakeScreenshot(Base.Captcha.CaptchaService.Manual, x))).ToList();
+
+                        Wait( );
+
+                        int solution= PosibleSolutionsPixels.IndexOf(PosibleSolutionsPixels.Min());
+
+                        var CaptchaSolution = ElementByXPath("//img[@id='visualCaptcha-img-" + solution.ToString() + "']");
+                        if ( IsVisible(CaptchaSolution) )
+                        {
+                            Click(CaptchaSolution);
+                            Wait( );
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch ( Exception ex )
+            {
+                Log("Problem solving VisualCaptcha: "+ex.Message);
+                Log("Trying again....");
+            }
+
+            return false;
+        }
+
+
+
+        private int GetDifferentPixels(Bitmap source , Bitmap target)
+        {
+            int cont = 0;
+            using ( target )
+            {
+
+                for ( int i = 0 ; i<source.Height ; i++ )
+                {
+                    for ( int j = 0 ; j<source.Width ; j++ )
+                    {
+                        if ( source.GetPixel(j , i)!=target.GetPixel(j , i) )
+                        {
+
+                            cont++;
+
+                        }
+                    }
+                }
+            }
+            return cont;
+
+
+        }
+    }
+
