@@ -286,7 +286,13 @@ public class primedice : FaucetScript
 		GoToUrl("https://primedice.com/?currency=eth&modal=vault&operation=withdraw");
         Wait(2);
 		
-        Vault_Function();
+        Choose_Coin_Function();	//call
+		
+		Wait(2);
+		
+        Vault_Function();	//call
+		
+		Wait(2);	
 		
 	 }//end Vault_Withdraw
 
@@ -297,8 +303,14 @@ public class primedice : FaucetScript
 		GoToUrl("https://primedice.com/?currency=eth&modal=vault&operation=deposit");
         Wait(2);
 		
-        Vault_Function();
-
+        Choose_Coin_Function();	//call
+		
+		Wait(2);
+		
+        Vault_Function();	//call
+		
+		Wait(2);	
+		
 	 }//end Vault_Deposit
 	 
      //=============//	 
@@ -525,10 +537,15 @@ public class primedice : FaucetScript
                 SetText(Amount_var, GetSetting("Vault_Amount_Deposit"));  //Deposit
 		     }
 			 
-             Wait(2);
+             Wait(5);
 			 
-		     var Vault_End_Button = ElementByXPath("//input[contains(@name,'amount')]");
-             Click(Vault_End_Button); //Deposit
+            var Vault_End_Button_Check = ElementByXPath("//div[contains(@class,'styles__Buttons')]//button[contains(@class,'Button__StyledButton') and (@disabled) ]"); 
+            if (!IsVisible(Vault_End_Button_Check))
+            {	
+              var Vault_End_Button_VAR = ElementByXPath("//div[contains(@class,'styles__Buttons')]//button[contains(@class,'Button__StyledButton') and @type='submit' ]");
+              Click(Vault_End_Button_VAR);
+              Log("Vault - click on end button - deposit or withdraw");
+            }		
 			 
           } // BalanceINT > 1
 		  
