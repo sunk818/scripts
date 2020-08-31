@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 26/05/2019 04:00PM
-//Last Update: 31/08/2020 11:00AM - Version 10
+//Last Update: 31/08/2020 12:00AM - Version 10
 //==================//
 
 using System;
@@ -561,7 +561,7 @@ public class primedice : FaucetScript
       public int Choose_Coin_Function()
       {	
 
-        var MenuVAR = ElementByXPath("//form[contains(@class,'styles__Form')]//button[contains(@class,'Button__StyledButton-sc-8bd3dp-0 jXTFLj')]"); 
+        var MenuVAR = ElementByXPath("//button[contains(@class,'Button__StyledButton-sc-8bd3dp-0 jXTFLj')]"); 
         if (IsVisible(MenuVAR))
         {
           Log("Menu_Function");				  
