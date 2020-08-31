@@ -2,7 +2,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 26/05/2019 04:00PM
-//Last Update: 23/08/2020 03:15AM - Version 13
+//Last Update: 31/08/2020 11:00AM - Version 14
 //==================//
 
 using System;
@@ -30,7 +30,7 @@ public class stake : FaucetScript
     {
         get
         {
-			
+		
             return new FaucetSettings("https://stake.com/")
             {
                 new FaucetSetting(){Name="Email",Display="Email OR UserName",Type=EditorType.TextBox,Required=false},
@@ -38,6 +38,14 @@ public class stake : FaucetScript
 				
                 new FaucetSetting() { Name = "Reload", Display = "Reload - ON/OFF - claim unlimited time if available", Type = EditorType.CheckBox, Default =true},	
                 new FaucetSetting(){Name="RakeBack",Display="RakeBack - ON/OFF - from Bronze level",Type=EditorType.CheckBox,Default=false},
+
+				new FaucetSetting(){Name="MenuCoins",Display="MenuCoins - Select Favorite Coins",Type=EditorType.ComboBox,Default="btc",Items=new System.Collections.Generic.List<string>{"btc","eth","ltc","doge","bch","xrp","trx","eos"}},
+
+                new FaucetSetting() { Name = "Vault_Withdraw", Display = "Vault_Withdraw - ON/OFF", Type = EditorType.CheckBox, Default =false},	
+                new FaucetSetting() { Name = "Vault_Deposit", Display = "Vault_Deposit - ON/OFF", Type = EditorType.CheckBox, Default =false},	
+
+                new FaucetSetting() { Name = "Vault_Amount_Withdraw", Display = "Vault_Amount_Withdraw", Type = EditorType.TextBox, Default = 0.00010000 },
+                new FaucetSetting() { Name = "Vault_Amount_Deposit", Display = "Vault_Amount_Deposit", Type = EditorType.TextBox, Default = 0.00010000 },
 
                 new FaucetSetting() { Name = "AffWithdraw", Display = "AffWithdraw", Type = EditorType.CheckBox, Default = false},	
 
@@ -261,8 +269,35 @@ public class stake : FaucetScript
 //==============//
  public override int DoSolveFaucet()
   {
-	  
-	  
+
+     //=======//
+     //Vault
+     //=======//
+
+     if (GetBoolSetting("Vault_Withdraw"))
+     {
+		Log("AffWithdraw");
+		GoToUrl("https://stake.com/?currency=eth&modal=vault&operation=withdraw");
+        Wait(2);
+		
+        Vault_Function();
+		
+	 }//end Vault_Withdraw
+
+
+     if (GetBoolSetting("Vault_Deposit"))
+     {
+		Log("AffWithdraw");
+		GoToUrl("https://stake.com/?currency=eth&modal=vault&operation=deposit");
+        Wait(2);
+		
+        Vault_Function();
+
+	 }//end Vault_Deposit
+	 
+     //=============//	 
+
+  
      //=============//
      //AffWithdraw
      //=============// 
@@ -404,24 +439,8 @@ public class stake : FaucetScript
 		//=========//
         public void All_Function()
         {	
-		
-          var MenuVAR = ElementByXPath("//form[contains(@class,'styles__Form')]//button[contains(@class,'Button__StyledButton-sc-8bd3dp-0 jXTFLj')]"); 
-          if (IsVisible(MenuVAR))
-          {
-            Log("Menu_Function");				  
-		    Click(MenuVAR);			  
-		  }
-		  
-	      Wait(2);
-		  
-          var btc_VAR = ElementByXPath("//li[1]/button[contains(@class,'Button__StyledButton')]");
-          if (IsVisible(btc_VAR))
-          {		
-		  Log("choose btc");	
-          Click(btc_VAR);
-          }
 
-	      Wait(2);
+          Choose_Coin_Function(); //call
 		  
           var CheckAvailableGeneral = ElementByXPath("//span[contains(text(),'Next claim available')] | //span[contains(text(),'None yet')]"); 
           if (!IsVisible(CheckAvailableGeneral)) 
@@ -463,7 +482,134 @@ public class stake : FaucetScript
 
 		}//end All_Function
 		//=========//
+
+
+        //=========//
+        //Vault_Function
+		//=========//
+        public int Vault_Function()
+        {	
+		
+          //cahck balance
+          var balance = ElementByXPath("//span[contains(@class,'NumberAnimation')]//span[contains(@class,'styles__Content')]");
+          string BalanceSTRING = balance.Text.Trim().Split('.')[1];
+          int BalanceINT = Convert.ToInt32(BalanceSTRING);
+		  
+          if (BalanceINT < 1) // if under 1
+          {
+	         Log("LimitFaucet - the balance under 0 < good");
+          }
+		  
+          if (BalanceINT > 1 ) // if above "1"
+          {
+		     Log("LimitFaucet - the balance above 0 > not good");	
+		  	 
+		     var Password_check = ElementByXPath("//input[contains(@name,'password')]"); //the password only apper in "Withdraw" section
+             if (IsVisible(Password_check))
+             {		
+		        var Password_var = ElementByXPath("//input[contains(@name,'password')]");
+                SetText(Password_var, GetPassword("Password"));	
+				
+                Wait(2);		
+				
+		        var Amount_var = ElementByXPath("//input[contains(@name,'amount')]");
+                SetText(Amount_var, GetSetting("Vault_Amount_Withdraw"));  //Withdraw
+		     }
+		 
+             if (!IsVisible(Password_check))
+             {			
+		        var Amount_var = ElementByXPath("//input[contains(@name,'amount')]");
+                SetText(Amount_var, GetSetting("Vault_Amount_Deposit"));  //Deposit
+		     }
+			 
+             Wait(2);
+			 
+		     var Vault_End_Button = ElementByXPath("//input[contains(@name,'amount')]");
+             Click(Vault_End_Button); //Deposit
+			 
+          } // BalanceINT > 1
+		  
+          return 0;
+		}//end Vault_Function
+		//=========//
+		
 	
+
+      //=========//
+      //Choose_Coin_Function
+      //=========//
+      public int Choose_Coin_Function()
+      {	
+
+        var MenuVAR = ElementByXPath("//form[contains(@class,'styles__Form')]//button[contains(@class,'Button__StyledButton-sc-8bd3dp-0 jXTFLj')]"); 
+        if (IsVisible(MenuVAR))
+        {
+          Log("Menu_Function");				  
+		  Click(MenuVAR);			  
+		}
+		  
+	    Wait(2);
+	  
+
+        var MenuCoinsVAR = GetSetting("MenuCoins"); 
+	    
+        if(MenuCoinsVAR=="btc")
+        {
+        var btc = ElementByXPath("//li[1]/button[contains(@class,'Button__StyledButton')]");
+        Log("choose - btc");
+        Click(btc);
+	    }// end btc
+	    
+        if(MenuCoinsVAR=="ltc")
+        {
+        var ltc = ElementByXPath("//li[2]/button[contains(@class,'Button__StyledButton')]");
+        Log("choose - ltc");
+        Click(ltc);
+	    }// end ltc	  
+	    
+        if(MenuCoinsVAR=="doge")
+        {
+        var doge = ElementByXPath("//li[3]/button[contains(@class,'Button__StyledButton')]");
+        Log("choose - doge");
+        Click(doge);
+	    }// end doge 
+	    
+        if(MenuCoinsVAR=="bch")
+        {
+        var bch = ElementByXPath("//li[4]/button[contains(@class,'Button__StyledButton')]");
+        Log("choose - bch");
+        Click(bch);
+	    }// end bch
+	    
+        if(MenuCoinsVAR=="xrp")
+        {
+        var xrp = ElementByXPath("//li[5]/button[contains(@class,'Button__StyledButton')]");
+        Log("choose - xrp");
+        Click(xrp);
+	    }// end xrp
+	    
+        if(MenuCoinsVAR=="trx")
+        {
+        var trx = ElementByXPath("//li[6]/button[contains(@class,'Button__StyledButton')]");
+        Log("choose - trx");
+        Click(trx);
+	    }// end trx
+	    
+        if(MenuCoinsVAR=="eos")
+        {
+        var eos = ElementByXPath("//li[7]/button[contains(@class,'Button__StyledButton')]");
+        Log("choose - eos");
+        Click(eos);
+	    }// end eos
+
+	    Wait(2);
+
+        return 0;
+
+      } // end Choose_Coin_Function
+		//=========//
+		
+
 	
 } //end public class
 
