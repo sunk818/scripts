@@ -282,7 +282,7 @@ public class primedice : FaucetScript
 
      if (GetBoolSetting("Vault_Withdraw"))
      {
-		Log("AffWithdraw");
+		Log("Vault_Withdraw");
 		GoToUrl("https://primedice.com/?currency=eth&modal=vault&operation=withdraw");
         Wait(2);
 		
@@ -299,7 +299,7 @@ public class primedice : FaucetScript
 
      if (GetBoolSetting("Vault_Deposit"))
      {
-		Log("AffWithdraw");
+		Log("Vault_Deposit");
 		GoToUrl("https://primedice.com/?currency=eth&modal=vault&operation=deposit");
         Wait(2);
 		
