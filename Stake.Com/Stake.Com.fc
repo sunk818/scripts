@@ -1,5 +1,4 @@
 
-
 //==================//
 //script Written by: ••AviramDayan•• 26/05/2019 04:00PM
 //Last Update: 31/08/2020 12:00AM - Version 14
@@ -276,7 +275,7 @@ public class stake : FaucetScript
 
      if (GetBoolSetting("Vault_Withdraw"))
      {
-		Log("AffWithdraw");
+		Log("Vault_Withdraw");
 		GoToUrl("https://stake.com/?currency=eth&modal=vault&operation=withdraw");
         Wait(2);
 		
@@ -292,7 +291,7 @@ public class stake : FaucetScript
 
      if (GetBoolSetting("Vault_Deposit"))
      {
-		Log("AffWithdraw");
+		Log("Vault_Deposit");
 		GoToUrl("https://stake.com/?currency=eth&modal=vault&operation=deposit");
         Wait(2);
 		
