@@ -508,12 +508,12 @@ public class stake : FaucetScript
 		  
           if (BalanceINT < 1) // if under 1
           {
-	         Log("LimitFaucet - the balance under 0 < good");
+	         Log("LimitFaucet - the balance under 0 < not good");
           }
 		  
           if (BalanceINT > 1 ) // if above "1"
           {
-		     Log("LimitFaucet - the balance above 0 > not good");	
+		     Log("LimitFaucet - the balance above 0 > good");	
 		  	 
 		     var Password_check = ElementByXPath("//input[contains(@name,'password')]"); //the password only apper in "Withdraw" section
              if (IsVisible(Password_check))
