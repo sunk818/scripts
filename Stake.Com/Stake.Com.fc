@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 26/05/2019 04:00PM
-//Last Update: 31/08/2020 12:00AM - Version 14
+//Last Update: 01/09/2020 16:20AM - Version 15
 //==================//
 
 using System;
@@ -461,7 +461,7 @@ public class stake : FaucetScript
             if (!IsVisible(CheckClaim))
             {	
 
-              var Claim1VAR = ElementByXPath("//div[contains(@class,'styles__Buttons')]//button[contains(@class,'Button__StyledButton')]"); //click on the claim 1
+              var Claim1VAR = ElementByXPath("//div[contains(@class,'styles__ButtonsWrap')]//span[contains(text(),'Claim')] "); //click on the claim 1
               Click(Claim1VAR);
               Log("claim 1 - try");
 			  
@@ -471,7 +471,7 @@ public class stake : FaucetScript
 		        Log("Reload - call to solve captch");
                 var result = DoSolveCaptcha(); //call to solve captch		 
 				
-                var Claim2VAR = ElementByXPath("//div[contains(@class,'styles__Buttons')]//button[contains(@class,'Button__StyledButton')]"); //click on the claim 2
+                var Claim2VAR = ElementByXPath("//div[contains(@class,'styles__ButtonsWrap')]//span[contains(text(),'Claim')] "); //click on the claim 2
                 Click(Claim2VAR);
                 Log("claim 2 - Success"); // click again  
 				
