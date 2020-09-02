@@ -281,7 +281,7 @@ class Coinfaucets : FaucetScript
     }
     public override int DoSolveCaptcha( )
     {
-        if ( IsVisible(ElementByXPath("//div[@class='g-recaptcha']")) )
+        if ( IsVisible(ElementByXPath("//div[@class='g-recaptcha']")) && IsVisible(ElementByXPath("//iframe[contains(@src,'recaptcha')]")) )
         {
             var result=base.DoSolveCaptcha ( );
             if ( result>0 )
