@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 05/11/2018 17:00PM
-//Last update - 02/07/2020 00:55PM - version 12
+//Last update - 03/09/2020 16:45PM - version 13
 //==================//
 
 using System;
@@ -31,7 +31,7 @@ public class bitsler : FaucetScript
 
 				//new FaucetSetting(){Name="Menu_SiteLanguage",Display="Menu_SiteLanguage - Select Your Language",Type=EditorType.ComboBox,Default="en",Items=new System.Collections.Generic.List<string>{"en","es","fr","br","ru","tr","jp"}},
 
-                new FaucetSetting(){Name="FreeBtc",Display="FreeBtc - ON/OFF - if you have 0 in balance",Type=EditorType.CheckBox,Default=false},
+                new FaucetSetting(){Name="FreeBtc",Display="FreeBtc - bitsler coin - ON/OFF",Type=EditorType.CheckBox,Default=false},
                 new FaucetSetting(){Name="RakeBack",Display="RakeBack - ON/OFF - from Gold level",Type=EditorType.CheckBox,Default=false},
                 new FaucetSetting(){Name="Nitro",Display="Nitro - ON/OFF - from Platinum level",Type=EditorType.CheckBox,Default=false},
 				
@@ -39,7 +39,7 @@ public class bitsler : FaucetScript
                 new FaucetSetting(){Name="MessageChat",Display="Your Message In Chat - only need to be active to get any rain",Default = ".",Type=EditorType.TextBox,Required=false},
 				
 	            new FaucetSetting(){Name="AllGames_Menu",Display="AllGames_Menu - Select Favorite Game (Correctly available only 'Dice' AND 'Multicolor' Games)",Type=EditorType.ComboBox,Default="none",Items=new System.Collections.Generic.List<string>{"none","Dice","Roulette","Multicolor","CaraYcruz"}},
-				new FaucetSetting(){Name="MenuCoins",Display="MenuCoins - Select Favorite Coins",Type=EditorType.ComboBox,Default="btc",Items=new System.Collections.Generic.List<string>{"btc","eth","ltc","bch","xrp","doge","dash","zec","etc","neo","strat","kmd","burst","btg","lsk","dgb","qtum","waves","bsv","btslr"}},
+				new FaucetSetting(){Name="MenuCoins",Display="MenuCoins - Select Favorite Coins",Type=EditorType.ComboBox,Default="btc",Items=new System.Collections.Generic.List<string>{"btc","eth","xrp","ltc","usdt","doge","etc","bch","zec","dgb","eos","xlm","trx","dash","bsv","btg","neo","strat","kmd","lsk","qtum","waves","btslr"}},
 				
 				//Dice Game//
 				new FaucetSetting(){Name="Dice_Amount_Input",Display="Dice - Amount",Default="0.00000003",Type=EditorType.TextBox,Required=true},
@@ -181,9 +181,12 @@ bool ad;
 	 //Site Language
 	 //============//
 
-     var SiteLanguageTAB = ElementByXPath("//*[@id='__BVID__40']"); 
+     var SiteLanguageTAB = ElementByXPath("//*[@id='__BVID__40']");
+	 if (IsVisible(SiteLanguageTAB))
+	 {
      Click(SiteLanguageTAB);
 	 Log("Click - SiteLanguageTAB");
+	 }
 	 
      var SiteLanguageTABOpen = ElementByXPath("//li[@class='nav-item b-nav-dropdown dropdown show']");	 
 	 if (IsVisible(SiteLanguageTABOpen))
@@ -222,7 +225,7 @@ bool ad;
         Wait();	
         Wait(2);	
 		
-        var box_user = ElementByXPath("//input[@id='lo-username']");
+        var box_user = ElementByXPath("//input[contains(@id,'user')]");
         if (!IsVisible(box_user))
         {
             return Fail("UserBox not found");
@@ -231,7 +234,7 @@ bool ad;
 		
         Wait(2);
 		
-        var box_pass = ElementByXPath("//input[@id='lo-password']");
+        var box_pass = ElementByXPath("//input[contains(@id,'password')]");
         if (!IsVisible(box_pass))
         {
             return Fail("Box pass not found");
@@ -243,8 +246,8 @@ bool ad;
         Recaptcha_Function(); //call
 		
         Wait(4);
-		
-        var ButtonLog = ElementByXPath("//button[contains(text(),'Login')] | //button[contains(text(),'Iniciar Sesión')] | //button[contains(text(),'Entrar')] | //button[contains(text(),'Логин')] | //button[contains(text(),'Giriş')] | //button[contains(text(),'ログイン')]");
+	
+        var ButtonLog = ElementByXPath("//div[contains(@id,'modal')]//button[contains(text(),'Login')] | //button[contains(text(),'Iniciar Sesión')] | //button[contains(text(),'Entrar')] | //button[contains(text(),'Логин')] | //button[contains(text(),'Giriş')] | //button[contains(text(),'ログイン')]");
         if (!IsVisible(ButtonLog))
         {
             return Fail("Button login not visible");
@@ -292,6 +295,7 @@ public override int GetFaucetWaitTime()
  {
         if (ad)
         {
+	        ad = false;
 			Log("GetFaucetWaitTime close");		
             return GetWaitSetting();
         }
@@ -343,8 +347,7 @@ public override int GetFaucetWaitTime()
 //=============//
  public override int DoSolveFaucet()
  {
-	 
-	ad = false;
+
     
      //=============//
      //AffWithdraw
@@ -541,30 +544,7 @@ public override int GetFaucetWaitTime()
      }// end AffWithdraw
      //=============//
 	 
-	
-    //===========//
-    //FreeBtc//
-    //===========//
-    if (GetBoolSetting("FreeBtc"))
-    {
 
-        GoToUrl("https://www.bitsler.com/en/bitsler-coins/claim");		
- 		Log("FreeBtcVar: go to - bitsler-coins");
-		
-        Wait();	
-		
-        //call the function - to CloseChat
-		ADFunction_CloseChat();
-
-        Recaptcha_Function(); //call
-	 
- 		var ButtonGetFreeBtc = ElementByXPath("//button[@type='button' and contains(text(),'Claim')]");  //span[text()='FREE BTC']
- 		Click(ButtonGetFreeBtc);
-
- 		var AlertGeneral = ElementByXPath("//div[@role='alert']"); 
-        Log(AlertGeneral.Text);
-
- 	} //end FreeBtc
 	
 
 	//=========//
@@ -777,7 +757,43 @@ public override int GetFaucetWaitTime()
 		//===========================//
 
 
-	    return GetWaitSetting(); //backup
+	
+         //===========//
+         //FreeBtc//
+         //===========//
+         if (GetBoolSetting("FreeBtc"))
+         {
+	     
+            GoToUrl("https://www.bitsler.com/en/bitsler-coins/claim");		
+ 	     	Log("FreeBtcVar: go to - bitsler-coins");     	
+            Wait(4);	
+	     	ADFunction_CloseChat(); //call the function - to CloseChat
+            Wait(2);
+
+            var ClaimButton = ElementByXPath("//button[contains(text(),'Claim') ]"); 
+            
+			if (!IsVisible(ClaimButton))
+            {
+			  Log("FreeBtc bitsler coins - success");
+	          return Time_Function();
+		    }
+			
+			if (IsVisible(ClaimButton))
+            {
+              Recaptcha_Function(); //call
+			  Wait(2);
+		      Click(ClaimButton);
+			  Wait(2);
+			  Log("FreeBtc bitsler coins - success");
+              ClaimSuccess(); //success
+			  Wait(2);
+ 	     	  var AlertGeneral = ElementByXPath("//div[@role='alert']"); 
+              Log(AlertGeneral.Text);
+		    }
+
+ 	     } //end FreeBtc
+
+	     return Time_Function();
 			
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
         return base.DoSolveFaucet();
@@ -810,7 +826,35 @@ public override int GetFaucetWaitTime()
     }
 	
 
-	
+
+        //=================//
+       //Time_Function
+        //=================//
+        public int Time_Function()
+        {
+		   var HourVar = ElementByXPath("//span[@class='hours']");			
+           var MinVar = ElementByXPath("//span[@class='minutes']");
+		   var SecVar = ElementByXPath("//span[@class='seconds']");
+
+           if (IsVisible(MinVar))
+           {
+	         Log("Time_Function - WaitTimerText apper - return to site time"); 
+             int hour,min,sec;
+             hour = Convert.ToInt32(HourVar.Text.Trim() )*3600;
+             min = Convert.ToInt32(MinVar.Text.Trim() )*60;
+             sec = Convert.ToInt32(SecVar.Text.Trim() );
+             return hour+min+sec;
+           } 
+
+           if (!IsVisible(MinVar))
+           {
+	            Log("Time_Function - return to your time"); 
+		        return GetWaitSetting();
+           }
+
+           return 0;		
+        }//end Time_Function
+        //=================//	
 
 	
 //====================//	
@@ -819,9 +863,9 @@ public override int GetFaucetWaitTime()
  private bool ADFunction_CloseChat()
  {
 	 
-    var ChatOpen = ElementByXPath("//div[@class='container-fluid user chat']"); 
-    var ChatClose = ElementByXPath("//div[@class='container-fluid user']"); 
-    var ButtonCloseChat = ElementByXPath("//i[@class='fas fa-angle-double-right']"); 
+    var ChatOpen = ElementByXPath("//div[contains(@class,'site-wrapper-chat')]"); 
+    var ChatClose = ElementByXPath("//div[contains(@class,'w-100')]"); 
+    var ButtonCloseChat = ElementByXPath("//div[contains(@id,'chat-switch')]"); 
 	
 	if (IsVisible(ChatOpen))
     {      
@@ -850,150 +894,170 @@ public override int GetFaucetWaitTime()
       var OpenTabCoins = ElementByXPath("//button[@class='btn dropdown-toggle cs-button btn-secondary']"); 
       Log("click - OpenTabCoins");
       Click(OpenTabCoins);
-
+ 
 	  
       var MenuCoinsVAR = GetSetting("MenuCoins"); 
 	  
       if(MenuCoinsVAR=="btc")
       {
-      var btc_coin_VAR = ElementByXPath("//div[3]/ul/li[1]"); 
+      var btc_coin_VAR = ElementByXPath("//li[1]//div[contains(@class,'clearfix')]"); 
       Log("click - btc_coin_VAR");
       Click(btc_coin_VAR);
 	  }// end btc
 	  
       if(MenuCoinsVAR=="eth")
       {
-      var eth_coin_VAR = ElementByXPath("//div[3]/ul/li[2]"); 
+      var eth_coin_VAR = ElementByXPath("//li[2]//div[contains(@class,'clearfix')]"); 
       Log("click - eth_coin_VAR");
       Click(eth_coin_VAR);
 	  }// end eth
 	  
-      if(MenuCoinsVAR=="ltc")
+      if(MenuCoinsVAR=="xrp")
       {
-      var ltc_coin_VAR = ElementByXPath("//div[3]/ul/li[3]"); 
-      Log("click - ltc_coin_VAR");
-      Click(ltc_coin_VAR);
-	  }// end ltc	
-	  
-      if(MenuCoinsVAR=="bch")
-      {
-      var bch_coin_VAR = ElementByXPath("//div[3]/ul/li[4]"); 
-      Log("click - bch_coin_VAR");
-      Click(bch_coin_VAR);
-	  }// end bch  
-	  
-	  if(MenuCoinsVAR=="xrp")
-      {
-      var xrp_coin_VAR = ElementByXPath("//div[3]/ul/li[5]"); 
+      var xrp_coin_VAR = ElementByXPath("//li[3]//div[contains(@class,'clearfix')]"); 
       Log("click - xrp_coin_VAR");
       Click(xrp_coin_VAR);
-	  }// end xrp  
+	  }// end xrp	
+	  
+      if(MenuCoinsVAR=="ltc")
+      {
+      var ltc_coin_VAR = ElementByXPath("//li[4]//div[contains(@class,'clearfix')]"); 
+      Log("click - ltc_coin_VAR");
+      Click(ltc_coin_VAR);
+	  }// end ltc  
+	  
+	  if(MenuCoinsVAR=="usdt")
+      {
+      var usdt_coin_VAR = ElementByXPath("//li[5]//div[contains(@class,'clearfix')]"); 
+      Log("click - usdt_coin_VAR");
+      Click(usdt_coin_VAR);
+	  }// end usdt  
 	  
 	  if(MenuCoinsVAR=="doge")
       {
-      var doge_coin_VAR = ElementByXPath("//div[3]/ul/li[6]"); 
+      var doge_coin_VAR = ElementByXPath("//li[6]//div[contains(@class,'clearfix')]"); 
       Log("click - doge_coin_VAR");
       Click(doge_coin_VAR);
 	  }// end doge 
 
-	  if(MenuCoinsVAR=="dash")
-      {
-      var dash_coin_VAR = ElementByXPath("//div[3]/ul/li[7]"); 
-      Log("click - dash_coin_VAR");
-      Click(dash_coin_VAR);
-	  }// end dash  
-
-	  if(MenuCoinsVAR=="zec")
-      {
-      var zec_coin_VAR = ElementByXPath("//div[3]/ul/li[8]"); 
-      Log("click - zec_coin_VAR");
-      Click(zec_coin_VAR);
-	  }// end zec   
-	  
 	  if(MenuCoinsVAR=="etc")
       {
-      var etc_coin_VAR = ElementByXPath("//div[3]/ul/li[9]"); 
+      var etc_coin_VAR = ElementByXPath("//li[7]//div[contains(@class,'clearfix')]"); 
       Log("click - etc_coin_VAR");
       Click(etc_coin_VAR);
 	  }// end etc  
 
+	  if(MenuCoinsVAR=="bch")
+      {
+      var bch_coin_VAR = ElementByXPath("//li[8]//div[contains(@class,'clearfix')]"); 
+      Log("click - bch_coin_VAR");
+      Click(bch_coin_VAR);
+	  }// end bch   
+	  
+	  if(MenuCoinsVAR=="zec")
+      {
+      var zec_coin_VAR = ElementByXPath("//li[9]//div[contains(@class,'clearfix')]"); 
+      Log("click - zec_coin_VAR");
+      Click(zec_coin_VAR);
+	  }// end zec  
+
+	  if(MenuCoinsVAR=="dgb")
+      {
+      var dgb_coin_VAR = ElementByXPath("//li[10]//div[contains(@class,'clearfix')]"); 
+      Log("click - dgb_coin_VAR");
+      Click(dgb_coin_VAR);
+	  }// end dgb  
+	  
+	  if(MenuCoinsVAR=="eos")
+      {
+      var eos_coin_VAR = ElementByXPath("//li[11]//div[contains(@class,'clearfix')]"); 
+      Log("click - eos_coin_VAR");
+      Click(eos_coin_VAR);
+	  }// end seos 	  
+	  
+	  if(MenuCoinsVAR=="xlm")
+      {
+      var xlm_coin_VAR = ElementByXPath("//li[12]//div[contains(@class,'clearfix')]"); 
+      Log("click - xlm_coin_VAR");
+      Click(xlm_coin_VAR);
+	  }// end xlm  	  
+	  
+	  if(MenuCoinsVAR=="trx")
+      {
+      var trx_coin_VAR = ElementByXPath("//li[13]//div[contains(@class,'clearfix')]"); 
+      Log("click - trx_coin_VAR");
+      Click(trx_coin_VAR);
+	  }// end trx  
+
+	  if(MenuCoinsVAR=="dash")
+      {
+      var dash_coin_VAR = ElementByXPath("//li[14]//div[contains(@class,'clearfix')]"); 
+      Log("click - dash_coin_VAR");
+      Click(dash_coin_VAR);
+	  }// end dash 
+
+	  if(MenuCoinsVAR=="bsv")
+      {
+      var bsv_coin_VAR = ElementByXPath("//li[15]//div[contains(@class,'clearfix')]"); 
+      Log("click - bsv_coin_VAR");
+      Click(bsv_coin_VAR);
+	  }// end bsv  
+	  
+	  if(MenuCoinsVAR=="btg")
+      {
+      var btg_coin_VAR = ElementByXPath("//li[16]//div[contains(@class,'clearfix')]"); 
+      Log("click - btg_coin_VAR");
+      Click(btg_coin_VAR);
+	  }// end btg  	  
+	  
 	  if(MenuCoinsVAR=="neo")
       {
-      var neo_coin_VAR = ElementByXPath("//div[3]/ul/li[10]"); 
+      var neo_coin_VAR = ElementByXPath("//li[17]//div[contains(@class,'clearfix')]"); 
       Log("click - neo_coin_VAR");
       Click(neo_coin_VAR);
 	  }// end neo  
 	  
 	  if(MenuCoinsVAR=="strat")
       {
-      var strat_coin_VAR = ElementByXPath("//div[3]/ul/li[11]"); 
+      var strat_coin_VAR = ElementByXPath("//li[18]//div[contains(@class,'clearfix')]"); 
       Log("click - strat_coin_VAR");
       Click(strat_coin_VAR);
-	  }// end strat  	  
-	  
+	  }// end strat	  
+
 	  if(MenuCoinsVAR=="kmd")
       {
-      var kmd_coin_VAR = ElementByXPath("//div[3]/ul/li[12]"); 
+      var kmd_coin_VAR = ElementByXPath("//li[19]//div[contains(@class,'clearfix')]"); 
       Log("click - kmd_coin_VAR");
       Click(kmd_coin_VAR);
-	  }// end kmd  	  
-	  
-	  if(MenuCoinsVAR=="burst")
-      {
-      var burst_coin_VAR = ElementByXPath("//div[3]/ul/li[13]"); 
-      Log("click - burst_coin_VAR");
-      Click(burst_coin_VAR);
-	  }// end burst  
-
-	  if(MenuCoinsVAR=="btg")
-      {
-      var btg_coin_VAR = ElementByXPath("//div[3]/ul/li[14]"); 
-      Log("click - btg_coin_VAR");
-      Click(btg_coin_VAR);
-	  }// end btg  
+	  }// end kmd  
 
 	  if(MenuCoinsVAR=="lsk")
       {
-      var lsk_coin_VAR = ElementByXPath("//div[3]/ul/li[15]"); 
+      var lsk_coin_VAR = ElementByXPath("//li[20]//div[contains(@class,'clearfix')]"); 
       Log("click - lsk_coin_VAR");
       Click(lsk_coin_VAR);
-	  }// end lsk  
-	  
-	  if(MenuCoinsVAR=="dgb")
-      {
-      var dgb_coin_VAR = ElementByXPath("//div[3]/ul/li[16]"); 
-      Log("click - dgb_coin_VAR");
-      Click(dgb_coin_VAR);
-	  }// end dgb  	  
+	  }// end lsk
 	  
 	  if(MenuCoinsVAR=="qtum")
       {
-      var qtum_coin_VAR = ElementByXPath("//div[3]/ul/li[17]"); 
+      var qtum_coin_VAR = ElementByXPath("//li[21]//div[contains(@class,'clearfix')]"); 
       Log("click - qtum_coin_VAR");
       Click(qtum_coin_VAR);
 	  }// end qtum  
-	  
+
 	  if(MenuCoinsVAR=="waves")
       {
-      var waves_coin_VAR = ElementByXPath("//div[3]/ul/li[18]"); 
+      var waves_coin_VAR = ElementByXPath("//li[22]//div[contains(@class,'clearfix')]"); 
       Log("click - waves_coin_VAR");
       Click(waves_coin_VAR);
-	  }// end waves  	  
-
-	  if(MenuCoinsVAR=="bsv")
-      {
-      var bsv_coin_VAR = ElementByXPath("//div[3]/ul/li[19]"); 
-      Log("click - bsv_coin_VAR");
-      Click(bsv_coin_VAR);
-	  }// end bsv  
+	  }// end waves  
 
 	  if(MenuCoinsVAR=="btslr")
       {
-      var btslr_coin_VAR = ElementByXPath("//div[3]/ul/li[20]"); 
+      var btslr_coin_VAR = ElementByXPath("//li[23]//div[contains(@class,'clearfix')]"); 
       Log("click - btslr_coin_VAR");
       Click(btslr_coin_VAR);
 	  }// end btslr  
-	  	   
 	
  return true;
  }//end Coins_Function
