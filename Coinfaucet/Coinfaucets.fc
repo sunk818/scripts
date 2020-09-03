@@ -92,9 +92,12 @@ class Coinfaucets : FaucetScript
             Url="https://freedash.io/",
             MinWithdraw=1
 
-        } }
-
-
+        } },
+        {"NEO",new Coinfaucet{
+            Url="https://freeneo.io/",
+            MinWithdraw=1
+        }   
+        }
     };
 
 
