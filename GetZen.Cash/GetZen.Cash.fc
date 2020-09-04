@@ -422,7 +422,7 @@ public class GetZen : FaucetScript
 
 	    Wait(2);
 		
-        var Claim_Button = ElementByXPath("//form[@id='form-claim-zen']//button[@type='submit']");       
+        var Claim_Button = ElementByXPath("//form[@id='form-claim-zen']//button[@type='button']");       
 		if (IsVisible(Claim_Button))
         {
          Log("Claim_Button - 1");
