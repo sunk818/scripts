@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 26/05/2019 04:00PM
-//Last Update: 01/09/2020 17:40PM - Version 11
+//Last Update: 04/09/2020 07:00AM - Version 12
 //==================//
 
 using System;
@@ -41,13 +41,13 @@ public class primedice : FaucetScript
 				new FaucetSetting(){Name="MenuCoins",Display="MenuCoins - Select Favorite Coins",Type=EditorType.ComboBox,Default="btc",Items=new System.Collections.Generic.List<string>{"btc","eth","ltc","doge","bch","xrp","trx","eos"}},
 
                 new FaucetSetting() { Name = "Vault_Withdraw", Display = "Vault_Withdraw - ON/OFF", Type = EditorType.CheckBox, Default =false},	
-                new FaucetSetting() { Name = "Vault_Deposit", Display = "Vault_Deposit - ON/OFF", Type = EditorType.CheckBox, Default =false},	
-
-                new FaucetSetting() { Name = "Vault_Amount_Withdraw", Display = "Vault_Amount_Withdraw", Type = EditorType.TextBox, Default = 0.00010000 },
-                new FaucetSetting() { Name = "Vault_Amount_Deposit", Display = "Vault_Amount_Deposit", Type = EditorType.TextBox, Default = 0.00010000 },
+                new FaucetSetting() { Name = "Vault_Deposit", Display = "Vault_Deposit - ON/OFF", Type = EditorType.CheckBox, Default =true},	
+                new FaucetSetting() { Name = "Vault_Max_Amount_Deposit", Display = "Vault_Max_Amount_Deposit - ON/OFF - if ON - deposit MAX amount - if OFF deposit custom amount ", Type = EditorType.CheckBox, Default =true},	
+                new FaucetSetting() { Name = "LimitDeposit", Display = "LimitDeposit - write the full number of satoshi (without point - 0.0 | 1.1 | 2.2 - and etc ) ", Type = EditorType.TextBox, Default = 50000 },
+                new FaucetSetting() { Name = "Vault_Amount_Withdraw", Display = "Vault_Amount_Withdraw", Type = EditorType.TextBox, Default = "0.00001000" },
+                new FaucetSetting() { Name = "Vault_Amount_Deposit", Display = "Vault_Amount_Deposit", Type = EditorType.TextBox, Default = "0.00050000" }, 
 
                 new FaucetSetting() { Name = "AffWithdraw", Display = "AffWithdraw", Type = EditorType.CheckBox, Default = false},	
-
 
             };
         }
@@ -505,14 +505,14 @@ public class primedice : FaucetScript
         public int Vault_Function()
         {	
 		
-          //cahck balance
+          //Check balance
           var balance = ElementByXPath("//span[contains(@class,'NumberAnimation')]//span[contains(@class,'styles__Content')]");
           string BalanceSTRING = balance.Text.Trim().Split('.')[1];
           int BalanceINT = Convert.ToInt32(BalanceSTRING);
 		  
           if (BalanceINT < 1) // if under 1
           {
-	         Log("LimitFaucet - the balance under 0 <  not good");
+	         Log("LimitFaucet - the balance under 0 < not good");
           }
 		  
           if (BalanceINT > 1 ) // if above "1"
@@ -529,12 +529,24 @@ public class primedice : FaucetScript
 				
 		        var Amount_var = ElementByXPath("//input[contains(@name,'amount')]");
                 SetText(Amount_var, GetSetting("Vault_Amount_Withdraw"));  //Withdraw
+		        Log("Vault - withdraw - success");
 		     }
 		 
              if (!IsVisible(Password_check))
-             {			
-		        var Amount_var = ElementByXPath("//input[contains(@name,'amount')]");
-                SetText(Amount_var, GetSetting("Vault_Amount_Deposit"));  //Deposit
+             {	
+                if (GetBoolSetting("Vault_Max_Amount_Deposit"))
+                {	
+                  var MAX_var = ElementByXPath("//span[contains(text(),'Max')]");
+		          Click(MAX_var);
+		          Log("Vault - MAX deposit - success");
+				}
+				
+                if (!GetBoolSetting("Vault_Max_Amount_Deposit"))
+                {	
+		          var Amount_var = ElementByXPath("//input[contains(@name,'amount')]");
+                  SetText(Amount_var, GetSetting("Vault_Amount_Deposit"));  //Deposit
+		          Log("Vault - custom deposit - success");
+				}
 		     }
 			 
              Wait(5);
@@ -545,8 +557,8 @@ public class primedice : FaucetScript
               var Vault_End_Button_VAR = ElementByXPath("//div[contains(@class,'styles__Buttons')]//button[contains(@class,'Button__StyledButton') and @type='submit' ]");
               Click(Vault_End_Button_VAR);
               Log("Vault - click on end button - deposit or withdraw");
-            }		
-			 
+            }	
+			
           } // BalanceINT > 1
 		  
           return 0;
