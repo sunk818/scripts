@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 26/05/2019 04:00PM
-//Last Update: 01/09/2020 17:40AM - Version 15
+//Last Update: 04/09/2020 07:00AM - Version 16
 //==================//
 
 using System;
@@ -41,13 +41,29 @@ public class stake : FaucetScript
 				new FaucetSetting(){Name="MenuCoins",Display="MenuCoins - Select Favorite Coins",Type=EditorType.ComboBox,Default="btc",Items=new System.Collections.Generic.List<string>{"btc","eth","ltc","doge","bch","xrp","trx","eos"}},
 
                 new FaucetSetting() { Name = "Vault_Withdraw", Display = "Vault_Withdraw - ON/OFF", Type = EditorType.CheckBox, Default =false},	
-                new FaucetSetting() { Name = "Vault_Deposit", Display = "Vault_Deposit - ON/OFF", Type = EditorType.CheckBox, Default =false},	
-
-                new FaucetSetting() { Name = "Vault_Amount_Withdraw", Display = "Vault_Amount_Withdraw", Type = EditorType.TextBox, Default = 0.00010000 },
-                new FaucetSetting() { Name = "Vault_Amount_Deposit", Display = "Vault_Amount_Deposit", Type = EditorType.TextBox, Default = 0.00010000 },
+                new FaucetSetting() { Name = "Vault_Deposit", Display = "Vault_Deposit - ON/OFF", Type = EditorType.CheckBox, Default =true},	
+                new FaucetSetting() { Name = "Vault_Max_Amount_Deposit", Display = "Vault_Max_Amount_Deposit - ON/OFF - if ON - deposit MAX amount - if OFF deposit custom amount ", Type = EditorType.CheckBox, Default =true},	
+                new FaucetSetting() { Name = "LimitDeposit", Display = "LimitDeposit - write the full number of satoshi (without point - 0.0 | 1.1 | 2.2 - and etc ) ", Type = EditorType.TextBox, Default = 50000 },
+                new FaucetSetting() { Name = "Vault_Amount_Withdraw", Display = "Vault_Amount_Withdraw", Type = EditorType.TextBox, Default = "0.00001000" },
+                new FaucetSetting() { Name = "Vault_Amount_Deposit", Display = "Vault_Amount_Deposit", Type = EditorType.TextBox, Default = "0.00050000" }, 
 
                 new FaucetSetting() { Name = "AffWithdraw", Display = "AffWithdraw", Type = EditorType.CheckBox, Default = false},	
 
+				new FaucetSetting(){Name="MenuGames",Display="MenuGames - Select Favorite Games",Type=EditorType.ComboBox,Default="none",Items=new System.Collections.Generic.List<string>{"none","Keno"}},
+                
+				//Keno
+                new FaucetSetting(){Name="InstantBet",Display="InstantBet - ON/OFF - if ON it will play faster",Type=EditorType.CheckBox,Default=true},
+                new FaucetSetting() { Name = "Keno_Spin_Number", Display = "Keno_Spin_Number - Choose how much Spin/BET numbers", Type = EditorType.TextBox, Default = 100 },
+                new FaucetSetting() { Name = "Keno_break", Display = "Keno_break - when the BET numbers works - Choose after how much time you want to break inside 'while loop' - the default is 1500sec = 25min", Type = EditorType.TextBox, Default = "1500" },
+				new FaucetSetting(){Name="Menu_Method_Choose_Numbers",Display="Menu_Method_Choose_Numbers - 'Random' OR 'Recent' OR 'Rotate_Between_Random_And_Recent' ",Type=EditorType.ComboBox,Default="Random",Items=new System.Collections.Generic.List<string>{"Random","Recent"}},
+				new FaucetSetting(){Name="MenuRiskLevel",Display="MenuRiskLevel - Select Risk Level",Type=EditorType.ComboBox,Default="classic",Items=new System.Collections.Generic.List<string>{"classic","low","medium","high"}},
+                new FaucetSetting(){Name="Keno_Bet_Amount",Display="Keno_Bet_Amount",Type=EditorType.TextBox,Default = "0.00000001"},
+                new FaucetSetting(){Name="CustomWaitTime",Display="CustomWaitTime - in sec, before click on Spin/BET",Type=EditorType.Numeric,Default = 2},
+
+                new FaucetSetting() { Name = "Win_Counter_Auto_Random_Label", Display = "Win Counter - if ON - before each Spin/BET - each time that you 'LOSE' under your 'Counter' - if you not WIN it will auto change the numbers in 'Random' ", Type = EditorType.Label},	
+                new FaucetSetting(){Name="Win_Counter_Auto_Random",Display="Win_Counter_Auto_Random - ON/OFF",Type=EditorType.CheckBox,Default=true},           
+				new FaucetSetting(){Name="Win_Counter_Numbers",Display="Win_Counter_Numbers - note: it will auto change the numbers in 'Random' if you LOSE ",Type=EditorType.TextBox,Default = 2},
+  
 
             };
         }
@@ -262,7 +278,8 @@ public class stake : FaucetScript
     }
   
 	
-	
+
+		 
 //==============//
 //DoSolveFaucet
 //==============//
@@ -320,7 +337,7 @@ public class stake : FaucetScript
         var CheckWithdrawCommission = ElementByXPath("//div[contains(@class,'styles__Buttons')]//button[contains(@class,'Button__StyledButton') and (@disabled) ]"); 
         if (!IsVisible(CheckWithdrawCommission))
         {	
-          Log("Claim_Function");
+          Log("AffWithdraw - Claim ALL");
           var WithdrawCommission = ElementByXPath("//div[contains(@class,'styles__Buttons')]//button[contains(@class,'Button__StyledButton')]"); 
           Click(WithdrawCommission);
         }//end WithdrawCommission
@@ -340,7 +357,13 @@ public class stake : FaucetScript
 	      Wait(2);	
 
           var RakebackAvailable = ElementByXPath("//a[contains(@href,'Rakeback')]/span[contains(text(),'Rakeback')]"); 
-          if (IsVisible(RakebackAvailable))
+		  
+          if (!IsVisible(RakebackAvailable))
+          {
+	        Log("Rakeback - NOT here - try next time");
+          }     
+		  
+		  if (IsVisible(RakebackAvailable))
           {
             All_Function(); //call
 	        Log("Rakeback - here");
@@ -361,6 +384,12 @@ public class stake : FaucetScript
 	      Wait(2);	
 
           var ReloadAvailable = ElementByXPath("//a[contains(@href,'Reload')]/span[contains(text(),'Reload')]"); 
+		  
+          if (!IsVisible(ReloadAvailable))
+          {
+	        Log("Reload - NOT here - try next time");
+          }     
+		  
           if (IsVisible(ReloadAvailable))
           {
             All_Function(); //call
@@ -369,6 +398,25 @@ public class stake : FaucetScript
 		
         } //end ReloadAvailable
 		//======//
+
+
+        //=========//
+        //MenuGames
+		//=========//
+        var MenuGamesVAR = GetSetting("MenuGames"); 
+
+        if(MenuGamesVAR=="none")
+        {
+  		  Log("Games - none - no game chosen");
+	    }// end none
+	    
+        if(MenuGamesVAR=="Keno")
+        {
+  		  Log("Keno Game - go to keno");
+          Keno_Game_Function(); //call
+	    }// end Keno
+		//=========//
+
 
 		return Time_Function(); //call to function time
 	
@@ -500,19 +548,22 @@ public class stake : FaucetScript
         public int Vault_Function()
         {	
 		
-          //cahck balance
-          var balance = ElementByXPath("//span[contains(@class,'NumberAnimation')]//span[contains(@class,'styles__Content')]");
-          string BalanceSTRING = balance.Text.Trim().Split('.')[1];
+          //Check balance
+          var BalanceVAR = ElementByXPath("//span[contains(@class,'NumberAnimation')]//span[contains(@class,'styles__Content')]");
+          string BalanceSTRING = BalanceVAR.Text.Trim().Split('.')[1];
           int BalanceINT = Convert.ToInt32(BalanceSTRING);
-		  
-          if (BalanceINT < 1) // if under 1
+
+          int MyAmount;
+          Int32.TryParse(GetSetting("LimitDeposit"), out MyAmount);
+
+          if (IsVisible(BalanceVAR) && BalanceINT < MyAmount) // if under 1
           {
-	         Log("LimitFaucet - the balance under 0 < not good");
+	         Log("LimitFaucet - the balance under " + MyAmount + " < not good");
           }
 		  
-          if (BalanceINT > 1 ) // if above "1"
+          if (IsVisible(BalanceVAR) && BalanceINT > MyAmount) // if above 1
           {
-		     Log("LimitFaucet - the balance above 0 > good");	
+	         Log("LimitFaucet - the balance above " + MyAmount + " > good");
 		  	 
 		     var Password_check = ElementByXPath("//input[contains(@name,'password')]"); //the password only apper in "Withdraw" section
              if (IsVisible(Password_check))
@@ -524,12 +575,24 @@ public class stake : FaucetScript
 				
 		        var Amount_var = ElementByXPath("//input[contains(@name,'amount')]");
                 SetText(Amount_var, GetSetting("Vault_Amount_Withdraw"));  //Withdraw
+		        Log("Vault - withdraw - success");
 		     }
 		 
              if (!IsVisible(Password_check))
-             {			
-		        var Amount_var = ElementByXPath("//input[contains(@name,'amount')]");
-                SetText(Amount_var, GetSetting("Vault_Amount_Deposit"));  //Deposit
+             {	
+                if (GetBoolSetting("Vault_Max_Amount_Deposit"))
+                {	
+                  var MAX_var = ElementByXPath("//span[contains(text(),'Max')]");
+		          Click(MAX_var);
+		          Log("Vault - MAX deposit - success");
+				}
+				
+                if (!GetBoolSetting("Vault_Max_Amount_Deposit"))
+                {	
+		          var Amount_var = ElementByXPath("//input[contains(@name,'amount')]");
+                  SetText(Amount_var, GetSetting("Vault_Amount_Deposit"));  //Deposit
+		          Log("Vault - custom deposit - success");
+				}
 		     }
 			 
              Wait(5);
@@ -631,6 +694,207 @@ public class stake : FaucetScript
       } // end Choose_Coin_Function
 		//=========//
 		
+		
+	//store multi elements 	
+    public List<IWebElement> RedElementsFunction = new List<IWebElement>();
+	//=========//
+	
+		  
+        //=========//
+        //Keno_Game_Function
+		//=========//
+        public int Keno_Game_Function()
+        {	
+		
+		  Wait(2);
+		  GoToUrl("https://stake.com/casino/games/keno");
+		  Wait(4);
+		  Choose_Coin_Function(); //call
+
+          //InstantBet
+          if (GetBoolSetting("InstantBet")) 
+          {
+  		    Log("Keno Game - InstantBet - play faster");
+            var SettingsKeno = ElementByXPath("//div[contains(@class,'dheDkC')]/span/button"); 
+			Click(SettingsKeno);
+			Wait(3);
+			 
+            var InstantBet_Active = ElementByXPath("//button[contains(@class,'cmvbPZ active')]//span[contains(text(),'Instant') ]"); 
+            if (!IsVisible(InstantBet_Active)) //if NOT Active/visible - then click
+            {
+  		    Log("Keno Game - InstantBet - click ");
+            var InstantBet = ElementByXPath("//span[contains(text(),'Instant Bet')]"); 
+			Click(InstantBet);
+			}
+			
+            if (IsVisible(InstantBet_Active)) //if NOT Active/visible - then click
+            {
+  		    Log("Keno Game - InstantBet - Already Active ");
+			}
+			
+		  }	
+
+          //do MenuRiskLevel
+          var MenuVAR = ElementByXPath("//select[@name='risk']"); 
+          if (IsVisible(MenuVAR))
+          {
+  		    Log("Keno Game - MenuRiskLevel - click");
+		    Click(MenuVAR);			  
+		  }
+
+	      Wait(2);
+
+          var MenuRiskLevel_VAR = GetSetting("MenuRiskLevel"); 
+	      
+          if(MenuRiskLevel_VAR == "classic")
+          {
+          var classic = ElementByXPath("//option[@value='classic']");
+          Log("Keno Game - MenuRiskLevel - choose - classic");
+          Click(classic);
+	      }// end classic
+		  
+          if(MenuRiskLevel_VAR == "low")
+          {
+          var low = ElementByXPath("//option[@value='low']");
+          Log("Keno Game - MenuRiskLevel - choose - low");
+          Click(low);
+	      }// end low
+		  
+          if(MenuRiskLevel_VAR == "medium")
+          {
+          var medium = ElementByXPath("//option[@value='medium']");
+          Log("Keno Game - MenuRiskLevel - choose - medium");
+          Click(medium);
+	      }// end medium
+		  
+          if(MenuRiskLevel_VAR == "high")
+          {
+          var high = ElementByXPath("//option[@value='high']");
+          Log("Keno Game - MenuRiskLevel - choose - high");
+          Click(high);
+	      }// end high
+
+	      Wait(2);
+
+		  //Bet_Amount
+          var Bet_Amount = ElementByXPath("//input[contains(@id,'betAmount')]"); 
+  		  Log("Keno Game - set bet amount");
+          SetText(Bet_Amount, GetSetting("Keno_Bet_Amount"));
+		
+          Wait(2);	
+		  
+          //1TIME - Click Only one Time - to store before loop entered
+          var RandomChoose_2_Numbers = ElementByXPath("//button//span[contains(text(),'Auto Pick')] "); //RandomChooseNumbers
+          Click(RandomChoose_2_Numbers);
+          var Bet_2_VAR = ElementByXPath("//button[@data-test='bet-button']//span[contains(text(),'Bet')] "); //bet button
+          Click(Bet_2_VAR);
+  		  Log("Keno Game - 1TIME - Click Only one Time - to store before loop entered");
+		  
+          //====//
+          //Loop
+		  //====//
+          int CustomNumber;
+          CustomNumber = Convert.ToInt32(GetSetting("Keno_Spin_Number"));
+		  
+          int CountGeneral = 1; //if for example i want 10 - and set from 1 - it will be 1-10 - if i set from 0 - it will be 0-10 (11)
+          var TimeToWaitForBreak = DateTime.Now.AddSeconds(GetIntSetting("Keno_break")); //1500sec = 25min //GetIntSetting("Keno_break")
+          while (CountGeneral <= CustomNumber)
+          {
+  
+            Log("spin number is: " + CountGeneral);
+  
+            //do stuff
+			
+			//var Double_var = ElementByXPath("//button//span[contains(text(),'2×')] "); //2x - Double
+            //var Divide_var = ElementByXPath("//button//span[contains(text(),'½')] "); //½ - Divide
+
+            //Menu_Method_Choose_Numbers//
+            var Menu_Method_Choose_Numbers_VAR = GetSetting("Menu_Method_Choose_Numbers"); 
+	        
+            if(Menu_Method_Choose_Numbers_VAR == "Random")
+            {
+  		      Log("Keno Game - Choose 'Random' Numbers");
+              var RandomChooseNumbers = ElementByXPath("//button//span[contains(text(),'Auto Pick')] "); //RandomChooseNumbers
+              Click(RandomChooseNumbers);
+			  Wait(4); //until the system choose the numbers
+			}
+			
+            if(Menu_Method_Choose_Numbers_VAR == "Recent")
+            {
+  		      Log("Keno Game - Choose 'Recent' Numbers");
+              Wait(2);
+
+			  RedElementsFunction.Clear(); //clear store
+  
+              var All_Reds_Results_var = ElementsByXPath("//button[contains(@class,'eMbhUq')]"); //store Elements
+              RedElementsFunction.AddRange(All_Reds_Results_var);
+
+			  var ClearNumbers_Button = ElementByXPath("//button//span[contains(text(),'Clear Table')] "); //Clear Numbers Button
+              Click(ClearNumbers_Button);
+  		      Log("Keno Game - Clear Numbers");
+
+              foreach(var ElementsForEach in RedElementsFunction) //multiple clicks
+              {
+                 Click(ElementsForEach);
+				 Log(ElementsForEach.Text);
+              }
+			  
+			}
+			
+			//=========================//
+
+		  
+            var CustomWaitTimeVAR = GetIntSetting("CustomWaitTime"); 
+            Wait(CustomWaitTimeVAR); //default 2sec
+	
+            //bet button
+            var Bet_Available = ElementByXPath("//button[@data-test='bet-button' and @disabled] "); 
+            if (!IsVisible(Bet_Available)) //if the button NOT disabled - click
+            {
+  		     Log("Keno Game - click on bet");
+             var Bet_VAR = ElementByXPath("//button[@data-test='bet-button']//span[contains(text(),'Bet')] "); 
+             Click(Bet_VAR);
+            }     
+
+            //WinCounter
+	        int Count;	
+            List<IWebElement> Win_VAR = ElementsByXPath("//span[contains(@class,'hgOEAT')]"); //Elements
+            var MyWinCounter = GetIntSetting("Win_Counter_Numbers"); 
+            
+            if (Win_VAR.Count < MyWinCounter)
+            {
+	           Log("Keno Game - under < You LOSE - Your result is: " + Win_VAR.Count);
+		       Wait(3); 
+
+               if (GetBoolSetting("Win_Counter_Auto_Random")) 
+               {
+                var RandomChooseNumbers = ElementByXPath("//button//span[contains(text(),'Auto Pick')] "); //RandomChooseNumbers
+                //Click(RandomChooseNumbers);
+		        Wait(4); //until the system choose the numbers
+		       }	 
+            }
+		    
+            if (Win_VAR.Count > MyWinCounter)
+            {
+	           Log("Keno Game - above > You WIN - Your result is: " + Win_VAR.Count);
+		       Wait(3); 
+		    }
+
+            CountGeneral++; //increment - call again
+            
+            if (DateTime.Now > TimeToWaitForBreak) //if the time above 150 sec 
+            {
+            Log("FaucetClaim - break - TimeToWaitForBreak");
+            break; //break the wait loop
+            }
+          
+          } //end while
+          
+          //=========================//      
+		  
+         return 0;
+		}//end Keno_Game_Function
+		//=========//
 
 	
 } //end public class
