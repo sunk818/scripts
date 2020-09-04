@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 23/12/2019 01:30PM - Version 1
-//Last Update: 08/07/2020 19:35PM - Version 9
+//Last Update: 04/09/2020 18:00PM - Version 11
 //==================//
 
 using System;
@@ -98,7 +98,7 @@ public class GetZen : FaucetScript
     {
 
         //In this case we check for en element with the class "loggedIn"
-		return ElementByXPath("//ul[@class='user-nav']//a[contains(@href,'auth/logout')]")!= null;
+		return ElementByXPath("//span[contains(text(),'Logout')]")!= null;
 		//return true;
     }
 //==================//
@@ -132,7 +132,7 @@ public class GetZen : FaucetScript
 
 
 	 //var checks login or exit
-     var ExitButton = ElementByXPath("//ul[@class='user-nav']//a[contains(@href,'auth/logout')]"); //SIGN OUT
+     var ExitButton = ElementByXPath("//span[contains(text(),'Logout')]"); //SIGN OUT
 
 		 
 	 //if i NOT Login - go to Login Page
@@ -143,8 +143,16 @@ public class GetZen : FaucetScript
 		GoToUrl("https://GetZen.Cash/");
         Wait();	
 	    Wait(2);		
+
+        var MenuLanguague = ElementByXPath("//li[contains(@class,'dropdown item-languague')]");
+        Click(MenuLanguague);
+        Wait(2);
+        var ChooseEnglish = ElementByXPath("//li[contains(@class,'dropdown item-languague')]//a[contains(text(),'English')]");
+        Click(ChooseEnglish);
+
+        Wait(2);
 	
-        var StartLoginButton = ElementByXPath("//ul[@class='user-nav']//a[@class='link-login']");
+        var StartLoginButton = ElementByXPath("//div[contains(@class,'user-nav')]//span[contains(text(),'Login')]");
 	    if (IsVisible(StartLoginButton))
 	    {
 		 Click(StartLoginButton);
