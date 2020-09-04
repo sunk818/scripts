@@ -25,7 +25,7 @@ public class NeobitsScript : FaucetScript
 
                 new FaucetSetting()
                 {
-                    Name="DoShortLink",Display="DoShortLink",Type=EditorType.CheckBox,Default=true
+                    Name="DoShortLink",Display="DoShortLink",Type=EditorType.CheckBox,Default=false
                 }
                 //insert user settings here
                 //new FaucetSetting { 
@@ -91,19 +91,11 @@ public class NeobitsScript : FaucetScript
     {
         get
         {
-            if ( manager!=null )
-            {
-                string Base=manager.BaseUri;
-                if ( Base.LastOrDefault( )!='/' )
-                {
-                    Base+="/";
-                }
+           
 
-                return Base+"shortlinks.html";
+                return "https://neobits.net/shortlinks.html";
 
-            }
-
-            return string.Empty;
+           
 
         }
     }
@@ -124,15 +116,16 @@ public class NeobitsScript : FaucetScript
             GoToUrl(ShortUrl);
             Wait( );
             var Shortlinks = manager.GetShortlinks();
+            Log("You have "+Shortlinks.Count.ToString( )+" Shortlinks");
             if ( Shortlinks.Count>0 )
             {
                 int NShort = Random(0, Shortlinks.Count - 1);
-
+                Log("Trying with shortlink ... "+NShort.ToString());
                 try
                 {
 
 
-
+                    Log("Trying solve icon captcha");
                     FaucetCollector.Captcha.IconCaptchaSolver solver=new  FaucetCollector.Captcha.IconCaptchaSolver(this);
                     Click(Shortlinks[NShort]);
                     Wait( );
