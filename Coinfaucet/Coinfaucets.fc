@@ -96,7 +96,14 @@ class Coinfaucets : FaucetScript
         {"NEO",new Coinfaucet{
             Url="https://freeneo.io/",
             MinWithdraw=1
-        }   
+        }
+
+
+        },
+        {"LINK",new Coinfaucet{
+            Url="https://freechain.link/",
+            MinWithdraw=0.1
+        }
         }
     };
 
