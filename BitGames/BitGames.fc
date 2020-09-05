@@ -153,11 +153,13 @@ public class faucetgame : FaucetScript
 
             Wait(3 , 4);
             var btnmine = ElementByXPath("//a[@class='btn-mine']");
-            while ( IsVisible(btnmine) )
+            int count=0; 
+            while ( IsVisible(btnmine)  && count<10)
             {
                 Click(btnmine);
                 btnmine=ElementByXPath("//a[@class='btn-mine']");
                 Wait( );
+                count++;
             }
             var result = DoSolveCaptcha();
             if ( result>0 )
@@ -175,9 +177,11 @@ public class faucetgame : FaucetScript
         {
             Log("Game frame not found");
         }
-        Wait( );
-        Driver.SwitchTo( ).DefaultContent( );
-
+        finally
+        {
+            Wait( );
+            Driver.SwitchTo( ).DefaultContent( );
+        }
 
 
 
