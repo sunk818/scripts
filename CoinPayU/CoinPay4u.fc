@@ -42,14 +42,6 @@ class ScriptCoinPayU: FaucetScript
         base.Start();
     }
 
-
-    public override int DoInit()
-    {
-
-        return base.DoInit();
-    }
-
-
     public override bool IsLoggedIn()
     {
         // See if the element is visible;
@@ -71,11 +63,32 @@ class ScriptCoinPayU: FaucetScript
         return base.BeforeLogin();
     }
 
+    private void WaitForCloudFlare( )
+    {
+        DateTime timeout=DateTime.Now.AddSeconds(10);
+        bool logged=false;
+        while ( IsVisible(ElementByXPath("//a[contains(text(),'Cloudflare')]"))&&DateTime.Now<timeout )
+        {
+            if ( !logged )
+            {
+                logged=true;
+                Log("Waiting for cloudflare....");
+            }
+            Wait( );
+        }
 
+        if ( logged )
+        {
+            Log("Cloudflare is gone");
+            Wait(1);
+        }
+    }
     public override int DoLogin()
     {
         GoToUrl ( "https://coinpayu.com/login" );
         Wait ( 2 );
+        WaitForCloudFlare( );
+
 
         var UserBox = ElementByXPath("//input[@type='email']");
         if (!IsVisible(UserBox))
@@ -121,30 +134,6 @@ class ScriptCoinPayU: FaucetScript
 
         return base.DoLogin();
     }
-
-
-    public override int AfterLogin()
-    {
-
-        return base.AfterLogin();
-    }
-
-
-    public override int GetFaucetWaitTime()
-    {
-
-       
-
-        return base.GetFaucetWaitTime();
-    }
-
-
-    public override int BeforeSolveCaptcha()
-    {
-
-        return base.BeforeSolveCaptcha();
-    }
-
     public override int DoSolveCaptcha()
     {
         var SpanRecaptcha = ElementByXPath("//span[contains(text(),'GoogleRecaptcha')]");
@@ -172,21 +161,6 @@ class ScriptCoinPayU: FaucetScript
 
         }
        return base.DoSolveCaptcha();
-    }
-
-
-    public override int AfterSolveCaptcha()
-    {
-
-        return base.AfterSolveCaptcha();
-    }
-
-
-    public override int BeforeSolveFaucet()
-    {
-       
-
-        return base.BeforeSolveCaptcha();
     }
 
     public IWebElement FindCorrectXPath (string PageNumber )
@@ -220,6 +194,7 @@ class ScriptCoinPayU: FaucetScript
             GoToUrl("https://coinpayu.com/dashboard/ads_surf");
             Wait(3,4);
         }
+        WaitForCloudFlare( );
         DateTime Timeout=DateTime.Now.AddSeconds(20);
         Log ( "Waiting for ads load" );
         while(IsVisible(ElementByXPath( "//div[@class='loader']" ) ) && DateTime.Now<Timeout )
@@ -320,18 +295,4 @@ class ScriptCoinPayU: FaucetScript
 
         return GetWaitSetting();
     }
-
-
-    public override int AfterSolveFaucet()
-    {
-        return base.AfterSolveFaucet();
-    }
-
-
-    public override int CheckFaucetResult()
-    {
-
-        return base.CheckFaucetResult();
-    }
-
 }
