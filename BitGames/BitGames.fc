@@ -93,19 +93,19 @@ public class faucetgame : FaucetScript
 
     public override int GetFaucetWaitTime( )
     {
-        if ( !Driver.Url.Contains("https://www.bitgames.io/play/bt/bt-faucet") )
+        if ( !Driver.Url.Contains("https://www.bitgames.io/offerwalls/faucet/") )
 
         {
-            GoToUrl("https://www.bitgames.io/play/bt/bt-faucet");
+            GoToUrl("https://www.bitgames.io/offerwalls/faucet/");
         }
         Wait(2 , 3);
         try
         {
             Driver.SwitchTo( ).DefaultContent( );
 
-            Driver.SwitchTo( ).Frame(ElementByXPath("//iframe[@id='iframe']"));
+            Driver.SwitchTo( ).Frame(ElementByXPath("//iframe[@id='iframe-offerwalls']"));
             Wait( );
-            var timer = ElementByXPath("//span[@class='timer']");
+            var timer = ElementByXPath("//iframe[@id='iframe-offerwalls']");
             if ( timer!=null )
             {
                 try
