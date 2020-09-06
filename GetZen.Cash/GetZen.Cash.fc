@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 23/12/2019 01:30PM - Version 1
-//Last Update: 04/09/2020 18:00PM - Version 11
+//Last Update: 06/09/2020 08:15AM - Version 12
 //==================//
 
 using System;
@@ -153,7 +153,7 @@ public class GetZen : FaucetScript
         Wait(2);
 	
         var StartLoginButton = ElementByXPath("//div[contains(@class,'user-nav')]//span[contains(text(),'Login')]");
-	    if (IsVisible(StartLoginButton))
+	    if (StartLoginButton !=null) // "found" on the website
 	    {
 		 Click(StartLoginButton);
 	    }
