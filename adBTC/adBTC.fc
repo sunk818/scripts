@@ -37,7 +37,7 @@ namespace Adbtc
         public override void Start( )
         {
 
-            Title="adbtc.top|DO|YOUH|You|Please solve the|satoshi|Bitcoin|Just a moment";
+            Title="adbtc.top|DO|YOUH|You|Please solve the|satoshi|Bitcoin|Just a moment|adbtc";
 
             SuccessXPath="//p[@class='white-text flow-text']";
             FailXPath="//a[@class='btn-large light-blue darken-4']";
