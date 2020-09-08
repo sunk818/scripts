@@ -1,6 +1,7 @@
 using FaucetCollector.Script;
 using System;
-//css_inc RecaptchaUtilities
+//css_ref FaucetCollector.Utilities
+//css_ref FaucetCollector.Captcha
 public class CointiplyScript : FaucetScript
 {
     public override FaucetSettings Settings
@@ -95,7 +96,7 @@ public class CointiplyScript : FaucetScript
         }
         if (!GetBoolSetting("UseSolvemedia"))
         {
-            RecaptchaUtility recaptchaUtility = new RecaptchaUtility(this);
+            FaucetCollector.Captcha.RecaptchaUtility recaptchaUtility = new FaucetCollector.Captcha.RecaptchaUtility(this);
             recaptchaUtility.DoSolve();
         }
         else
@@ -170,6 +171,14 @@ public class CointiplyScript : FaucetScript
 
     public override int DoSolveCaptcha()
     {
+        var popupCloseBtn=ElementByXPath("//button[@class='md-button md-button-condensed no-padding pull-right md-theme-default hide-fl-ad']");
+        if ( IsVisible(popupCloseBtn) )
+        {
+            // We click on the close add with javascript so we don't open a popup trying to close it
+            ExecuteScript("arguments[0].click()" , popupCloseBtn);
+            Wait(1);
+
+        }
         if (GetBoolSetting("UseSolvemedia"))
         {
             ChangeCaptcha(true);
@@ -253,7 +262,7 @@ public class CointiplyScript : FaucetScript
         if (!GetBoolSetting("UseSolvemedia"))
         {
 
-            RecaptchaUtility recaptchaUtility = new RecaptchaUtility(this);
+            FaucetCollector.Captcha.RecaptchaUtility recaptchaUtility = new FaucetCollector.Captcha.RecaptchaUtility(this);
             recaptchaUtility.DoSolve();
         }
         else
