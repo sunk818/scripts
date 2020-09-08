@@ -29,14 +29,6 @@ using System.Linq;
                                 Type=EditorType.Password,
                                 Required=true
                             },
-                            new FaucetSetting( )
-                            {
-                               Name="Ads",
-                               Type=EditorType.CheckBox,
-                               Default=true,
-                               Display="Check Ads"
-
-                            }
                         };
 
 
@@ -44,6 +36,7 @@ using System.Linq;
 
 
         }
+
 
         public override void Start( )
         {
@@ -114,7 +107,7 @@ using System.Linq;
                 Log("Cookies btn clicked");
             }
 
-            var UserBox=ElementByXPath("//input[@id='ctl02_Username']");
+            var UserBox=ElementByXPath("//input[@id='ctl00_MainContentPlaceHolder_ctl00_Username']");
             if ( !IsVisible(UserBox) )
             {
                 if ( !TryingLoginAgain )
@@ -133,7 +126,7 @@ using System.Linq;
             {
                 TryingLoginAgain=false;
             }
-            var PasswordBox=ElementByXPath("//input[@id='ctl02_Password']");
+            var PasswordBox=ElementByXPath("//input[@id='ctl00_MainContentPlaceHolder_ctl00_Password']");
             if ( !IsVisible(PasswordBox) )
             {
                 return Fail("Password bot not found");
@@ -147,7 +140,7 @@ using System.Linq;
                 return result;
 
             }
-            var loginBtn=ElementByXPath("//input[@id='ctl02_LoginButton']");
+            var loginBtn=ElementByXPath("//input[@id='ctl00_MainContentPlaceHolder_ctl00_LoginButon']");
             if ( !IsVisible(loginBtn) )
             {
                 return Fail("login button not found");
@@ -221,8 +214,7 @@ using System.Linq;
 
         public override int DoSolveFaucet( )
         {
-            if ( GetBoolSetting("Ads") )
-            {
+
                 Log("We are going to see if there are available ads");
 
                 GoToUrl("https://litegpt.com/user/earn/ads.aspx");
@@ -319,69 +311,12 @@ using System.Linq;
                     }
 
                 }
-            }
 
-            Log("See if the faucet Claim is available");
 
-            //Go to faucet url
-            GoToUrl("https://litegpt.com/user/earn/faucet.aspx");
-            WaitForCloudFlare( );
-            Wait(2 , 3);
-            DateTime Timeout=DateTime.Now.AddSeconds(20);
-            while ( !IsVisible(ElementByXPath("//select[@id='ctl00_PageMainContent_CaptchaList']"))&&DateTime.Now<Timeout )
-            {
-
-                Wait( );
-
-            }
-            Wait(1);
-            // Solve the captcha of the faucet
-            var res=DoSolveCaptcha( );
-            if ( res>0 )
-            {
-
-                return res;
-            }
-
-            var btnClaim=ElementByXPath("//input[@id='ctl00_PageMainContent_SolvemediaBtn']");
-            if ( !IsVisible(btnClaim) )
-            {
-                return Fail("Btn claim faucet not visible");
-            }
-            Click(btnClaim);
-
-            return base.DoSolveFaucet( );
+        return GetWaitSetting( );
         }
 
-        public override int GetFaucetWaitTime( )
-        {
-            if ( !Driver.Url.Contains("https://litegpt.com/user/earn/faucet.aspx") )
-            {
-                GoToUrl("https://litegpt.com/user/earn/faucet.aspx");
-                Wait(2);
-            }
-
-            var Timer=ElementByXPath("//span[@id='countdown']");
-            if ( Timer!=null )
-            {
-                var TimerText=ExecuteScript("return arguments[0].textContent;",Timer).ToString().
-                    Replace("minutes","").Replace("and","").Replace("seconds","").Trim().Split(' ');
-                int min, seg;
-
-                if ( TimerText.Length==2&&
-                    int.TryParse(TimerText[0] , out min)&&int.TryParse(TimerText[1] , out seg) )
-                {
-                    return min*60+seg;
-                }
-                else
-                {
-                    return 3600;
-                }
-            }
-
-
-            return base.GetFaucetWaitTime( );
-        }
+       
         private bool SolveVisualCaptcha(string name)
         {
             Wait( );
