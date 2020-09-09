@@ -64,12 +64,6 @@ class RollerCoin : FaucetScript
             return Enum.GetNames ( typeof ( Games ) ).ToList ( );
         }
     }
-    public override int DoInit( )
-    {
-        // Rollercoin sometimes bug and doesn't load, since we don't have a captcha in login is better delete the cookies in every run
-        Driver.Manage( ).Cookies.DeleteAllCookies( );
-        return base.DoInit( );
-    }
     public override int DoLogin ( )
     {
         GoToUrl ( "https://rollercoin.com/sign-in" );
