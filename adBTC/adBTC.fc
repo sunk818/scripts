@@ -105,7 +105,7 @@ namespace Adbtc
         public override int DoLogin( )
         {
 
-            var AddressBox = ElementByXPath("//input[@id='firztfiild']");
+            var AddressBox = ElementsByXPath("//input[@type='text' and @required]|//label[contains(text(), 'Email')]//..//input").FirstOrDefault(X=>IsVisible(X));
             if ( !IsVisible(AddressBox) )
             {
                 return Fail("Fail To login address box is not visible");
@@ -123,7 +123,7 @@ namespace Adbtc
             }
             //Captcha probably changed and site refreshed so we need to update the elements and check if it's visible
 
-            AddressBox=ElementByXPath("//input[@id='firztfiild']");
+            AddressBox=ElementsByXPath("//input[@type='text' and @required]|//label[contains(text(), 'Email')]//..//input").FirstOrDefault(x=>IsVisible(x));
             if ( !IsVisible(AddressBox) )
             {
                 return Fail("Fail To login address box is not visible  after solve login captcha");
