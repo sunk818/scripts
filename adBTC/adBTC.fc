@@ -106,7 +106,7 @@ namespace Adbtc
         {
 
             var AddressBox = ElementsByXPath("//input[@type='text' and @required]|//label[contains(text(), 'Email')]//..//input").FirstOrDefault(X=>IsVisible(X));
-            if ( !IsVisible(AddressBox) )
+            if ( AddressBox==null )
             {
                 return Fail("Fail To login address box is not visible");
             }
@@ -124,7 +124,7 @@ namespace Adbtc
             //Captcha probably changed and site refreshed so we need to update the elements and check if it's visible
 
             AddressBox=ElementsByXPath("//input[@type='text' and @required]|//label[contains(text(), 'Email')]//..//input").FirstOrDefault(x=>IsVisible(x));
-            if ( !IsVisible(AddressBox) )
+            if ( AddressBox==null )
             {
                 return Fail("Fail To login address box is not visible  after solve login captcha");
             }
