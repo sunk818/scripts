@@ -299,6 +299,16 @@ public class WadOjoPtcgScript_ : FaucetScript
                     GoToUrl(total_url);
 
                     Wait(2, 3);
+
+                    try
+                    {
+                        // We try to execute function to start timer
+                        ExecuteScript("start_timer();");
+                    }
+                    catch ( Exception )
+                    {
+
+                    }
                     var clock = ElementByXPath("//div[@id='clock']");
                     while (IsVisible(clock))
                     {
