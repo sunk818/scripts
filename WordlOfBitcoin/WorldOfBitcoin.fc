@@ -75,7 +75,7 @@ public class worldofbitcoScript : FaucetScript
         }
         SetText(WalletAddress , GetSetting("User"));
         Wait(1);
-        var buttonLogin = ElementByXPath("//input[@id='signin']");
+        var buttonLogin = ElementByXPath("//input[contains(@id, 'signin')]");
         if ( !IsVisible(buttonLogin) )
         {
             return Fail("Button login is not visible");
@@ -229,7 +229,7 @@ public class worldofbitcoScript : FaucetScript
             return Fail("Fail solving captcha");
         }
         Wait(3);
-        var button = ElementsByXPath("//div[@id='submit']").FirstOrDefault(X=>(IsVisible(X)));
+        var button = ElementsByXPath("//div[contains(@id,'captchaButton')]").FirstOrDefault(X=>(IsVisible(X)));
         if ( !IsVisible(button) )
         {
             return Fail("Button submit isn't visible");
