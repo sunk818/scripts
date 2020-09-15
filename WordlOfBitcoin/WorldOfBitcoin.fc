@@ -75,7 +75,7 @@ public class worldofbitcoScript : FaucetScript
         }
         SetText(WalletAddress , GetSetting("User"));
         Wait(1);
-        var buttonLogin = ElementByXPath("//input[contains(@id, 'signin')]");
+        var buttonLogin = ElementByXPath("//div[contains(@id, 'signin')]");
         if ( !IsVisible(buttonLogin) )
         {
             return Fail("Button login is not visible");
@@ -143,7 +143,7 @@ public class worldofbitcoScript : FaucetScript
             }
             return result;
         }
-        if ( IsVisible(ElementByXPath("//iframe[contains(@src,'bit-puzzle')]")) )
+        if ( IsVisible(ElementByXPath("//div[@id='captchaArea']//iframe[contains(@src,'bitpuzz')]")) )
         {
             int result = 0;
             FaucetCollector.Captcha.AntibotLinksImageType.PuzzleBall puzzleBallSolver = new FaucetCollector.Captcha.AntibotLinksImageType.PuzzleBall(this);
