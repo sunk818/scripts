@@ -1,8 +1,7 @@
-﻿
 
 //==================//
 //script Written by: ••AviramDayan•• 22/08/2019 09:00AM - Version 1
-//Last Update: 29/08/2019 09:00AM - Version 3
+//Last Update: 17/09/2020 00:05PM - Version 4
 //==================//
 
 using System;
@@ -31,13 +30,15 @@ public class WinDice : FaucetScript
         get
         {
 			
-            return new FaucetSettings("https://WinDice.io/")
+            return new FaucetSettings("https://windice.io/")
             {
                 new FaucetSetting(){Name="Email",Display="UserName",Type=EditorType.TextBox,Required=false},
                 new FaucetSetting(){Name="Password",Display="Password",Type=EditorType.Password,Required=false},
 
-                new FaucetSetting() { Name = "btc", Display = "btc - claim", Type = EditorType.CheckBox, Default =true},
+                new FaucetSetting() { Name = "btc", Display = "btc - faucet claim", Type = EditorType.CheckBox, Default =true},
                 new FaucetSetting() { Name = "LimitFaucet", Display = "LimitFaucet - write the full number of satoshi (without point - 0.0 | 1.1 | 2.2 - and etc ) ", Type = EditorType.Numeric, Default = 9 },
+
+                new FaucetSetting() { Name = "ClaimBonus", Display = "ClaimBonus - earn free WIN coin", Type = EditorType.CheckBox, Default =true},		
 
 				new FaucetSetting() { Name = "Rain_AirDrop_Chat", Display = "Rain_AirDrop_Chat - ON/OFF", Type = EditorType.CheckBox, Default = false},		
                 new FaucetSetting(){Name="MessageChat",Display="Your Message In Chat - only need to be active to get any rain",Default = ".",Type=EditorType.TextBox,Required=false},
@@ -114,7 +115,7 @@ public class WinDice : FaucetScript
 		
 
         //if we already login go to here
-        GoToUrl("https://www.WinDice.io/");
+        GoToUrl("https://windice.io/");
 
 		
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
@@ -140,7 +141,7 @@ public class WinDice : FaucetScript
   if (!IsVisible(ExitButton))
   {
 
-        GoToUrl("https://www.WinDice.io/");
+        GoToUrl("https://windice.io/");
         Wait();		
         Wait(2);
 
@@ -276,6 +277,23 @@ public class WinDice : FaucetScript
 //==============//
  public override int DoSolveFaucet()
   {
+
+		//==============//
+		//ClaimBonus//
+		//==============//	
+        if (GetBoolSetting("ClaimBonus"))
+        {  
+          Wait(15);	
+	      var CheckBonus = ElementByXPath("//div[contains(@class,'modal-card')]/div[contains(@class,'bonus-current')]"); 
+          if (IsVisible(CheckBonus)) //if the button NOT disabled - click
+          {
+	      Log("ClaimBonus - here - do claim");
+	      var Bonus_VAR = ElementByXPath("//a[contains(text(),'COLLECT')]");
+	      Click(Bonus_VAR);
+	      }			  
+		}//ClaimBonus
+		//==============//		  
+
 	
 		//==============//
 		//Rain_AirDrop_Chat//
@@ -291,8 +309,6 @@ public class WinDice : FaucetScript
 		}// Rain_AirDrop_Chat
 		//==============//
 
-		 
-
 	
 /*
 		//==============//
@@ -300,7 +316,7 @@ public class WinDice : FaucetScript
 		//==============//
         if (GetBoolSetting("AutoWithdraw"))
         {
-         GoToUrl("https://panel.bither.one/dashboard");
+         GoToUrl("https://windice.io/");
          Wait();
          Wait(2);
 
@@ -322,7 +338,7 @@ public class WinDice : FaucetScript
       if (!IsVisible(ProtectionAffiliate_NotZero)) //if the Affiliate NOT 0 - only then do stuff
 	  {
 		Log("AffWithdraw");
-		GoToUrl("https://WinDice.io/affiliate/funds");
+		GoToUrl("https://windice.io/cabinet/partner");
 		Wait();
 		Wait(2);	
 
@@ -375,7 +391,7 @@ public class WinDice : FaucetScript
  
 
 
-        GoToUrl("https://www.WinDice.io/");
+        GoToUrl("https://windice.io/");
 		Log("Go to faucet");	
 		
 		Wait();
@@ -479,7 +495,7 @@ public class WinDice : FaucetScript
         if (BalanceINT > MyAmount) // the Default Limit to withdraw is 1000
         {
 			Log("AutoWithdraw - Above >");
-            //GoToUrl("https://panel.bither.one/withdraw");
+            //GoToUrl("https://windice.io/");
 
             var WalletCheck = ElementByXPath("//input[@class='form-control' and (@readonly) ]");
 	        if (!IsVisible(WalletCheck))  //if NOT visible "readonly" so set the wallet
