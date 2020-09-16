@@ -1,8 +1,7 @@
 
-
 //==================//
 //script Written by: ••AviramDayan•• 15/07/2020 17:00AM - Version 1
-//Last Update: 15/07/2020 17:00AM - Version 1
+//Last Update: 16/09/2020 05:30AM - Version 2
 //==================//
 
 using System;
@@ -39,8 +38,10 @@ public class FocusGames : FaucetScript
                 new FaucetSetting(){Name="Email",Display="UserName",Type=EditorType.TextBox,Required=true},
                 new FaucetSetting(){Name="Password",Display="Password",Type=EditorType.Password,Required=true},
 				
-                new FaucetSetting(){Name="FaucetClaim",Display="FaucetClaim",Type=EditorType.CheckBox,Default=true},		
+                new FaucetSetting(){Name="FaucetClaim",Display="FaucetClaim",Type=EditorType.CheckBox,Default=true},			
                 new FaucetSetting(){Name="DailyActiveClaim",Display="DailyActiveClaim",Type=EditorType.CheckBox,Default=true},               
+			
+			
 			
                 //insert user settings here
                 //new FaucetSetting { 
@@ -104,9 +105,8 @@ public class FocusGames : FaucetScript
 //==================//
     public override bool IsLoggedIn()
     {
-
         //In this case we check for en element with the class "loggedIn"
-		return ElementByXPath("//a[contains(@href,'logout')]") != null;
+		return ElementByXPath("//div[contains(@class,'dropdown-toggle')]") != null;
 		//return true;
     }
 //==================//
@@ -137,7 +137,7 @@ public class FocusGames : FaucetScript
  public override int DoLogin()
  {
 	
-  var ExitButton = ElementByXPath ("//a[contains(@href,'logout')]"); 
+  var ExitButton = ElementByXPath("//div[contains(@class,'dropdown-toggle')]"); 
 
   //if i NOT Login - go to Login Page
   if (!IsVisible(ExitButton))
@@ -269,8 +269,6 @@ public class FocusGames : FaucetScript
     public override int DoSolveFaucet()
     {
 
-
-
       //=============//
       //DailyActiveClaim
       //=============//
@@ -294,12 +292,14 @@ public class FocusGames : FaucetScript
 		  Log("DailyActiveClaim - Available ");  			
 		  Click(ClaimAvailable);
           Wait(6); 
+		  Log("DailyActiveClaim - Success "); 
           var SuccessMessage = ElementByXPath("//div[contains(@class,'alert-success alert-dismissible')]");
 		  Log(SuccessMessage.Text); 
 		  ClaimSuccess(); //Marks the claim as a success
         }
 		
       } //end DailyActiveClaim
+      //=============//
 	  
 	
       //=============//
@@ -307,41 +307,69 @@ public class FocusGames : FaucetScript
       //=============//
       if (GetBoolSetting("FaucetClaim"))
       {
-	
-		GoToUrl("https://focusgames.io/faucet");
-		Log("FaucetClaim - go to ");  		
-	    Wait();
-	    Wait(4);
-		
-        var ClaimButton = ElementByXPath("//button[contains(text(),'Claim')]");		
-		
-        if (!IsVisible(ClaimButton))
+
+        var TimeToWaitForBreak = DateTime.Now.AddSeconds(1200); //1200sec = 20min
+        while (true)
         {
-		  Log("DailyActiveClaim - Not here - try next time ");  
-		}
-
-        if (IsVisible(ClaimButton))
-        {
-		  Log("FaucetClaim - Available ");  
-		  Click(ClaimButton);
-          
-		  Wait(5);
+		    
+		  GoToUrl("https://focusgames.io/faucet");
+		  Log("FaucetClaim - go to ");  		
+	      Wait();
+	      Wait(4);
 		  
-		  Recaptcha_Function (); //call if apper
+          var CheckStuff = ElementByXPath("//button[contains(text(),'Claim FREE')] | //button[contains(text(),'Complete')] ");		
 		  
-          var CompleteClaimButton = ElementByXPath("//button[contains(text(),'Complete')]");	
-		  Click(CompleteClaimButton);	
+          if (!IsVisible(CheckStuff))
+          {
+		    Log("FaucetClaim - Not here - try next time - break the loop ");  
+            break;
+		  }
+		  
+          if (IsVisible(CheckStuff))
+          {
+		      Log("FaucetClaim - Available ");  
+              var ClaimButton = ElementByXPath("//button[contains(text(),'Claim FREE')]");	
+		      Click(ClaimButton);
+              
+		      Wait(5);
 
-		  Wait(4);
+		      Recaptcha_Function (); //call if apper
+		      
+              var CompleteClaimButton = ElementByXPath("//button[contains(text(),'Complete')]");	
+              
+			  if (!IsVisible(CompleteClaimButton))
+              {
+              Log("FaucetClaim - break - not Available");
+              break;
+              }
+			  
+              if (IsVisible(CompleteClaimButton))
+              {
+		      Log("FaucetClaim - CompleteClaimButton");
+		      Click(CompleteClaimButton);	
+			  
+		      Wait(2);
+			  
+              var SuccessMessage = ElementByXPath("//div[contains(@class,'alert alert-success')]");
+		      Log(SuccessMessage.Text); 
+		      ClaimSuccess(); //Marks the claim as a success			  
+			  }
+			  
+		      Wait(3);  
 
-          var SuccessMessage = ElementByXPath("//div[contains(@class,'alert alert-success')]");
-		  Log(SuccessMessage.Text); 
-		  ClaimSuccess(); //Marks the claim as a success
-          		  
-		}
+		  } //end CheckStuff
+
+          if (DateTime.Now > TimeToWaitForBreak) //if the time above 65 sec 
+          {
+          Log("FaucetClaim - break - TimeToWaitForBreak");
+          break; //break the wait loop
+          }
+		  
+	    }//end while
 
       } //end FaucetClaim
-
+      //=============//
+	  
         //ad = true; //call to timer / and do success		
 		return Time_Function();
 	
@@ -438,6 +466,7 @@ public class FocusGames : FaucetScript
 		return 0;
         }//end Recaptcha_Function
         //=================//	
-	
-	
+
+
+
 } //public class dogeto
