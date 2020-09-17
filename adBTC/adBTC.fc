@@ -257,9 +257,22 @@ namespace Adbtc
             }
             return 0;
         }
+        private void OpenMenu( )
+        {
+            // Open the menu if we are in mobile design 
+            var OpenMenuBtn=ElementByXPath("//a[@class='sidenav-trigger']");
+            if ( IsVisible(OpenMenuBtn) )
+            {
+                Click(OpenMenuBtn);
+                Wait(1);
+            }
+        }
         public override int BeforeSolveFaucet( )
         {
-            var surf = ElementByXPath("//a[contains(@href,'https://adbtc.top/surf/browse')]//li[contains(@class,'collection-item')]");
+            // Open the menu if we are in mobile design 
+            OpenMenu( );
+
+             var surf = ElementByXPath("//a[contains(@href,'https://adbtc.top/surf/browse')]//li[contains(@class,'collection-item')]");
             if ( !IsVisible(surf) )
             {
                 return Fail("Go to ad area button is not visible");
@@ -386,6 +399,8 @@ namespace Adbtc
 
             if ( GetBoolSetting("Faucet") )
             {
+                // Open the menu if we are in mobile design 
+                OpenMenu( );
                 // If the user like to claim the faucet  we see if the button to go to the faucet is visible
                 var GotoFaucetBtn=ElementByXPath("//a[@href='https://adbtc.top/faucet']//li[contains(@class,'collection-item')]");
                 if ( IsVisible(GotoFaucetBtn) )
@@ -429,6 +444,7 @@ namespace Adbtc
 
             if ( GetBoolSetting("SA") )
             {
+                OpenMenu( );
                 var GotoSurfAds = ElementByXPath("//a[@href='http://adbtc.top/surftab/inf']");
                 if ( IsVisible(GotoSurfAds) )
                 {
@@ -510,6 +526,7 @@ namespace Adbtc
             Wait( );
             if ( GetBoolSetting("AS") )
             {
+                OpenMenu( );
                 try
                 {
                     var GotoAutoSurf = ElementByXPath("//a[@href='http://adbtc.top/autosurf/inf']");
