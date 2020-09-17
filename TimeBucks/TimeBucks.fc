@@ -1,7 +1,7 @@
 
 //==================//
 //script Written first by: ••cgerabit•• 30/10/2018 10:30AM - Version 1
-//Last Update by: ••AviramDayan••: 16/09/2020 22:40PM - Version 9
+//Last Update by: ••AviramDayan••: 18/09/2020 02:00AM - Version 10
 //==================//
 
 using System;
@@ -26,6 +26,7 @@ public class TimeBucks : FaucetScript
                 new FaucetSetting(){Name="Watch",Display="WathAvaible Videos",Type=EditorType.CheckBox,Default=true},
                 new FaucetSetting(){Name="SlideShows",Display="SlideShows",Type=EditorType.CheckBox,Default=true},
                 new FaucetSetting(){Name="NightFallNews",Display="NightFallNews",Type=EditorType.CheckBox,Default=true},				
+                new FaucetSetting(){Name="Clicks",Display="Clicks",Type=EditorType.CheckBox,Default=true},				
                 new FaucetSetting(){Name="TT",Display="Time to wait",Type=EditorType.Numeric,Default=60},
                 //insert user settings here
                 //new FaucetSetting { 
@@ -49,35 +50,22 @@ public class TimeBucks : FaucetScript
         Title = "";
         cs = false;
         //After we did try to claim on the faucet we search for these elements to determine if it was a success or a fail
-        SuccessXPath = "//span[@id='counter2']";
-        FailXPath = "//span[@id='Failed']";
+        SuccessXPath = "//*"; // //span[@id='counter2']
+        FailXPath = "//*"; // //span[@id='Failed']
 
         //Let Faucet Collector start up everything
         base.Start();
     }
 
-    /// <summary>
-    /// This is the first method to run after the browser is opened and the first page is loaded.
-    /// </summary>
+
     public override int DoInit()
     {
-        var FormLoginButton = ElementByXPath("//span[@class='button-top btnLogin']");
-        if (IsVisible((FormLoginButton)))
-        {
-            Click(FormLoginButton);
-            Wait(1);
-        }
 
         //Let Faucet Collector continue.
         return base.DoInit();
     }
 
-    /// <summary>
-    /// This method gets called after the Start method, here you need to return if we are logged in or not.
-    /// If you return false then it will call the BeforeLogin, Login and AfterLogin methods so you can login.
-    /// After those Login methods are called it will call this IsLoggedIn method again to see if the login did succeed.
-    /// If you return true Faucet Collector will store all cookies so it will probably be already logged in on the next attempt.
-    /// </summary>
+
     public override bool IsLoggedIn()
     {
         //In here we can check for the presence of an element that is only present when you are logged in.
@@ -85,23 +73,31 @@ public class TimeBucks : FaucetScript
         return ElementByXPath("//a[contains(@href,'action.php?action=logout')]") != null;
     }
 
-    /// <summary>
-    /// This method gets called if IsLoggedIn returned false, right before the DoLogin method is called.
-    /// </summary>
+
     public override int BeforeLogin()
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
         return base.BeforeLogin();
     }
 
-    /// <summary>
-    /// This method gets called after BeforeLogin, but only if IsLoggedIn returned false.
-    /// It can be used to actually login the user/enter wallet details in the faucet
-    /// </summary>
-    /// <returns></returns>
+
     bool cs;
+	
+	
+//======//
+//DoLogin//
+//======//
     public override int DoLogin()
     {
+		
+        var StartLogin = ElementByXPath("//span[contains(@class,'btnLogin')]") ;
+        if (IsVisible(StartLogin))
+        {
+		    Click(StartLogin);
+		}
+
+        Wait(3);		
+		
         var UsernameBox = ElementByXPath("//input[@id='username_box']");
         if (!IsVisible(UsernameBox))
         {
@@ -135,10 +131,10 @@ public class TimeBucks : FaucetScript
 		
         return base.DoLogin();
     }
+//======//
 
-    /// <summary>
-    /// This method gets called after the DoLogin method.
-    /// </summary>
+
+
     public override int AfterLogin()
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
@@ -147,12 +143,9 @@ public class TimeBucks : FaucetScript
 
 
 
-    /// <summary>
-    /// This method gets called after the login methods are successful, so we are logged into the faucet.
-    /// If the faucet is not yet ready to claim you should return a TimeStamp value to return how long it takes before the Faucet claim can be done.
-    /// This is used to pause the script while the faucet its timer runs out.
-    /// Return the number of seconds the bot should wait.
-    /// </summary>
+//=================//
+//GetFaucetWaitTime//
+//=================//
     public override int GetFaucetWaitTime()
     {
         if (cs)
@@ -173,6 +166,7 @@ public class TimeBucks : FaucetScript
         //let Faucet Collector continue.
         return base.GetFaucetWaitTime();
     }
+//=================//
 
 
     public override int BeforeSolveCaptcha()
@@ -200,11 +194,97 @@ public class TimeBucks : FaucetScript
     }
 
 
+
 //=============//
 //DoSolveFaucet//
 //=============//
     public override int DoSolveFaucet()
     {
+		
+		//==========//
+		//Clicks//
+		//==========//
+        if (GetBoolSetting("Clicks"))
+        {
+
+           Title = "Earn";
+           GoToUrl("https://timebucks.com/publishers/index.php?pg=earn&tab=view_content_ads");
+	
+           Wait(2);
+		   
+		   var Captcha_Check = ElementByXPath("//iframe[contains(@src,'google.com/recaptcha')]");
+           if (IsVisible(Captcha_Check))
+		   {
+             Log("Clicks - do recaptcha");
+             Recaptcha_Function(); //call
+           }
+
+           Wait(6);
+		
+		   var CheckAll = ElementByXPath("//input[@value='View']");
+           if (IsVisible(CheckAll))
+		   {
+
+             var TimeToWaitForBreak = DateTime.Now.AddSeconds(420); //420sec = 7min
+             while (true)
+             {
+				 
+               CheckForPopupsEnabled = false;	
+				 
+               Title = "";
+
+		       var Captcha_2_Check = ElementByXPath("//iframe[contains(@src,'google.com/recaptcha')]");
+               if (IsVisible(Captcha_2_Check))
+		       {
+                 Log("Clicks - do recaptcha");
+                 Recaptcha_Function(); //call
+               }
+			   
+		       var ViewButtons = ElementByXPath("//input[@value='View']");
+			   if (IsVisible(ViewButtons))
+		       {
+               Log("Clicks - View button - start");
+			   Click(ViewButtons);
+			   }
+			   
+			   Wait(5);
+		   		   
+               Driver.SwitchTo().Window(Driver.WindowHandles[1]);
+			   
+               Log("Clicks - Wait for end AD");
+			   Wait(70);
+
+               Title = "Earn";
+               Driver.SwitchTo().Window(Driver.WindowHandles[0]);
+
+               CheckForPopupsEnabled = true; //enable
+               CheckForPopups();    //call
+			      
+		       var Timer_Run_Check = ElementByXPath("//h2[contains(@class,'timerMessage') and contains(@style,'display:none')]") ;
+               if (!IsVisible(Timer_Run_Check)) //NOT Visible
+		       {
+				   Log("Clicks - Time end - success");
+				   ClaimSuccess(); //Marks the claim as a success
+			   }
+	   
+               if (DateTime.Now > TimeToWaitForBreak) //if the time above 65 sec 
+               {
+               Log("Clicks - break - TimeToWaitForBreak");
+               break; //break the wait loop
+               }
+		     
+		     } //end while
+		 
+		   } //end CheckAll
+		   
+           Title = "Earn";
+           CheckForPopupsEnabled = true; //enable
+           CheckForPopups();    //call
+		   
+        } //end Clicks
+		//==========//		
+		
+		
 		//==========//
 		//SlideShows//
 		//==========//
@@ -251,7 +331,8 @@ public class TimeBucks : FaucetScript
 			   
                if (Driver.Url.Contains("https://timebucks.com/publishers/index.php?pg=earn&tab=view_content_timecave_slideshows"))	   			   
                {
-               Log("SlideShows - break - end season - succeed");
+               Log("SlideShows - break - end season - success");
+			   ClaimSuccess(); //Marks the claim as a success
                break; //break the wait loop
                }
 	   
@@ -273,7 +354,7 @@ public class TimeBucks : FaucetScript
 		   } //end CheckAll
 		   
            Title = "Earn";
-           CheckForPopupsEnabled = true;     //enable
+           CheckForPopupsEnabled = true; //enable
            CheckForPopups();    //call
 		   
         } //end SlideShows
@@ -316,6 +397,21 @@ public class TimeBucks : FaucetScript
 			   
                Wait(); //Wait for NEXT button
                Log("NightFallNews - Wait for NEXT button");
+
+		       var Article_Click = ElementByXPath("//div[contains(@class,'click_checker')]/div[@class='col-md-4']");
+               if (IsVisible(Article_Click))
+		       {
+                Log("NightFallNews - Click on Article");
+                Click(Article_Click);				
+			   }
+
+		       var StartEndNewOne = ElementByXPath("//a[contains(text(),'START NEXT')]");
+               if (IsVisible(StartEndNewOne))
+		       {
+                ClaimSuccess(); //Marks the claim as a success
+                Log("NightFallNews - END - success - start new one");
+                Click(StartEndNewOne);			
+			   }
 			   
 		       var Time_check = ElementByXPath("//span[text()='10']");
                if (IsVisible(Time_check))
@@ -349,7 +445,7 @@ public class TimeBucks : FaucetScript
 		   } //end CheckAll
 		   
            Title = "Earn";
-           CheckForPopupsEnabled = true;     //enable
+           CheckForPopupsEnabled = true; //enable
            CheckForPopups();    //call
 		   
         } //end NightFallNews
