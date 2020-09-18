@@ -398,7 +398,7 @@ public class TimeBucks : FaucetScript
                Wait(); //Wait for NEXT button
                Log("NightFallNews - Wait for NEXT button");
 
-		       var Article_Click = ElementByXPath("//div[contains(@class,'click_checker')]/div[@class='col-md-4']");
+		       var Article_Click = ElementByXPath("//div[contains(@class,'click_checker')]//div[@class='col-md-4']");
                if (IsVisible(Article_Click))
 		       {
                 Log("NightFallNews - Click on Article");
