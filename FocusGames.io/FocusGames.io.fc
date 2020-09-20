@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 15/07/2020 17:00AM - Version 1
-//Last Update: 16/09/2020 05:30AM - Version 2
+//Last Update: 20/09/2020 05:30AM - Version 3
 //==================//
 
 using System;
@@ -40,7 +40,7 @@ public class FocusGames : FaucetScript
 				
                 new FaucetSetting(){Name="FaucetClaim",Display="FaucetClaim",Type=EditorType.CheckBox,Default=true},			
                 new FaucetSetting(){Name="DailyActiveClaim",Display="DailyActiveClaim",Type=EditorType.CheckBox,Default=true},               
-			
+                new FaucetSetting() { Name = "CaptchaChoose", Display = "ON SolveMedia / OFF ReCaptcha", Type = EditorType.CheckBox, Default = true },			
 			
 			
                 //insert user settings here
@@ -439,7 +439,18 @@ public class FocusGames : FaucetScript
 
         public int Recaptcha_Function()
         {
-			
+
+          //CaptchaChoose
+          var dropdown = ElementByXPath("//select[contains(@name,'captcha_type')]");
+          if (GetBoolSetting("CaptchaChoose"))
+          {
+              SelectOptionByValue(dropdown, "1"); //SolveMedia
+          }
+          if (!GetBoolSetting("CaptchaChoose"))
+          {
+              SelectOptionByValue(dropdown, "0"); //ReCaptcha
+          }
+		
           //DoSolveImageCaptcha
           var SolveMedia = ElementByXPath ("//img[contains(@id,'adcopy-puzzle-image-image')]"); 
           if (IsVisible(SolveMedia))
