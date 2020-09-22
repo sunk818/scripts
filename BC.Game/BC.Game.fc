@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 30/04/2019 21:09PM - Version 1
-//Last Update: 31/08/2020 11:45AM - Version 36
+//Last Update: 22/09/2020 07:35AM - Version 37
 //==================//
 
 using System;
@@ -180,7 +180,7 @@ public class bcgame : FaucetScript
 		
 		Wait(2);
 			
-        var ButtonLog = ElementByXPath("//button[contains(@class,'xbutton') and contains(text(),'SIGN IN')] | //button[contains(@type,'button') and contains(@class,'sc-fzplWN') ]");
+        var ButtonLog = ElementByXPath("//div[contains(@class,'xdialog')]//button[contains(text(),'SIGN IN')]");
         Click(ButtonLog);
 		
 		Wait(1);
