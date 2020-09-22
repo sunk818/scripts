@@ -2,7 +2,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 10/04/2020 17:30PM - Version 1
-//Last Update: 01/06/2020 06:10PM - Version 2
+//Last Update: 22/09/2020 07:20AM - Version 3
 //==================//
 
 using System;
@@ -247,6 +247,7 @@ public override int DoSolveFaucet()
        }
 	
 	   Wait();	
+	   Wait(5);
       //=============//
 
 	  
@@ -396,4 +397,4 @@ public override int DoSolveFaucet()
         //=================//	
 	
 	
-} //public class dogeto
+} //public class
