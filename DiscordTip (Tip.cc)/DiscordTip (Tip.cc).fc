@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 05/12/2018 06:00AM 
-//Last Update: 11/08/2020 04:35AM - Version 61
+//Last Update: 24/09/2020 00:35AM - Version 62
 //==================//
 
 using System;
@@ -12,7 +12,7 @@ using OpenQA.Selenium.Interactions;
 //css_inc RecaptchaUtilities
 
 
-public class discordapp_ : FaucetScript
+public class DiscordScript: FaucetScript
 {
     /// <summary>
     /// List of Settings that will be shown in the bot when selecting this Faucet in the bot.
@@ -43,7 +43,7 @@ public class discordapp_ : FaucetScript
 				new FaucetSetting(){Name="Command_1",Display="LaccsFaucet_BTC - Command_1",Default="!claim",Type=EditorType.TextBox,Required=true},
 				new FaucetSetting(){Name="Command_2",Display="LaccsFaucet_BTC - Command_2",Default="%claim",Type=EditorType.TextBox,Required=true},
                 new FaucetSetting(){Name="Discordtip_LaccsFaucet_vote_OnOff",Display="Discordtip_LaccsFaucet_vote - On/off",Type=EditorType.CheckBox,Default=true},
-				new FaucetSetting(){Name="Discordtip_LaccsFaucet_Main_ID",Display="LaccsFaucet - Vote and Claim between 50 to 100 satoshi - every 12 hours' ",Default="621049716913733642",Type=EditorType.TextBox,Required=true},
+				new FaucetSetting(){Name="Discordtip_LaccsFaucet_Main_ID",Display="LaccsFaucet - Vote and Claim between 50 to 100 satoshi - every 12 hours' ",Default="719287586849423420",Type=EditorType.TextBox,Required=true},
 
                 new FaucetSetting(){Name="Discordtip_GridCoin_OnOff",Display="GridCoin - Faucet every 24h - OnOff",Type=EditorType.CheckBox,Default=true},		
               
@@ -630,7 +630,7 @@ public class discordapp_ : FaucetScript
 
 		//first go to server
 	    Title = "Discord";	
-		GoToUrl("https://discord.gg/52zUZaM");
+		GoToUrl("https://discord.gg/Dx6eVgt"); // old server https://discord.gg/52zUZaM
 		Wait();	
 		Wait(5);		
 
@@ -830,7 +830,7 @@ public class discordapp_ : FaucetScript
 		Wait();
         Wait(5);
         Title = "#commands";		
-        GoToUrl("https://discordapp.com/channels/529052821614493698/621344688393289728");
+        GoToUrl("https://discord.com/channels/749393412238868571/749397869202505858"); //old channel https://discordapp.com/channels/529052821614493698/621344688393289728
 		Log("Discordtip_LaccsFaucet_BTC: go to to claim in channel  | LaccsFaucet - BTC "); 	
 		Wait();
 		Wait(6);
