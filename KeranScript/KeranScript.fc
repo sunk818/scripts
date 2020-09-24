@@ -1,0 +1,259 @@
+﻿using FaucetCollector.Script;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+
+public class KeranScript : FaucetScript
+{
+    public override FaucetSettings Settings
+    {
+        get
+        {
+            return new FaucetSettings(BASEURL)
+            {
+                new FaucetSetting(){
+                    Name="User",
+                    Type=EditorType.TextBox,
+                    Required=true,
+                    Display="Faucet Pay Address"
+                },
+                new FaucetSetting(){
+                    Name="Coin",
+                    Type=EditorType.ComboBox, 
+                    // We set bitcoin as default
+                    Default=CoinSitePairs.Keys.FirstOrDefault() ,
+                    Items = CoinSitePairs.Keys.ToList(),
+                    Display="Coin Selected"
+                }
+
+
+            };
+
+
+        }
+    }
+
+    // base domain a schema of the site
+    private const string BASEURL="https://keran.co/";
+    // Coin pairs with the domains
+    private readonly Dictionary<string , string> CoinSitePairs=new Dictionary<string, string>
+    {
+        {"BTC",BASEURL+"BTC" },
+        {"BCH",BASEURL+"BCH" },
+        {"DASH",BASEURL+"DASH" },
+        {"Doge",BASEURL+"DOGE" },
+        {"Eth",BASEURL+"ETH" },
+        {"LTC",BASEURL+"LTC" },
+        {"DGB",BASEURL+"DGB" },
+        {"TRX",BASEURL+"TRX" }
+    };
+    public override void Start( )
+    {
+
+        SuccessXPath="//div[@class='alert alert-success']";
+        FailXPath="//div[@class='alert alert-danger']";
+
+        Title="KERAN.CO|"+PairSelected;
+        // We update the url
+        Url=SelectedUrl;
+
+        base.Start( );
+    }
+    private string PairSelected
+    {
+        get
+        {
+            try
+            {
+                return GetSetting("Coin");
+            }
+            catch ( Exception )
+            {
+                // If something goes wrong we catch the exception and return empty 
+                Log("Something went wrong getting the coin");
+                return string.Empty;
+            }
+        }
+
+    }
+
+    private string SelectedUrl
+    {
+        get
+        {
+            string pairSelected=PairSelected;
+
+            if ( string.IsNullOrEmpty(pairSelected) )
+            {
+                return string.Empty;
+            }
+
+            try
+            {
+                return CoinSitePairs[pairSelected];
+            }
+            catch ( Exception )
+            {
+                Log("Something went wrong getting the url");
+
+                return string.Empty;
+            }
+        }
+    }
+
+    private void GoToSelectedUrl(bool reload = false)
+    {
+        string url = SelectedUrl;
+
+        if ( Driver.Url!=url )
+        {
+            GoToUrl(url);
+        }
+        else if ( reload )
+        {
+            Driver.Navigate( ).Refresh( );
+        }
+        Wait( );
+    }
+    public override int DoInit( )
+    {
+        GoToSelectedUrl(true);
+        // We go to the selected url 
+
+
+
+
+        return base.DoInit( );
+    }
+
+    public override bool IsLoggedIn( )
+    {
+        GoToSelectedUrl( );
+        var navBarBrand=ElementByXPath("//a[@class='navbar-brand']");
+        // We check if the site are correctly loaded before check for the  login btn 
+        if ( navBarBrand==null )
+        {
+
+            Fail("We have a problem loading the site please check your internet connection and try again");
+            return false;
+        }
+
+
+        return ElementByXPath("//button[contains(text(),'GET STARTED')]")==null;
+    }
+
+    private void InjectSuccessCheck( )
+    {
+        // We need to use javasscript to find if we have claimed succesfully or not since there is not a way to select correctly the element using relative 
+        // or absolute xpath
+        ExecuteScript("function checkSuccess(){  var arr = Array.from(document.getElementsByClassName(\"alert alert-success\")); return arr.find(x=>x.textContent.indexOf(\"You can claim again in \")!=-1)!=null }");
+    }
+
+    public override int GetFaucetWaitTime( )
+    {
+        InjectSuccessCheck( );
+        Wait(1);
+
+        var success= Convert.ToBoolean(ExecuteScript("return checkSuccess();"));
+
+        if ( success )
+        {
+            return 600;
+        }
+
+        return base.GetFaucetWaitTime( );
+    }
+    public override int DoLogin( )
+    {
+        GoToSelectedUrl( );
+
+
+        var modalBtn=ElementByXPath("//button[@data-target='#myModal']");
+        if ( !IsVisible(modalBtn) )
+        {
+            return Fail(nameof(modalBtn)+"not visible or not found");
+        }
+        // We prefer click with javascript this time so we don't oppen a popups
+        ExecuteScript("arguments[0].click();" , modalBtn);
+        Wait(1);
+
+        var addressBox=ElementByXPath("//input[@name='address']");
+        if ( !IsVisible(addressBox) )
+        {
+            return Fail(nameof(addressBox)+"not visible or not found");
+        }
+
+        SetText(addressBox , GetSetting("User"));
+
+        var loginBtn=ElementByXPath("//button[@class='btn btn-primary btn-block']");
+        if ( !IsVisible(loginBtn) )
+        {
+            return Fail(nameof(loginBtn)+"not visible or not found");
+        }
+        // We prefer click with javascript this time so we don't oppen a popups
+        ExecuteScript("arguments[0].click();" , loginBtn);
+        Wait(1);
+
+
+        return base.DoLogin( );
+    }
+
+    public override int DoSolveFaucet( )
+    {
+        var btnGoCaptcha=ElementByXPath("//button[@class='btn btn-primary btn-block col-lg-3']");
+        if ( !IsVisible(btnGoCaptcha) )
+        {
+            return Fail(nameof(btnGoCaptcha)+"not found or not visible");
+        }
+        Click(btnGoCaptcha);
+        // Wait for cloudflare
+        Wait(6 , 7);
+
+        var modalBtn=ElementByXPath("//button[@data-target='#myModal']");
+        if ( !IsVisible(modalBtn) )
+        {
+            return Fail(nameof(modalBtn)+"not visible or not found");
+        }
+
+        Click(modalBtn);
+
+        Wait(1);
+
+        var result=DoSolveCaptcha();
+        if ( result>0 )
+        {
+            return result;
+        }
+
+
+
+
+
+
+
+        return base.DoSolveFaucet( );
+    }
+
+
+    public override int CheckFaucetResult( )
+    {
+
+        InjectSuccessCheck( );
+        Wait(1);
+
+        var success= Convert.ToBoolean(ExecuteScript("return checkSuccess();"));
+
+        if ( success )
+        {
+            IsSuccess=true;
+            ClaimSuccess( );
+            Log("You have claimed successfully" , Level.Payout);
+            return 0;
+        }
+
+        return base.CheckFaucetResult( );
+    }
+
+}
+
