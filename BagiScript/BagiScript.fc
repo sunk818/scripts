@@ -60,13 +60,6 @@ public class BagiScript : FaucetScript
 
         base.Start( );
     }
-
-
-    public override int AfterCreateDriver( )
-    {
-        return base.AfterCreateDriver( );
-    }
-
     private string PairSelected
     {
         get
