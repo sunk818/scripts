@@ -192,7 +192,8 @@ public class AdDashScript : FaucetScript
         int NClaims = 0;
         string BalanceText = string.Empty;
         int captchaTries=0;
-        while ( (IsVisible(DivCaptcha)||IsVisible(ButtonAd)) && captchaTries<5 )
+        int AdTries=0;
+        while ( (IsVisible(DivCaptcha)||IsVisible(ButtonAd)) && captchaTries<5  && AdTries<10)
         {
 
             var Balance = ElementByXPath("//p[@class='white-text flow-text' and contains(text(),'Account Balance')]//b");
@@ -202,6 +203,7 @@ public class AdDashScript : FaucetScript
             }
             if ( IsVisible(DivCaptcha) )
             {
+                AdTries=0;
                 captchaTries++;
                 var result = DoSolveCaptcha();
                 if ( result>0 )
@@ -226,6 +228,7 @@ public class AdDashScript : FaucetScript
             {
                 try
                 {
+                    AdTries++;
                     captchaTries=0;
                     CheckForPopupsEnabled=false;
                     Click(ButtonAd , false);
