@@ -172,7 +172,7 @@ public class BagiScript : FaucetScript
         var modalBtn=ElementByXPath("//button[@data-target='#myModal']");
         if ( !IsVisible(modalBtn) )
         {
-            return Fail(nameof(modalBtn)+"not visible or not found");
+            return Fail("modalBtn not visible or not found");
         }
         // We prefer click with javascript this time so we don't oppen a popups
         ExecuteScript("arguments[0].click();" , modalBtn);
@@ -181,7 +181,7 @@ public class BagiScript : FaucetScript
         var addressBox=ElementByXPath("//input[@name='address']");
         if ( !IsVisible(addressBox) )
         {
-            return Fail(nameof(addressBox)+"not visible or not found");
+            return Fail("addressBox not visible or not found");
         }
 
         SetText(addressBox , GetSetting("User"));
@@ -189,7 +189,7 @@ public class BagiScript : FaucetScript
         var loginBtn=ElementByXPath("//button[@class='btn btn-primary btn-block']");
         if ( !IsVisible(loginBtn) )
         {
-            return Fail(nameof(loginBtn)+"not visible or not found");
+            return Fail("loginBtn not visible or not found");
         }
         // We prefer click with javascript this time so we don't oppen a popups
         ExecuteScript("arguments[0].click();" , loginBtn);
@@ -204,7 +204,7 @@ public class BagiScript : FaucetScript
         var btnGoCaptcha=ElementByXPath("//button[@class='btn btn-primary btn-block col-lg-3']");
         if ( !IsVisible(btnGoCaptcha) )
         {
-            return Fail(nameof(btnGoCaptcha)+"not found or not visible");
+            return Fail("btnGoCaptcha not found or not visible");
         }
         Click(btnGoCaptcha);
         // Wait for cloudflare
@@ -213,7 +213,7 @@ public class BagiScript : FaucetScript
         var modalBtn=ElementByXPath("//button[@data-target='#myModal']");
         if ( !IsVisible(modalBtn) )
         {
-            return Fail(nameof(modalBtn)+"not visible or not found");
+            return Fail("modalBtn not visible or not found");
         }
 
         Click(modalBtn);
