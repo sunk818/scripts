@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 26/05/2019 04:00PM
-//Last Update: 22/09/2020 06:30AM - Version 17
+//Last Update: 26/09/2020 21:30PM - Version 18
 //==================//
 
 using System;
@@ -67,8 +67,8 @@ public class stake : FaucetScript
                 new FaucetSetting() { Name = "Win_Counter_Auto_Random_Label", Display = "Win Counter - if ON - before each Spin/BET - each time that you 'LOSE' under your 'Counter' - if you not WIN it will auto change the numbers in 'Random' ", Type = EditorType.Label},	
                 new FaucetSetting(){Name="Win_Counter_Auto_Random",Display="Win_Counter_Auto_Random - ON/OFF",Type=EditorType.CheckBox,Default=true},           
 				new FaucetSetting(){Name="Win_Counter_Numbers",Display="Win_Counter_Numbers - note: it will auto change the numbers in 'Random' if you LOSE ",Type=EditorType.TextBox,Default = 2},
-
- 
+                
+				new FaucetSetting(){Name="increaseWhenYouLose",Display="increaseWhenYouLose - ON/OFF - only if you LOSE, if you WIN he will return to default amount that you set in first settings ",Type=EditorType.CheckBox,Default=true},           
 
 
             };
@@ -819,7 +819,6 @@ public class stake : FaucetScript
             //START
             Log("spin number is: " + CountGeneral);
 
-			//var Double_var = ElementByXPath("//button//span[contains(text(),'2×')] "); //2x - Double
             //var Divide_var = ElementByXPath("//button//span[contains(text(),'½')] "); //½ - Divide
 
             //Menu_Method_Choose_Numbers//
@@ -863,6 +862,11 @@ public class stake : FaucetScript
 			//====CustomMostUsed====//
               if (CountGeneral > CustomNumber)
 		      {
+			  
+			    var ClearNumbers_Button = ElementByXPath("//button//span[contains(text(),'Clear Table')] "); //Clear Numbers Button
+                Click(ClearNumbers_Button);
+  		        Log("Keno Game - Clear Numbers");	
+			  
   		        Log("Keno Game - Custom - choose Most Used Numbers");
 
                 var CustomMostUsed_VAR = GetSetting("CustomMostUsed").Split(',');
@@ -872,10 +876,7 @@ public class stake : FaucetScript
                .OrderByDescending(x => x.Count())
                .Select(grp => grp.Key)
                .FirstOrDefault();
-			   
-			    var ClearNumbers_Button = ElementByXPath("//button//span[contains(text(),'Clear Table')] "); //Clear Numbers Button
-                Click(ClearNumbers_Button);
-  		        Log("Keno Game - Clear Numbers");			   
+			      
 
                 //Click(mostUsed);
   		        Log("Keno Game - Click - mostUsed");
@@ -911,13 +912,26 @@ public class stake : FaucetScript
                 var RandomChooseNumbers = ElementByXPath("//button//span[contains(text(),'Auto Pick')] "); //RandomChooseNumbers
                 Click(RandomChooseNumbers);
 		        Wait(4); //until the system choose the numbers
-		       }	 
+		       }	
+			   
+               if (GetBoolSetting("increaseWhenYouLose")) 
+               {
+	             Log("Keno Game - do Double - amount");
+			  	 var Double_var = ElementByXPath("//button//span[contains(text(),'2×')] "); //2x - Double
+                 Click(Double_var);
+		         Wait(2);
+		       }
             }
 		    
             if (Win_VAR.Count > MyWinCounter)
             {
 	           Log("Keno Game - above > You WIN - Your total result is: " + Win_VAR.Count);
-		       Wait(3); 
+		       Wait(3);
+   
+               var Bet_2_Amount = ElementByXPath("//input[contains(@id,'betAmount')]"); 
+  		       Log("Keno Game - set bet amount - default amount");
+               SetText(Bet_2_Amount, GetSetting("Keno_Bet_Amount"));
+		       Wait(2);
 		    }
             //====//
     
