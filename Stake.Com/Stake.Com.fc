@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 26/05/2019 04:00PM
-//Last Update: 22/09/2020 06:30AM - Version 17
+//Last Update: 26/09/2020 23:45PM - Version 18
 //==================//
 
 using System;
@@ -67,8 +67,8 @@ public class stake : FaucetScript
                 new FaucetSetting() { Name = "Win_Counter_Auto_Random_Label", Display = "Win Counter - if ON - before each Spin/BET - each time that you 'LOSE' under your 'Counter' - if you not WIN it will auto change the numbers in 'Random' ", Type = EditorType.Label},	
                 new FaucetSetting(){Name="Win_Counter_Auto_Random",Display="Win_Counter_Auto_Random - ON/OFF",Type=EditorType.CheckBox,Default=true},           
 				new FaucetSetting(){Name="Win_Counter_Numbers",Display="Win_Counter_Numbers - note: it will auto change the numbers in 'Random' if you LOSE ",Type=EditorType.TextBox,Default = 2},
-
- 
+                
+				new FaucetSetting(){Name="increaseWhenYouLose",Display="increaseWhenYouLose - ON/OFF - only if you LOSE, if you WIN he will return to default amount that you set in first settings ",Type=EditorType.CheckBox,Default=false},           
 
 
             };
@@ -795,10 +795,7 @@ public class stake : FaucetScript
           Wait(2);	
 		  
           //1TIME - Click Only one Time - to store before loop entered
-          var RandomChoose_2_Numbers = ElementByXPath("//button//span[contains(text(),'Auto Pick')] "); //RandomChooseNumbers
-          Click(RandomChoose_2_Numbers);
-          var Bet_2_VAR = ElementByXPath("//button[@data-test='bet-button']//span[contains(text(),'Bet')] "); //bet button
-          Click(Bet_2_VAR);
+          Keno_Random_AND_Bet_Click_Function(); //call
   		  Log("Keno Game - 1TIME - Click Only one Time - to store before loop entered");
           //====//
 
@@ -817,9 +814,8 @@ public class stake : FaucetScript
           {
              		  
             //START
-            Log("spin number is: " + CountGeneral);
+            Log("spin number now is: " + CountGeneral);
 
-			//var Double_var = ElementByXPath("//button//span[contains(text(),'2×')] "); //2x - Double
             //var Divide_var = ElementByXPath("//button//span[contains(text(),'½')] "); //½ - Divide
 
             //Menu_Method_Choose_Numbers//
@@ -863,6 +859,11 @@ public class stake : FaucetScript
 			//====CustomMostUsed====//
               if (CountGeneral > CustomNumber)
 		      {
+			  
+			    var ClearNumbers_Button = ElementByXPath("//button//span[contains(text(),'Clear Table')] "); //Clear Numbers Button
+                Click(ClearNumbers_Button);
+  		        Log("Keno Game - Clear Numbers");	
+			  
   		        Log("Keno Game - Custom - choose Most Used Numbers");
 
                 var CustomMostUsed_VAR = GetSetting("CustomMostUsed").Split(',');
@@ -872,21 +873,17 @@ public class stake : FaucetScript
                .OrderByDescending(x => x.Count())
                .Select(grp => grp.Key)
                .FirstOrDefault();
-			   
-			    var ClearNumbers_Button = ElementByXPath("//button//span[contains(text(),'Clear Table')] "); //Clear Numbers Button
-                Click(ClearNumbers_Button);
-  		        Log("Keno Game - Clear Numbers");			   
-
+			      
                 //Click(mostUsed);
   		        Log("Keno Game - Click - mostUsed");
 			   
 			  }
 			//=========================//
-
-
+			
+			Wait(4);
             var CustomWaitTimeVAR = GetIntSetting("CustomWaitTime"); 
-            Wait(CustomWaitTimeVAR); //default 2sec
-	
+            Wait(CustomWaitTimeVAR); //default 2sec 
+			
             //bet button
             var Bet_Available = ElementByXPath("//button[@data-test='bet-button' and @disabled] "); 
             if (!IsVisible(Bet_Available)) //if the button NOT disabled - click
@@ -894,33 +891,47 @@ public class stake : FaucetScript
   		     Log("Keno Game - click on bet");
              var Bet_VAR = ElementByXPath("//button[@data-test='bet-button']//span[contains(text(),'Bet')] "); 
              Click(Bet_VAR);
-            }     
+            }   
 
             //WinCounter
 	        int Count;	
             List<IWebElement> Win_VAR = ElementsByXPath("//button[contains(@class,'kyItwI')]"); //Elements
             var MyWinCounter = GetIntSetting("Win_Counter_Numbers"); 
             
-            if (Win_VAR.Count < MyWinCounter)
+            if (Win_VAR.Count < MyWinCounter || Win_VAR.Count == MyWinCounter)
             {
 	           Log("Keno Game - under < You LOSE - Your total result is: " + Win_VAR.Count);
 		       Wait(3); 
+			   
+               if (GetBoolSetting("increaseWhenYouLose")) 
+               {
+	             Log("Keno Game - do Double - amount");
+			  	 var Double_var = ElementByXPath("//button//span[contains(text(),'2×')] "); //2x - Double
+                 Click(Double_var);
+		         Wait(2);
+		       }
 
                if (GetBoolSetting("Win_Counter_Auto_Random")) 
                {
-                var RandomChooseNumbers = ElementByXPath("//button//span[contains(text(),'Auto Pick')] "); //RandomChooseNumbers
-                Click(RandomChooseNumbers);
+                Keno_Random_AND_Bet_Click_Function(); //call
 		        Wait(4); //until the system choose the numbers
-		       }	 
+		       }	
+
             }
 		    
             if (Win_VAR.Count > MyWinCounter)
             {
 	           Log("Keno Game - above > You WIN - Your total result is: " + Win_VAR.Count);
-		       Wait(3); 
+		       Wait(3);
+   
+               var Bet_2_Amount = ElementByXPath("//input[contains(@id,'betAmount')]"); 
+  		       Log("Keno Game - set bet amount - default amount");
+               SetText(Bet_2_Amount, GetSetting("Keno_Bet_Amount"));
+		       Wait(2);
 		    }
             //====//
-    
+  
+  
             //END - results for spin number
 			Wait(2);
             var All_Green_Results_win_var = ElementsByXPath("//button[contains(@class,'kyItwI')]"); //'Elements' ByXPath - that need to store 
@@ -953,6 +964,24 @@ public class stake : FaucetScript
 		}//end Keno_Game_Function
 		//=========//
 
+	
+	
+      //=========//
+      //Keno_Random_AND_Bet_Click_Function
+      //=========//
+      public int Keno_Random_AND_Bet_Click_Function()
+      {	
+          var RandomChoose_Numbers = ElementByXPath("//button//span[contains(text(),'Auto Pick')] "); //RandomChooseNumbers
+          Click(RandomChoose_Numbers);
+          var Bet_VAR = ElementByXPath("//button[@data-test='bet-button']//span[contains(text(),'Bet')] "); //bet button
+          Click(Bet_VAR);  
+		  
+		  return 0;
+		  
+      } // end Keno_Random_AND_Bet_Click_Function
+		//=========//
+		
+	
 	
 } //end public class
 
