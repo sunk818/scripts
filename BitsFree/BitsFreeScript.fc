@@ -44,7 +44,7 @@ public class BitsFreeScript_: FaucetScript
     public override void Start()
     {
         //Title that shows in the browser. Is used to identify and close popup windows
-        Title = "BitsFree";
+        Title ="BitsFree|More than a faucet";
 
         //After we did try to claim on the faucet we search for these elements to determine if it was a success or a fail
         SuccessXPath = "//div[@class='alert alert-success']";
