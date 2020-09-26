@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 13/11/2019 09:00AM - Version 1
-//Last Update: 19/09/2020 15:20PM - Version 9
+//Last Update: 26/09/2020 15:20PM - Version 10
 //==================//
 
 using System;
@@ -296,6 +296,47 @@ public class TrustDice : FaucetScript
 		}
         //=====//	
 
+
+		//======//
+		//DailyActiveClaim//
+		//======//
+        GoToUrl("https://TrustDice.win/");
+		Wait();
+		Wait(6);
+		
+        var DailyActiveClaim_Check = ElementByXPath ("//span[contains(@class,'jss')]//span[contains(@class,'dot')]");  //("//span[contains(@class,'jss')]//span[contains(@class,'invisible')]")
+        if (IsVisible(DailyActiveClaim_Check)) //if this class "MuiBadge-invisible" - NOT Visible - do stuff
+	    {
+         var DailyActiveClaim = ElementByXPath("//span[contains(@class,'jss')]//span[contains(text(),'Task')]");
+         Click(DailyActiveClaim);
+		 Log("DailyActiveClaim - available - do stuff");
+
+		 Wait(6);
+
+         var ClaimButton = ElementByXPath("//button//span[contains(text(),'Claim')]");
+		 
+		 if (IsVisible(ClaimButton))
+	     {
+         Click(ClaimButton);
+		 Log("DailyActiveClaim - claim - success");
+		 Wait(2);
+		 }
+
+         var SuccessMessage = ElementByXPath("//span[contains(text(),'success')]");
+		 if (IsVisible(SuccessMessage))
+	     {
+		 Log(SuccessMessage.Text);	 
+         ClaimSuccess();
+		 }
+
+		 if (!IsVisible(ClaimButton))
+	     {
+		 Log("DailyActiveClaim - Already did it");
+		 } 
+			 
+        }
+        //=====//	
+		
 		
 		//==============//
 		//Rain_AirDrop_Chat//
@@ -328,45 +369,6 @@ public class TrustDice : FaucetScript
 		}
         //=====//	
 
-		//======//
-		//DailyActiveClaim//
-		//======//
-        GoToUrl("https://TrustDice.win/");
-		Wait();
-		Wait(6);
-		
-        var DailyActiveClaim_Check = ElementByXPath ("//span[contains(@class,'jss')]//span[contains(@class,'dot')]");  //("//span[contains(@class,'jss')]//span[contains(@class,'invisible')]")
-        if (IsVisible(DailyActiveClaim_Check)) //if this class "MuiBadge-invisible" - NOT Visible - do stuff
-	    {
-         var DailyActiveClaim = ElementByXPath("//span[contains(@class,'jss')]/img[contains(@src,'6d4.svg')]");
-         Click(DailyActiveClaim);
-		 Log("DailyActiveClaim - available - do stuff");
-
-		 Wait(6);
-
-         var ClaimButton = ElementByXPath("//button//span[contains(text(),'Claim')]");
-		 
-		 if (IsVisible(ClaimButton))
-	     {
-         Click(ClaimButton);
-		 Log("DailyActiveClaim - claim - success");
-		 Wait(2);
-		 }
-
-         var SuccessMessage = ElementByXPath("//span[contains(text(),'success')]");
-		 if (IsVisible(SuccessMessage))
-	     {
-		 Log(SuccessMessage.Text);	 
-         ClaimSuccess();
-		 }
-
-		 if (!IsVisible(ClaimButton))
-	     {
-		 Log("DailyActiveClaim - Already did it");
-		 } 
-			 
-        }
-        //=====//	
 				
 		//======//
 		//FaucetBtc//
