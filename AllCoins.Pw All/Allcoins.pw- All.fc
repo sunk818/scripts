@@ -2,9 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Base.Captcha;
+using System.Runtime.InteropServices.WindowsRuntime;
+using FaucetCollector.Captcha;
 using FaucetCollector.Script;
 
+//css_ref FaucetCollector.Utilities
+//css_ref FaucetCollector.Captcha
 public class AllCoinsPWScript : FaucetScript
 {
     public override FaucetSettings Settings
@@ -67,7 +70,7 @@ public class AllCoinsPWScript : FaucetScript
     {
         Title = "Allcoins.pw";
         
-        SuccessXPath = "//p[starts-with(text(),'Your actual Balance')]";
+        SuccessXPath ="//h3[contains(text(),'REWARD')]";
         FailXPath = "//div[contains(@class,'alert-warning')]";
         Url=Url_;   
         base.Start();
@@ -75,12 +78,13 @@ public class AllCoinsPWScript : FaucetScript
     }
     public override bool IsLoggedIn( )
     {
+        WaitForSiteLoad( );
 
-        return IsVisible(ElementByXPath("//a[contains(@href, '/logout.php')]"));
+        return ElementByXPath("//a[contains(@onclick,'$(\"#login\").show()')]")==null;
     }
     public bool IsVisibleSite( )
     {
-        return IsVisible(ElementByXPath("//div[@class='navbar-brand font-weight-bold']") );        
+        return ElementByXPath("//div[@id='topbar']")!=null;        
     }
 
     public void WaitForSiteLoad( )
@@ -90,15 +94,6 @@ public class AllCoinsPWScript : FaucetScript
         {
             Wait( );
         }
-
-        Wait(1);
-        // Wait for login modal
-        Timeout=DateTime.Now.AddSeconds(5);
-        while ( !IsVisible(ElementByXPath("//div[@id='login']"))&&DateTime.Now<Timeout )
-        {
-            Wait( );
-        }
-
        
     }
     public override int DoLogin()
@@ -108,14 +103,18 @@ public class AllCoinsPWScript : FaucetScript
 
         WaitForSiteLoad( );
 
-        var loginPanelBtn = ElementByXPath("//a[contains(@data-target,'login')]");
-        if ( IsVisible(loginPanelBtn)  && !IsVisible(ElementByXPath("//div[@id='login']")) && !IsVisible(ElementByXPath("//div[@id='register']//button[@id='swlogin']")))
+        Wait(3 , 4);
+
+        var loginPanelBtn = ElementByXPath("//a[contains(@onclick,'$(\"#login\").show()')]");
+        //
+
+        if ( IsVisible(loginPanelBtn)  && !IsVisible(ElementByXPath("//input[@id='log_email']")) && !IsVisible(ElementByXPath("//a[contains(@onclick,'$(\"#register\").hide() && $(\"#login\").show()')]")))
         {
             Click(loginPanelBtn);
         }
         else
         {
-            var GotoLogin=ElementByXPath("//div[@id='register']//button[@id='swlogin']");
+            var GotoLogin=ElementByXPath("//a[contains(@onclick,'$(\"#register\").hide() && $(\"#login\").show()')]");
             if ( IsVisible(GotoLogin) )
             {
                 Click(GotoLogin);
@@ -124,19 +123,31 @@ public class AllCoinsPWScript : FaucetScript
         Wait(2);
 
 
-        var UserBox=ElementByXPath("//input[@id='lem']");
+        var UserBox=ElementByXPath("//input[@id='log_email']");
         if ( !IsVisible(UserBox) )
         {
             return Fail("User box not visible");
         }
         SetText(UserBox , GetSetting("User"));
 
-        var PassBox=ElementByXPath("//input[@id='lpw']");
+        var PassBox=ElementByXPath("//input[@id='log_pass']");
         if ( !IsVisible(PassBox) )
         {
             return Fail("Password box is not visible");
         }
         SetText(PassBox , GetPassword("Pass"));
+
+
+        var captchaBtn=ElementByXPath("//div[@id='log_captcha']//button[@class='w3-button w3-block w3-green w3-section w3-padding'][contains(text(),'Click here if you are human')]");
+        if ( !IsVisible(captchaBtn) )
+        {
+            return Fail("Login btn not visible");
+        }
+
+        Click(captchaBtn);
+
+
+        Wait(2,3);
 
         var result=DoSolveCaptcha();
         if ( result>0 )
@@ -144,26 +155,17 @@ public class AllCoinsPWScript : FaucetScript
             return result;
         }
 
-        if ( !LoginCaptchaSolved )
+        var loginBtn=ElementByXPath("//button[@id='login_btn']");
+        if ( !IsVisible(loginBtn) )
         {
-            return Fail("Login captcha not solved");
+            return Fail("loginBtn is not visible or not found");
         }
 
-        string CaptchaResult=Context.CaptchaResult.Result;
-        if ( !CaptchaResult.All(x=>char.IsDigit(x)) )
-        {
-            return Fail("Captcha result is not a digit");
-        }
+        Click(loginBtn);
+        Wait(2);
 
-        var LoginBtn=ElementByXPath("//button[@class='btn btn-primary'][contains(text(),'Login')]");
-        if ( !IsVisible(LoginBtn) )
-        {
-            return Fail("Login btn not visible");
-        }
 
-        Click(LoginBtn);
-
-        var ErrorLogin=ElementByXPath("//div[@class='bootstrap-growl alert alert-warning border border-warning alert-dismissible']");
+        var ErrorLogin=ElementByXPath("//div[@class='w3-pale-red w3-padding-small w3-round']");
         if ( IsVisible(ErrorLogin) )
         {
             return Fail(ErrorLogin.Text);
@@ -215,58 +217,40 @@ public class AllCoinsPWScript : FaucetScript
         return base.BeforeSolveCaptcha();
     }
 
-	
-//================================//
-//end BeforeSolveCaptcha
-//================================//
-	
-	
-	 private void CheckAntiBot()
+
+    //================================//
+    //end BeforeSolveCaptcha
+    //================================//
+
+
+    private void CheckAntiBot( )
     {
-      
+
         var AntiBotButton = ElementByXPath("//a[contains(@text,'I AM NOT A BOT')]");
-        if (IsVisible(AntiBotButton))
+        if ( IsVisible(AntiBotButton) )
         {
             Click(AntiBotButton);
             Wait(4);
         }
+
+    }
       
         
-    }
 
-	private bool LoginCaptchaSolved { get; set; }
-    /// <summary>
-    /// This method is called right before a captcha will be solved. 
-    /// If you call SolveCaptcha() in other methods it will start this flow and tries to solve the captcha on the page.
-    /// </summary>
     public override int DoSolveCaptcha()
 	{
-		//check for the custom captcha image
-		var captchaImage = ElementByXPath("//*[@id='login']//label/img/..");
-		if (IsVisible(captchaImage))
-		{
-			//get the input where the result of the captcha needs to be entered.
-			var captchaInput = ElementByName("captchal");
-			if (!IsVisible(captchaInput))
-			{
-				return Fail("ImageCaptcha input field not found");
-			}
+        var result = base.DoSolveCaptcha( );
 
-			//We can use this method to let Faucet Collector solve the image captcha and put the result into the captchaInput element
-			var sleep = DoSolveImageCaptcha(captchaImage, captchaInput);
-			if (sleep > 0)
-			{
-				return sleep;
-			}
-            LoginCaptchaSolved=true;
-			//return we are done.
-			return 0;
-		}
-		else
-		{
-			//Let Faucet Collector continue. It will check for SolveMedia and reCAPTCHA.
-			return base.DoSolveCaptcha();
-		}
+        if ( result>0 )
+        {
+            return result;
+        }
+
+        RecaptchaUtility utility = new RecaptchaUtility(this);
+        utility.DoSolve( );
+
+
+        return result;
 	}
 	
 
@@ -290,16 +274,17 @@ public override int DoSolveFaucet()
 
 
     
-        var claimBtn = ElementByXPath("//button[@id='claimb'][@class='btn btn-primary']");
-        if ( IsVisible ( claimBtn ) )
+        var startClaimBtn = ElementsByXPath("//span[contains(@data-href,'./faucet.php?coin')]")
+            .FirstOrDefault(button=>IsVisible(button));
+        if ( IsVisible ( startClaimBtn ) )
         {
-            Click ( claimBtn );
+            Click ( startClaimBtn );
         }
 
         CheckAntiBot ( );
 
         //get the captchaResolved button after claimBtn click
-        var captchaResolvedBtn = ElementByXPath("//button[@type='submit' and contains(@class,'btn-primary')]");
+        var captchaResolvedBtn = ElementByXPath("//button[contains(text(),'Captcha is resolved')]");
         if ( !IsVisible ( captchaResolvedBtn ) )
         {
             Log ( "Captcha is Resolved button not visible." );
@@ -319,19 +304,23 @@ public override int DoSolveFaucet()
 
         Wait ( 3 );
 
-        captchaResolvedBtn=ElementByXPath ( "//button[@type='submit' and contains(@class,'btn-primary')]" );
+        captchaResolvedBtn=ElementByXPath ("//button[contains(text(),'Captcha is resolved')]");
+        if ( !IsVisible(captchaResolvedBtn) )
+        {
+            return Fail("captchaResolved btn not found");
+        }
         Wait ( );
         Click ( captchaResolvedBtn );
+        Wait(2 , 3);
+
+        var addToMyBalance=ElementByXPath("//a[@href='?add']");
+        if ( IsVisible(addToMyBalance) )
+        {
+            Click(addToMyBalance);
+            Wait(2);
+        }
 
         CheckAntiBot ( );
-        //if the captcha Not resolved
-        //fix BAN user Accounts
-        //so return 1 hour after
-        var FixBanUserAccounts = ElementByXPath("//div[@class='bootstrap-growl alert alert-danger border border-danger alert-dismissible']");
-        if ( IsVisible ( FixBanUserAccounts ) )
-        {
-            return 60*60;
-        }
 
         return base.DoSolveFaucet();
 }
@@ -345,16 +334,16 @@ public override int DoSolveFaucet()
             GoToUrl ( Url_ );
         }
         Wait ( 2 );
-        var Timer=ElementsByXPath("//span[@id='claim']").Where(x=>IsVisible(x) && x.Text.ToLower().Contains("seconds")).FirstOrDefault();
+        var Timer=ElementsByXPath("//span[@id='cntds']").FirstOrDefault(x=>IsVisible(x));
         if ( Timer!=null )
         {
-            var SplitedText=Timer.Text.Split ( ' ' );
-            string textTimer= SplitedText[SplitedText.Length-2];
-
-            int s;
-            if(int.TryParse(textTimer,out s ) )
+            var SplitedText=Timer.Text.Split ( ':' );
+            int m,s;
+            if(int.TryParse(SplitedText[0],out m) && int.TryParse(SplitedText[1], out s) )
             {
-                return s;
+
+                return m*60+s;
+
             }
         }
         return base.GetFaucetWaitTime ( );
