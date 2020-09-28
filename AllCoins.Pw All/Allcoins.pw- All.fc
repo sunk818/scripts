@@ -80,7 +80,7 @@ public class AllCoinsPWScript : FaucetScript
     {
         WaitForSiteLoad( );
 
-        return ElementByXPath("//a[contains(@onclick,'$(\"#login\").show()')]")==null;
+        return ElementByXPath("//a[contains(@onclick,\"$('#login').show()\")]")==null;
     }
     public bool IsVisibleSite( )
     {
@@ -105,16 +105,20 @@ public class AllCoinsPWScript : FaucetScript
 
         Wait(3 , 4);
 
-        var loginPanelBtn = ElementByXPath("//a[contains(@onclick,'$(\"#login\").show()')]");
+        ExecuteScript("$('#register').hide()");
+
+        Wait(1);
+
+        var loginPanelBtn = ElementByXPath("//a[contains(@onclick,\"$('#login').show()\")]");
         //
 
-        if ( IsVisible(loginPanelBtn)  && !IsVisible(ElementByXPath("//input[@id='log_email']")) && !IsVisible(ElementByXPath("//a[contains(@onclick,'$(\"#register\").hide() && $(\"#login\").show()')]")))
+        if ( IsVisible(loginPanelBtn)  && !IsVisible(ElementByXPath("//input[@id='log_email']")) && !IsVisible(ElementByXPath("//a[contains(@onclick,\"$('#register').hide() && $('#login').show()\")]")))
         {
             Click(loginPanelBtn);
         }
         else
         {
-            var GotoLogin=ElementByXPath("//a[contains(@onclick,'$(\"#register\").hide() && $(\"#login\").show()')]");
+            var GotoLogin=ElementByXPath("//a[contains(@onclick,\"$('#register').hide() && $('#login').show()\")]");
             if ( IsVisible(GotoLogin) )
             {
                 Click(GotoLogin);
@@ -212,7 +216,7 @@ public class AllCoinsPWScript : FaucetScript
 			}
 		}
 
-        Wait();
+        Wait(1);
 
         return base.BeforeSolveCaptcha();
     }
@@ -226,7 +230,7 @@ public class AllCoinsPWScript : FaucetScript
     private void CheckAntiBot( )
     {
 
-        var AntiBotButton = ElementByXPath("//a[contains(@text,'I AM NOT A BOT')]");
+        var AntiBotButton = ElementByXPath("//a[contains(@text,'I AM NOT A BOT')]",0);
         if ( IsVisible(AntiBotButton) )
         {
             Click(AntiBotButton);
@@ -302,14 +306,13 @@ public override int DoSolveFaucet()
        CheckAntiBot ( );
 
 
-        Wait ( 3 );
+        Wait ( 1 );
 
         captchaResolvedBtn=ElementByXPath ("//button[contains(text(),'Captcha is resolved')]");
         if ( !IsVisible(captchaResolvedBtn) )
         {
             return Fail("captchaResolved btn not found");
         }
-        Wait ( );
         Click ( captchaResolvedBtn );
         Wait(2 , 3);
 
