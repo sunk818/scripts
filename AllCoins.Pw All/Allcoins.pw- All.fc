@@ -287,15 +287,14 @@ public override int DoSolveFaucet()
 
         CheckAntiBot ( );
 
-        //get the captchaResolved button after claimBtn click
-        var captchaResolvedBtn = ElementByXPath("//button[contains(text(),'Captcha is resolved')]");
-        if ( !IsVisible ( captchaResolvedBtn ) )
+        DateTime timeout=DateTime.Now.AddSeconds(20);
+        while(!IsVisible(ElementByXPath("//button[contains(text(),'Captcha is resolved')]")) && DateTime.Now<timeout )
         {
-            Log ( "Captcha is Resolved button not visible." );
-            return 5*60;
+            Wait( 1);
+
         }
 
-        //Solve the captcha
+
         var result = SolveCaptcha();
         if ( result>0 )
         {
@@ -308,13 +307,15 @@ public override int DoSolveFaucet()
 
         Wait ( 1 );
 
-        captchaResolvedBtn=ElementByXPath ("//button[contains(text(),'Captcha is resolved')]");
+        var captchaResolvedBtn=ElementByXPath ("//button[contains(text(),'Captcha is resolved')]");
         if ( !IsVisible(captchaResolvedBtn) )
         {
             return Fail("captchaResolved btn not found");
         }
         Click ( captchaResolvedBtn );
-        Wait(2 , 3);
+
+
+        Wait(1);
 
         var addToMyBalance=ElementByXPath("//a[@href='?add']");
         if ( IsVisible(addToMyBalance) )
