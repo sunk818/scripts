@@ -280,11 +280,12 @@ public override int DoSolveFaucet()
     
         var startClaimBtn = ElementsByXPath("//span[contains(@data-href,'./faucet.php?coin')]")
             .FirstOrDefault(button=>IsVisible(button));
-        if ( IsVisible ( startClaimBtn ) )
+        if (! IsVisible ( startClaimBtn ) )
         {
-            Click ( startClaimBtn );
-        }
 
+            return Fail("start claim button not found");
+        }
+        ExecuteScript("arguments[0].click()" , startClaimBtn);
         CheckAntiBot ( );
 
         DateTime timeout=DateTime.Now.AddSeconds(20);
@@ -312,10 +313,11 @@ public override int DoSolveFaucet()
         {
             return Fail("captchaResolved btn not found");
         }
-        Click ( captchaResolvedBtn );
+        //Click ( captchaResolvedBtn );
 
-
+        ExecuteScript("arguments[0].click()" , captchaResolvedBtn);
         Wait(1);
+        CheckFaucetResult( );
 
         var addToMyBalance=ElementByXPath("//a[@href='?add']");
         if ( IsVisible(addToMyBalance) )
