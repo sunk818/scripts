@@ -152,6 +152,17 @@ public class EarnBtc : FaucetScript
             return result;
         }
 
+
+        var btnLogin=ElementByXPath("//button[@class='btn btn-primary btn-block']");
+        if ( !IsVisible(btnLogin) )
+        {
+            return Fail("Btn login not visible or not found");
+        }
+
+        Click(btnLogin);
+        Wait(2);
+
+
         GoToUrl("https://earnbtc.io/user/dashboard.page");
 
 
