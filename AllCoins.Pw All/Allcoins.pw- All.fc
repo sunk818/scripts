@@ -295,6 +295,26 @@ public override int DoSolveFaucet()
 
         }
 
+        var captchaResolvedBtn=ElementByXPath ("//button[contains(text(),'Captcha is resolved')]");
+        if ( !IsVisible(captchaResolvedBtn) )
+        {
+            // We check if there are a button to process the antibot
+            var shortlinkBtn=ElementsByXPath("//span[contains(@data-href,'&verification')]").FirstOrDefault(x=>IsVisible(x));
+
+            if(shortlinkBtn!=null)
+            {
+                FaucetCollector.Utilities.ShortLinkBypasser bypasser =new FaucetCollector.Utilities.ShortLinkBypasser(this);
+
+                ExecuteScript("arguments[0].click" , shortlinkBtn);
+                Wait(1);
+
+                bypasser.DoShortLink( );
+
+            }
+
+        }
+
+
 
         var result = SolveCaptcha();
         if ( result>0 )
@@ -308,7 +328,7 @@ public override int DoSolveFaucet()
 
         Wait ( 1 );
 
-        var captchaResolvedBtn=ElementByXPath ("//button[contains(text(),'Captcha is resolved')]");
+         captchaResolvedBtn=ElementByXPath ("//button[contains(text(),'Captcha is resolved')]");
         if ( !IsVisible(captchaResolvedBtn) )
         {
             return Fail("captchaResolved btn not found");
