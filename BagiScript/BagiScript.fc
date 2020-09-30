@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+//css_ref FaucetCollector.Utilities
+//css_ref FaucetCollector.Captcha
 
 public class BagiScript : FaucetScript
 {
@@ -48,6 +50,8 @@ public class BagiScript : FaucetScript
         {"DGB",BASEURL+"digibyte" },
         {"TRX",BASEURL+"tron" }
     };
+
+    private FaucetCollector.Utilities.Adblock adblock;
     public override void Start( )
     {
 
@@ -120,8 +124,8 @@ public class BagiScript : FaucetScript
     {
         GoToSelectedUrl(true);
         // We go to the selected url 
-
-
+        adblock=new FaucetCollector.Utilities.Adblock(this);
+        adblock.DestroyAds( );
 
 
         return base.DoInit( );
@@ -143,19 +147,17 @@ public class BagiScript : FaucetScript
         return ElementByXPath("//button[contains(text(),'GET STARTED')]")==null;
     }
 
-    private void InjectSuccessCheck( )
+    private object InjectSuccessCheck( )
     {
         // We need to use javasscript to find if we have claimed succesfully or not since there is not a way to select correctly the element using relative 
         // or absolute xpath
-        ExecuteScript("function checkSuccess(){  var arr = Array.from(document.getElementsByClassName(\"alert alert-success\")); return arr.find(x=>x.textContent.indexOf(\"You can claim again in \")!=-1)!=null }");
+        return ExecuteScript("function checkSuccess(){  var arr = Array.from(document.getElementsByClassName(\"alert alert-success\")); return arr.find(x=>x.textContent.indexOf(\"You can claim again in \")!=-1)!=null }return checkSuccess();");
     }
+
 
     public override int GetFaucetWaitTime( )
     {
-        InjectSuccessCheck( );
-        Wait(1);
-
-        var success= Convert.ToBoolean(ExecuteScript("return checkSuccess();"));
+        var success= Convert.ToBoolean( InjectSuccessCheck( ));
 
         if ( success )
         {
@@ -167,7 +169,7 @@ public class BagiScript : FaucetScript
     public override int DoLogin( )
     {
         GoToSelectedUrl( );
-
+        adblock.DestroyAds( );
 
         var modalBtn=ElementByXPath("//button[@data-target='#myModal']");
         if ( !IsVisible(modalBtn) )
@@ -201,15 +203,22 @@ public class BagiScript : FaucetScript
 
     public override int DoSolveFaucet( )
     {
+        adblock.DestroyAds( );
         var btnGoCaptcha=ElementByXPath("//button[@class='btn btn-primary btn-block col-lg-3']");
         if ( !IsVisible(btnGoCaptcha) )
         {
             return Fail("btnGoCaptcha not found or not visible");
         }
         Click(btnGoCaptcha);
-        // Wait for cloudflare
-        Wait(6 , 7);
-
+        Log("Waiting for cloudflare");
+        // Waiting for cloudflare
+        DateTime timeout=DateTime.Now.AddSeconds(35);
+        while ( !IsVisible(ElementByXPath("//button[@data-target='#myModal']"))&&DateTime.Now<timeout )
+        {
+            Wait(1 , 2);
+        }
+        Log("Wait end");
+        adblock.DestroyAds( );
         var modalBtn=ElementByXPath("//button[@data-target='#myModal']");
         if ( !IsVisible(modalBtn) )
         {
@@ -239,10 +248,7 @@ public class BagiScript : FaucetScript
     public override int CheckFaucetResult( )
     {
 
-        InjectSuccessCheck( );
-        Wait(1);
-
-        var success= Convert.ToBoolean(ExecuteScript("return checkSuccess();"));
+        var success= Convert.ToBoolean( InjectSuccessCheck( ));
 
         if ( success )
         {
