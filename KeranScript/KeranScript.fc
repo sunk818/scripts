@@ -2,7 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+//css_ref FaucetCollector.Utilities
+//css_ref FaucetCollector.Captcha
 
 public class KeranScript : FaucetScript
 {
@@ -57,9 +58,12 @@ public class KeranScript : FaucetScript
         Title="KERAN.CO|"+PairSelected;
         // We update the url
         Url=SelectedUrl;
-
+        adblock=new FaucetCollector.Utilities.Adblock(this);
         base.Start( );
     }
+
+    FaucetCollector.Utilities.Adblock adblock; 
+
     private string PairSelected
     {
         get
@@ -130,6 +134,7 @@ public class KeranScript : FaucetScript
     public override bool IsLoggedIn( )
     {
         GoToSelectedUrl( );
+        adblock.DestroyAds( );
         var navBarBrand=ElementByXPath("//a[@class='navbar-brand']");
         // We check if the site are correctly loaded before check for the  login btn 
         if ( navBarBrand==null )
@@ -165,7 +170,7 @@ public class KeranScript : FaucetScript
     {
         GoToSelectedUrl( );
 
-
+        adblock.DestroyAds( );
         var modalBtn=ElementByXPath("//button[@data-target='#myModal']");
         if ( !IsVisible(modalBtn) )
         {
@@ -198,6 +203,7 @@ public class KeranScript : FaucetScript
 
     public override int DoSolveFaucet( )
     {
+        adblock.DestroyAds( );
         var btnGoCaptcha=ElementByXPath("//button[@class='btn btn-primary btn-block col-lg-3']");
         if ( !IsVisible(btnGoCaptcha) )
         {
@@ -212,7 +218,7 @@ public class KeranScript : FaucetScript
             Wait(1,2);
         }
         Log("Wait end");
-
+        adblock.DestroyAds( );
         var modalBtn=ElementByXPath("//button[@data-target='#myModal']");
         if ( !IsVisible(modalBtn) )
         {
