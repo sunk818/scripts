@@ -169,20 +169,20 @@ class Coinfaucets : FaucetScript
     public override int DoLogin( )
     {
 
-        var UserBox=ElementByXPath("//div[@class='login-wrapper wrapper bg-1']//input[@placeholder='Email Address']");
+        var UserBox=ElementByXPath("//div[contains(@class,'login-wrapper')]//input[@name='email']");
         if ( !IsVisible(UserBox) )
         {
             return Fail("Userbox not visible");
         }
 
 
-        var PasswordBox=ElementByXPath("//div[@class='login-wrapper wrapper bg-1']//input[@placeholder='Password']");
+        var PasswordBox=ElementByXPath("//div[contains(@class,'login-wrapper')]//input[@name='password']");
         if ( !IsVisible(PasswordBox) )
         {
             return Fail("Password box not visible");
         }
 
-        var Loginbtn=ElementByXPath("//button[@class='main-button main-button-yellow login bg-3']");
+        var Loginbtn=ElementByXPath("//div[contains(@class,'login-wrapper')]//button[contains(@class,'login')]");
         if ( !IsVisible(Loginbtn) )
         {
             return Fail("Login button not visible");
