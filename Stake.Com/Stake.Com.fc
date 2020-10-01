@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 26/05/2019 04:00PM
-//Last Update: 01/10/2020 09:00AM - Version 20
+//Last Update: 01/10/2020 10:10AM - Version 20
 //==================//
 
 using System;
@@ -940,7 +940,7 @@ public class stake : FaucetScript
 			  
           foreach(var ElementsForEach in AllKenoElementsFunction) //multiple clicks
           {
-            Click(ElementsForEach);
+            Click(ElementsForEach,false); //if false  - is without "Wait"
 		   //Log(ElementsForEach.Text);
           }
 			  
@@ -969,7 +969,7 @@ public class stake : FaucetScript
 			
           foreach(var ElementsForEach in AllKenoElementsFunction) //multiple clicks
           {
-            Click(ElementsForEach);
+            Click(ElementsForEach,false); //if false  - is without "Wait"
 		    //Log(ElementsForEach.Text);
           }
 			
@@ -1003,7 +1003,7 @@ public class stake : FaucetScript
           foreach(var Numbers in FixedNumbers)
           {
             var FixedNumbersElement = ElementByXPath("//button[contains(@class,'gaCGxm')]/span[contains(@class,'hIkLvN') and text()='"+Numbers+"']");
-            Click(FixedNumbersElement);
+            Click(FixedNumbersElement,false); //if false  - is without "Wait"
             Log("Keno Game - FixedNumbers - Click " + Numbers); 
           } 
 		
@@ -1035,7 +1035,9 @@ public class stake : FaucetScript
 	        AllKenoElementsFunction.AddRange(All_Green_Results_win_var); //add the all elements list
 	        AllKenoElementsFunction.AddRange(All_Reds_Results_var); //add the all elements list
 			  
-		    Log("results for spin number " + CountGeneral + " is:" );
+		    //Log("results for spin number " + CountGeneral + " is:" );
+		    Log("results for this spin is:");
+
             foreach(var ElementsForEach in AllKenoElementsFunction) //log ElementsForEach
             {
 		    Log(ElementsForEach.Text);
