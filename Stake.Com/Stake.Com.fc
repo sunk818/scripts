@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 26/05/2019 04:00PM
-//Last Update: 26/09/2020 23:45PM - Version 18
+//Last Update: 01/10/2020 09:00AM - Version 20
 //==================//
 
 using System;
@@ -55,10 +55,11 @@ public class stake : FaucetScript
 				//Keno
                 new FaucetSetting(){Name="InstantBet",Display="InstantBet - ON/OFF - if ON it will play faster",Type=EditorType.CheckBox,Default=true},
                 new FaucetSetting() { Name = "Keno_Spin_Number", Display = "Keno_Spin_Number - Choose how much Spin/BET numbers", Type = EditorType.TextBox, Default = 100 },
-                new FaucetSetting() { Name = "CustomMostUsed", Display = "Custom Most Used Numbers - after the 'Spin_Number' end, choose until 10 number | split by 'comma' ", Type = EditorType.TextBox, Default = "1,2,3,4,5,6,7,8,9,10" },
-
 				new FaucetSetting() { Name = "Keno_break", Display = "Keno_break - when the BET numbers works - Choose after how much time you want to break inside 'while loop' - the default is 1500sec = 25min", Type = EditorType.TextBox, Default = "1500" },
-				new FaucetSetting(){Name="Menu_Method_Choose_Numbers",Display="Menu_Method_Choose_Numbers - 'Random' OR 'Recent' ",Type=EditorType.ComboBox,Default="Random",Items=new System.Collections.Generic.List<string>{"Random","Recent"}},
+				
+				new FaucetSetting(){Name="Menu_Method_Choose_Numbers",Display="Menu_Method_Choose_Numbers - 'Random' OR 'Recent' OR 'MostWinNumbers' OR 'FixedNumbers' ",Type=EditorType.ComboBox,Default="Random",Items=new System.Collections.Generic.List<string>{"Random","Recent","MostWinNumbers","FixedNumbers"}},
+                new FaucetSetting() { Name = "FixedNumbers", Display = "FixedNumbers - option, choose until 10 number | split by 'comma' ", Type = EditorType.TextBox, Default = "1,2,3,4,5,6,7,8,9,10" },
+				new FaucetSetting(){Name="FixedNumbers_ON_OFF",Display="FixedNumbers - ON/OFF - more option to choose your numbers only once - after the CountGeneral end (Spin/Bet Numbers) ",Type=EditorType.CheckBox,Default=false},
 
 				new FaucetSetting(){Name="MenuRiskLevel",Display="MenuRiskLevel - Select Risk Level",Type=EditorType.ComboBox,Default="classic",Items=new System.Collections.Generic.List<string>{"classic","low","medium","high"}},
                 new FaucetSetting(){Name="Keno_Bet_Amount",Display="Keno_Bet_Amount",Type=EditorType.TextBox,Default = "0.00000001"},
@@ -700,16 +701,16 @@ public class stake : FaucetScript
       } // end Choose_Coin_Function
 		//=========//
 		
-		
-		
-		
-	//store multi elements 	
-    public List<IWebElement> AllKenoElementsFunction = new List<IWebElement>();
-	//=========//
 
-   /*CustomMostUsedString*/
-   public List<string> CustomMostUsedString = new List<string>();
-	
+		
+	  //AllKenoElementsFunction - store multi elements - last numbers	
+      public List<IWebElement> AllKenoElementsFunction = new List<IWebElement>();
+
+      //MostWinNumbersString - after the CountGeneral end - choose numbers that set in settings
+      public List<string> MostWinNumbersString = new List<string>();
+
+	  //CustomFixedNumbersString - from the general menu - choose FixedNumbers
+      public List<string> CustomFixedNumbersString = new List<string>();
 		  
         //=========//
         //Keno_Game_Function
@@ -787,10 +788,7 @@ public class stake : FaucetScript
 
 	      Wait(2);
 
-		  //Bet_Amount
-          var Bet_Amount = ElementByXPath("//input[contains(@id,'betAmount')]"); 
-  		  Log("Keno Game - set bet amount");
-          SetText(Bet_Amount, GetSetting("Keno_Bet_Amount"));
+          Bet_Amount_Function(); //call to set Bet_Amount
 		
           Wait(2);	
 		  
@@ -799,11 +797,11 @@ public class stake : FaucetScript
   		  Log("Keno Game - 1TIME - Click Only one Time - to store before loop entered");
           //====//
 
-		  
+	  
           //====//
           //Loop
 		  //====//		  
-		  Log("Keno_Spin_Number: "  + GetSetting("Keno_Spin_Number"));
+		  Log("Starting Loop - Keno - total spin to do is: " + GetSetting("Keno_Spin_Number"));
 		  
           int CustomNumber;
           CustomNumber = Convert.ToInt32(GetSetting("Keno_Spin_Number"));
@@ -816,8 +814,6 @@ public class stake : FaucetScript
             //START
             Log("spin number now is: " + CountGeneral);
 
-            //var Divide_var = ElementByXPath("//button//span[contains(text(),'½')] "); //½ - Divide
-
             //Menu_Method_Choose_Numbers//
             var Menu_Method_Choose_Numbers_VAR = GetSetting("Menu_Method_Choose_Numbers"); 
 	        
@@ -825,77 +821,39 @@ public class stake : FaucetScript
             {
   		      Log("Keno Game - Choose 'Random' Numbers");
               var RandomChooseNumbers = ElementByXPath("//button//span[contains(text(),'Auto Pick')] "); //RandomChooseNumbers
-              Click(RandomChooseNumbers);
-			  
-			  Wait(4); //until the system choose the numbers
+              Click(RandomChooseNumbers);			  
 			}
+			//=========================//
 			
             if(Menu_Method_Choose_Numbers_VAR == "Recent")
             {
-  		      Log("Keno Game - Choose 'Recent' Numbers");
-              Wait(2);
-
-              var All_Green_Results_2_win_var = ElementsByXPath("//button[contains(@class,'kyItwI')]"); //'Elements' ByXPath - that need to store 
-              var All_Reds_Results_2_var = ElementsByXPath("//button[contains(@class,'eMbhUq')]"); //'Elements' ByXPath - that need to store 
-			  AllKenoElementsFunction.AddRange(All_Green_Results_2_win_var); //add the all elements list
-			  AllKenoElementsFunction.AddRange(All_Reds_Results_2_var); //add the all elements list
-			  
-			  var ClearNumbers_Button = ElementByXPath("//button//span[contains(text(),'Clear Table')] "); //Clear Numbers Button
-              Click(ClearNumbers_Button);
-  		      Log("Keno Game - Clear Numbers");
-			  
-              foreach(var ElementsForEach in AllKenoElementsFunction) //multiple clicks
-              {
-                 Click(ElementsForEach);
-				 //Log(ElementsForEach.Text);
-              }
-			  
-			  AllKenoElementsFunction.Clear(); //clear the last store (before)		   
-		  
+                Recent_Function(); //call
 			}	
 			//=========================//
 
+            if(Menu_Method_Choose_Numbers_VAR == "MostWinNumbers")
+            {
+				MostWinNumbers_Function(); //call
+			}	
+			//=========================//	
 
-			//====CustomMostUsed====//
-              if (CountGeneral > CustomNumber)
-		      {
-			  
-			    var ClearNumbers_Button = ElementByXPath("//button//span[contains(text(),'Clear Table')] "); //Clear Numbers Button
-                Click(ClearNumbers_Button);
-  		        Log("Keno Game - Clear Numbers");	
-			  
-  		        Log("Keno Game - Custom - choose Most Used Numbers");
+            if(Menu_Method_Choose_Numbers_VAR == "FixedNumbers")
+            {
+				FixedNumbers_Function(); //call
+			}	
+			//=========================//	
 
-                var CustomMostUsed_VAR = GetSetting("CustomMostUsed").Split(',');
-                CustomMostUsedString.AddRange(CustomMostUsed_VAR );
-
-                var mostUsed = CustomMostUsedString.GroupBy(value => value)
-               .OrderByDescending(x => x.Count())
-               .Select(grp => grp.Key)
-               .FirstOrDefault();
-			      
-                //Click(mostUsed);
-  		        Log("Keno Game - Click - mostUsed");
-			   
-			  }
-			//=========================//
-			
+		
 			Wait(4);
             var CustomWaitTimeVAR = GetIntSetting("CustomWaitTime"); 
             Wait(CustomWaitTimeVAR); //default 2sec 
 			
             //bet button
-            var Bet_Available = ElementByXPath("//button[@data-test='bet-button' and @disabled] "); 
-            if (!IsVisible(Bet_Available)) //if the button NOT disabled - click
-            {
-  		     Log("Keno Game - click on bet");
-             var Bet_VAR = ElementByXPath("//button[@data-test='bet-button']//span[contains(text(),'Bet')] "); 
-             Click(Bet_VAR);
-            }   
+            Click_Bet_Button_Function(); //call
 
             //WinCounter
 	        int Count;	
-            List<IWebElement> Win_VAR = ElementsByXPath("//button[contains(@class,'kyItwI')]"); //Elements
+            var Win_VAR = ElementsByXPath("//button[contains(@class,'kyItwI')]"); //Elements
             var MyWinCounter = GetIntSetting("Win_Counter_Numbers"); 
             
             if (Win_VAR.Count < MyWinCounter || Win_VAR.Count == MyWinCounter)
@@ -923,33 +881,26 @@ public class stake : FaucetScript
             {
 	           Log("Keno Game - above > You WIN - Your total result is: " + Win_VAR.Count);
 		       Wait(3);
-   
-               var Bet_2_Amount = ElementByXPath("//input[contains(@id,'betAmount')]"); 
-  		       Log("Keno Game - set bet amount - default amount");
-               SetText(Bet_2_Amount, GetSetting("Keno_Bet_Amount"));
+               //var Divide_var = ElementByXPath("//button//span[contains(text(),'½')] "); //½ - Divide
+               Bet_Amount_Function(); //call to set Bet_Amount
 		       Wait(2);
 		    }
             //====//
   
-  
-            //END - results for spin number
-			Wait(2);
-            var All_Green_Results_win_var = ElementsByXPath("//button[contains(@class,'kyItwI')]"); //'Elements' ByXPath - that need to store 
-            var All_Reds_Results_var = ElementsByXPath("//button[contains(@class,'eMbhUq')]"); //'Elements' ByXPath - that need to store 
-        
-			AllKenoElementsFunction.AddRange(All_Green_Results_win_var); //add the all elements list
-			AllKenoElementsFunction.AddRange(All_Reds_Results_var); //add the all elements list
-			
-			Log("results for spin number " + CountGeneral + " is:" );
-            foreach(var ElementsForEach in AllKenoElementsFunction) //log ElementsForEach
-            {
-			Log(ElementsForEach.Text);
-            }
-			AllKenoElementsFunction.Clear(); //clear the last store (before)
-            //====//
+            Keno_Results_Info_Function(); //call - Keno_Results_Info_Function
 			
             CountGeneral++; //increment - call again
             
+			//FixedNumbers_ON_OFF - more option to choose your numbers only once - after the CountGeneral end (Spin/Bet Numbers) 
+            if (CountGeneral > CustomNumber)
+            {  	
+               if (GetBoolSetting("FixedNumbers_ON_OFF")) 
+               {
+			   Log("FixedNumbers_ON_OFF - more option to choose your numbers only once - after the CountGeneral end (Spin/Bet Numbers) ");
+               FixedNumbers_Function(); //call - to FixedNumbers_Function
+			   }//end FixedNumbers_ON_OFF
+            }
+ 
             if (DateTime.Now > TimeToWaitForBreak) //if the time above 150 sec 
             {
             Log("FaucetClaim - break - TimeToWaitForBreak");
@@ -964,6 +915,140 @@ public class stake : FaucetScript
 		}//end Keno_Game_Function
 		//=========//
 
+	
+
+
+
+
+      //=========//
+      //Recent_Function
+      //=========//
+      public int Recent_Function()
+      {
+		  //choose also the Green & Red
+  		  Log("Keno Game - Choose 'Recent' Numbers");
+          Wait(2);
+
+          var All_Green_Results_2_win_var = ElementsByXPath("//button[contains(@class,'kyItwI')]"); //'Elements' ByXPath - that need to store 
+          var All_Reds_Results_2_var = ElementsByXPath("//button[contains(@class,'eMbhUq')]"); //'Elements' ByXPath - that need to store 
+		  AllKenoElementsFunction.AddRange(All_Green_Results_2_win_var); //add the all elements list
+		  AllKenoElementsFunction.AddRange(All_Reds_Results_2_var); //add the all elements list
+			  
+		  var ClearNumbers_Button = ElementByXPath("//button//span[contains(text(),'Clear Table')] "); //Clear Numbers Button
+          Click(ClearNumbers_Button);
+  		  Log("Keno Game - Clear Numbers");
+			  
+          foreach(var ElementsForEach in AllKenoElementsFunction) //multiple clicks
+          {
+            Click(ElementsForEach);
+		   //Log(ElementsForEach.Text);
+          }
+			  
+		  AllKenoElementsFunction.Clear(); //clear the last store (before)	  
+
+		  return 0;
+      } // end Recent_Function
+		//=========//
+
+	  
+      //=========//
+      //MostWinNumbers_Function
+      //=========//
+      public int MostWinNumbers_Function()
+      {	
+		  //choose ONLY the Green - Wins
+  		  Log("Keno Game - Choose 'MostWinNumbers' ");
+          Wait(2);
+
+          var All_Green_Results_2_win_var = ElementsByXPath("//button[contains(@class,'kyItwI')]"); //'Elements' ByXPath - that need to store 
+	      AllKenoElementsFunction.AddRange(All_Green_Results_2_win_var); //add the all elements list
+			
+	      var ClearNumbers_Button = ElementByXPath("//button//span[contains(text(),'Clear Table')] "); //Clear Numbers Button
+          Click(ClearNumbers_Button);
+  		  Log("Keno Game - Clear Numbers");
+			
+          foreach(var ElementsForEach in AllKenoElementsFunction) //multiple clicks
+          {
+            Click(ElementsForEach);
+		    //Log(ElementsForEach.Text);
+          }
+			
+		  //AllKenoElementsFunction.Clear(); //clear the last store (before)	  
+
+		  return 0;
+      } // end MostWinNumbers_Function
+		//=========//
+
+
+      //=========//
+      //FixedNumbers_Function
+      //=========//
+      public int FixedNumbers_Function()
+      {	
+          Log("Keno Game - Custom - choose FixedNumbers");
+
+          var ClearNumbers_Button = ElementByXPath("//button//span[contains(text(),'Clear Table')] "); //Clear Numbers Button
+          Click(ClearNumbers_Button);
+          Log("Keno Game - Clear Numbers");    
+            
+          var FixedNumbers_Settings = GetSetting("FixedNumbers").Split(',');
+          CustomFixedNumbersString.AddRange(FixedNumbers_Settings );
+		
+          var FixedNumbers = CustomFixedNumbersString.GroupBy(value => value)
+          .OrderByDescending(x => x.Count())
+          .Select(grp => grp.Key)
+          .Take(10)
+          .ToArray();
+                   
+          foreach(var Numbers in FixedNumbers)
+          {
+            var FixedNumbersElement = ElementByXPath("//button[contains(@class,'gaCGxm')]/span[contains(@class,'hIkLvN') and text()='"+Numbers+"']");
+            Click(FixedNumbersElement);
+            Log("Keno Game - FixedNumbers - Click " + Numbers); 
+          } 
+		
+		  Click_Bet_Button_Function(); //call			  
+ 		  Wait(2); 
+          Keno_Results_Info_Function(); //call - Keno_Results_Info_Function
+		  Wait(5);
+
+		  return 0;
+      } // end FixedNumbers_Function
+		//=========//
+	
+	
+      //=========//
+      //Keno_Results_Info_Function
+      //=========//
+      public int Keno_Results_Info_Function()
+      {	
+          var MostWinNumbers_Menu_VAR = GetSetting("Menu_Method_Choose_Numbers") == "MostWinNumbers"; 
+          if(!MostWinNumbers_Menu_VAR) // if MostWinNumbers not chosen, only then do clear
+          {	  
+            int CountGeneral = 1; //need to declare again 
+			  
+            //END - results for spin number
+		    Wait(2);
+            var All_Green_Results_win_var = ElementsByXPath("//button[contains(@class,'kyItwI')]"); //'Elements' ByXPath - that need to store 
+            var All_Reds_Results_var = ElementsByXPath("//button[contains(@class,'eMbhUq')]"); //'Elements' ByXPath - that need to store 
+		    
+	        AllKenoElementsFunction.AddRange(All_Green_Results_win_var); //add the all elements list
+	        AllKenoElementsFunction.AddRange(All_Reds_Results_var); //add the all elements list
+			  
+		    Log("results for spin number " + CountGeneral + " is:" );
+            foreach(var ElementsForEach in AllKenoElementsFunction) //log ElementsForEach
+            {
+		    Log(ElementsForEach.Text);
+            }
+
+		    AllKenoElementsFunction.Clear(); //clear the last store (before)
+			
+		  }//end MostWinNumbers not chosen
+			
+		  return 0;
+		  
+      } // end Keno_Results_Info_Function
+		//=========//	
 	
 	
       //=========//
@@ -980,7 +1065,40 @@ public class stake : FaucetScript
 		  
       } // end Keno_Random_AND_Bet_Click_Function
 		//=========//
+
 		
+      //=========//
+      //Click_Bet_Button_Function
+      //=========//
+      public int Click_Bet_Button_Function()
+      {	
+          var Bet_Available = ElementByXPath("//button[@data-test='bet-button' and @disabled] "); 
+          if (!IsVisible(Bet_Available)) //if the button NOT disabled - click
+          {
+  		   Log("Keno Game - click on bet");
+           var Bet_VAR = ElementByXPath("//button[@data-test='bet-button']//span[contains(text(),'Bet')] "); 
+           Click(Bet_VAR);
+          }   
+			
+		  return 0;
+		  
+      } // end Click_Bet_Button_Function
+		//=========//	
+
+
+      //=========//
+      //Bet_Amount_Function
+      //=========//
+      public int Bet_Amount_Function()
+      {	
+          var Bet_Amount = ElementByXPath("//input[contains(@id,'betAmount')]"); 
+  		  Log("Keno Game - set bet amount");
+          SetText(Bet_Amount, GetSetting("Keno_Bet_Amount"));
+		  
+		  return 0;
+		  		  
+      } // end Bet_Amount_Function
+		//=========//	
 	
 	
 } //end public class
