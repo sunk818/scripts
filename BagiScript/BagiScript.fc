@@ -151,7 +151,7 @@ public class BagiScript : FaucetScript
     {
         // We need to use javasscript to find if we have claimed succesfully or not since there is not a way to select correctly the element using relative 
         // or absolute xpath
-        return ExecuteScript("function checkSuccess(){  var arr = Array.from(document.getElementsByClassName(\"alert alert-success\")); return arr.find(x=>x.textContent.indexOf(\"You can claim again in \")!=-1)!=null }return checkSuccess();");
+        return ExecuteScript("function checkSuccess(){  var arr = Array.from(document.getElementsByClassName(\"alert\")); return arr.find(x=>x.textContent.indexOf(\"You can claim again in \")!=-1)!=null }return checkSuccess();");
     }
 
 
@@ -197,6 +197,23 @@ public class BagiScript : FaucetScript
         ExecuteScript("arguments[0].click();" , loginBtn);
         Wait(1);
 
+
+        var errorLogin=ElementByXPath("//div[@class='alert alert-danger']");
+
+        if ( IsVisible(errorLogin) )
+        {
+
+            string errorText=errorLogin.Text;
+
+            if ( errorText.Contains("Login not Valid, Please reLogin") )
+            {
+                //If login is not valid we need to delete the cookies
+                Driver.Manage( ).Cookies.DeleteAllCookies( );
+            }
+            return Fail(errorText);
+
+
+        }
 
         return base.DoLogin( );
     }
