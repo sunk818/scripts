@@ -235,6 +235,15 @@ public class KeranScript : FaucetScript
             return result;
         }
 
+        var btnConfirmClaim=ElementByXPath("//div[contains(@style,'display: block;')]//button[contains(@class,'btn btn-primary')]");
+
+        if ( !IsVisible(btnConfirmClaim) )
+        {
+            return Fail("btnConfirmClaim is not visible");
+        }
+
+
+        Click(btnConfirmClaim);
 
 
 
