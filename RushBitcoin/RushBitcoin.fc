@@ -88,7 +88,7 @@ public class RushBitcoinScript : FaucetScript
     }
 
 
-    public const string ShortUrl="https://rushbitcoin.com/shortlinks.html";
+    public const string ShortUrl="https://rushbitcoin.com/?page=shortlinks";
     public override int BeforeSolveFaucet( )
     {
         if ( GetBoolSetting("DoShortLink") )
