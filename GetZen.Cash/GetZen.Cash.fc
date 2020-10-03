@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 23/12/2019 01:30PM - Version 1
-//Last Update: 06/09/2020 08:15AM - Version 12
+//Last Update: 03/10/2020 03:30AM - Version 13
 //==================//
 
 using System;
@@ -409,16 +409,7 @@ public class GetZen : FaucetScript
 		
 	    Wait(2);
 
-        var RecaptchaOpen_Iframe = ElementByXPath ("//textarea[contains(@name,'recaptcha') and contains(@style,'block')] | //div[contains(@class,'recaptcha')] | //iframe[contains(@src,'recaptcha')] "); //iframe[contains(@src,'recaptcha')]
-        if (IsVisible(RecaptchaOpen_Iframe))
-        {
-          var result = DoSolveCaptcha();
-          if (result > 0)
-          {
-             return Fail("fail not solve"); //return to solve again - if something wrong
-          }
-          Wait();
-        }
+        Recaptcha_Function(); //call
 
 	    Wait(2);
 		
@@ -457,23 +448,16 @@ public class GetZen : FaucetScript
 		 ClaimSuccess(); //Marks the claim as a success
 		}
 
-        if (!IsVisible(StatusCheck_Success))
-		{
-         Log("fail - need to wait");	
-         return GetWaitSetting(); //fail  
-		}
-
       } //end FaucetClaim
       //=============//
 
-   return GetWaitSetting(); 
+	  return Time_Function(); //call to function time
 
   //This faucet has nothing to do here. We will let Faucet Collector handle it.
   return base.DoSolveFaucet();
   }
 	
 	
-
 
 	
 	
@@ -549,6 +533,71 @@ public class GetZen : FaucetScript
 	    return 0;
       }//end Bonus_Function
       //=================//	
+	
+
+        //=================//
+       //Time_Function
+        //=================//
+        public int Time_Function()
+        {
+			
+           var MinVar = ElementByXPath("//article[contains(@class,'maincontent')]//span[2]/span[1]") ;
+		   var SecVar = ElementByXPath("//article[contains(@class,'maincontent')]//span[3]/span[1]") ;
+
+           if (IsVisible(MinVar))
+           {
+	         Log("Time_Function - WaitTimerText apper - return to site time"); 
+             int min,sec;
+             min = Convert.ToInt32(MinVar.Text.Trim().Replace("m.", "").Replace("s.", "").Split(' ')[0])*60;
+             sec = Convert.ToInt32(SecVar.Text.Trim().Replace("m.", "").Replace("s.", "").Split(' ')[1]);
+             return min+sec;
+           } 
+
+           if (!IsVisible(MinVar))
+           {
+	            Log("Time_Function - return to your time"); 
+		        return GetWaitSetting();
+           }
+
+           return 0;		
+        }//end Time_Function
+        //=================//	
+		
+	
+	
+        //=================//
+       //Recaptcha_Function
+        //=================//
+
+        public int Recaptcha_Function()
+        {
+			
+          //DoSolveImageCaptcha
+          var SolveMedia = ElementByXPath ("//img[contains(@id,'adcopy-puzzle-image-image')]"); 
+          if (IsVisible(SolveMedia))
+		  {  
+            Log("DO SolveMedia");	  
+	        var result_2 = DoSolveImageCaptcha(ElementByXPath("//img[contains(@id,'adcopy-puzzle-image-image')]"),ElementByXPath("//input[@name='adcopy_response']")); 
+		  }
+		  
+	     //for recaptcha popup after click on button - ("//button[contains(@class,'reload')] | //button[contains(@id,'reload')] ")
+          var RecaptchaOpen_Iframe = ElementByXPath ("//iframe[contains(@src,'recaptcha/api2/anchor')]"); 
+          if (IsVisible(RecaptchaOpen_Iframe))
+		  {
+            //SolveCaptcha if apper
+            Log("DO Recaptcha");	  
+            var result = base.DoSolveCaptcha();
+            if (result > 0)
+            {
+                return Fail("Fail solving captcha");
+            }
+            RecaptchaUtility utility = new RecaptchaUtility(this);
+            utility.DoSolve();
+		  }
+
+		return 0;
+        }//end Recaptcha_Function
+        //=================//	
 	
 	
 } //public class
