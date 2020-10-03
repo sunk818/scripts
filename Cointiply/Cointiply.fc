@@ -291,12 +291,7 @@ public class CointiplyScript : FaucetScript
         }
         Log("Clicking submit button");
         ExecuteScript("arguments[0].click()", submitButton);
-        Wait(1);
-        if (IsVisible(ElementByXPath("//div[contains(@class,'md-snackbar-content')]//span[contains(., 'won')]")))
-        {
-            return 3600;
 
-        }
         //Let Faucet Collector continue its work
         return base.DoSolveFaucet();
     }
