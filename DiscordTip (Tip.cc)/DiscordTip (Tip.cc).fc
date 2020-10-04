@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 05/12/2018 06:00AM 
-//Last Update: 04/10/2020 11:50AM - Version 63
+//Last Update: 04/10/2020 13:40AM - Version 64
 //==================//
 
 using System;
@@ -410,57 +410,59 @@ public class DiscordScript: FaucetScript
 			
             //Withdraw BTC		
    			var inputDiscord2MessageVar = ElementByXPath("//div[contains(@class,'inner')]/div[contains(@class,'textArea')]");      
-
-            Wait(2);
-			
-            Actions Builder_4_Act = new Actions(Driver);			
-            Builder_4_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		    Builder_4_Act.SendKeys(inputDiscord2MessageVar,"withdraw btc").Build().Perform();
-			
-            Wait();
-
-            Enter_SendKeys_General_Discord_Input_Function();
-
-            Wait(2);
-			
-            Actions Builder_5_Act = new Actions(Driver);			
-            Builder_5_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		    Builder_5_Act.SendKeys(inputDiscord2MessageVar, GetSetting("WalletAddress_BTC") ).Build().Perform();
-			
-            Wait();
-
-            Enter_SendKeys_General_Discord_Input_Function();
-
-            Wait(3);
-			
-            Actions Builder_6_Act = new Actions(Driver);			
-            Builder_6_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		    Builder_6_Act.SendKeys(inputDiscord2MessageVar, "all" ).Build().Perform();
-			
-            Wait();
-
-            Enter_SendKeys_General_Discord_Input_Function();
-
-            Wait(6);
-			 
-            var FeeVAR = ElementByXPath("//div[contains(@id,'chat-messages-')]//div[contains(@class,'embedFields-2IPs5Z')]/div[3]/div[2 and contains(., '$0.0') or contains(., '$0.00')  or contains(., '$0.000') ] ");
-            if (IsVisible(FeeVAR) )
+	        if (IsVisible(inputDiscord2MessageVar))
             {
-                Log("LimitFee - the fee above -> not good");
-            }
-			 		    
-            if (IsVisible(FeeVAR)) 
-            {
-               Log("LimitFee - the fee under <- good");		   
-               Wait(3);
-               Actions Builder_7_Act = new Actions(Driver);
-               Builder_7_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		       Builder_7_Act.SendKeys(inputDiscord2MessageVar, "yes" ).Build().Perform();			
-               Wait();
-               Enter_SendKeys_General_Discord_Input_Function();
-			   Log("Withdraw_BTC - success");
-               Wait(5);
-            }
+              Wait(2);
+			  
+              Actions Builder_4_Act = new Actions(Driver);			
+              Builder_4_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		      Builder_4_Act.SendKeys(inputDiscord2MessageVar,"withdraw btc").Build().Perform();
+			  
+              Wait();
+			  
+              Enter_SendKeys_General_Discord_Input_Function();
+			  
+              Wait(2);
+			  
+              Actions Builder_5_Act = new Actions(Driver);			
+              Builder_5_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		      Builder_5_Act.SendKeys(inputDiscord2MessageVar, GetSetting("WalletAddress_BTC") ).Build().Perform();
+			  
+              Wait();
+			  
+              Enter_SendKeys_General_Discord_Input_Function();
+			  
+              Wait(3);
+			  
+              Actions Builder_6_Act = new Actions(Driver);			
+              Builder_6_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		      Builder_6_Act.SendKeys(inputDiscord2MessageVar, "all" ).Build().Perform();
+			  
+              Wait();
+			  
+              Enter_SendKeys_General_Discord_Input_Function();
+			  
+              Wait(6);
+			   
+              var FeeVAR = ElementByXPath("//div[contains(@id,'chat-messages-')]//div[contains(@class,'embedFields-2IPs5Z')]/div[3]/div[2 and contains(., '$0.0') or contains(., '$0.00')  or contains(., '$0.000') ] ");
+              if (IsVisible(FeeVAR) )
+              {
+                  Log("LimitFee - the fee above -> not good");
+              }
+			   		    
+              if (IsVisible(FeeVAR)) 
+              {
+                 Log("LimitFee - the fee under <- good");		   
+                 Wait(3);
+                 Actions Builder_7_Act = new Actions(Driver);
+                 Builder_7_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		         Builder_7_Act.SendKeys(inputDiscord2MessageVar, "yes" ).Build().Perform();			
+                 Wait();
+                 Enter_SendKeys_General_Discord_Input_Function();
+			     Log("Withdraw_BTC - success");
+                 Wait(5);
+              }
+			}
 
 	    }// end LaccsFaucet_BTC_AutoWithdraw
         //==============================//
@@ -475,57 +477,59 @@ public class DiscordScript: FaucetScript
 			
             //Withdraw DOGE		
    			var inputDiscord2MessageVar = ElementByXPath("//div[contains(@class,'inner')]/div[contains(@class,'textArea')]");      
-
-            Wait(2);
-			
-            Actions Builder_4_Act = new Actions(Driver);			
-            Builder_4_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		    Builder_4_Act.SendKeys(inputDiscord2MessageVar,"withdraw DOGE").Build().Perform();
-			
-            Wait();
-
-            Enter_SendKeys_General_Discord_Input_Function();
-
-            Wait(2);
-			
-            Actions Builder_5_Act = new Actions(Driver);			
-            Builder_5_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		    Builder_5_Act.SendKeys(inputDiscord2MessageVar, GetSetting("WalletAddress_DOGE") ).Build().Perform();
-			
-            Wait();
-
-            Enter_SendKeys_General_Discord_Input_Function();
-
-            Wait(3);
-			
-            Actions Builder_6_Act = new Actions(Driver);			
-            Builder_6_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		    Builder_6_Act.SendKeys(inputDiscord2MessageVar, "all" ).Build().Perform();
-			
-            Wait();
-
-            Enter_SendKeys_General_Discord_Input_Function();
-
-            Wait(6);
-			 
-            var FeeVAR = ElementByXPath("//div[contains(@id,'chat-messages-')]//div[contains(@class,'embedFields-2IPs5Z')]/div[3]/div[2 and contains(., '$0.0') or contains(., '$0.00')  or contains(., '$0.000') ] ");
-            if (IsVisible(FeeVAR) )
+	        if (IsVisible(inputDiscord2MessageVar))
             {
-                Log("LimitFee - the fee above -> not good");
-            }
-			 		    
-            if (IsVisible(FeeVAR)) 
-            {
-               Log("LimitFee - the fee under <- good");		   
-               Wait(3);
-               Actions Builder_7_Act = new Actions(Driver);
-               Builder_7_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		       Builder_7_Act.SendKeys(inputDiscord2MessageVar, "yes" ).Build().Perform();			
-               Wait();
-               Enter_SendKeys_General_Discord_Input_Function();
-			   Log("Withdraw_BTC - success");
-               Wait(5);
-            }
+              Wait(2);
+			  
+              Actions Builder_4_Act = new Actions(Driver);			
+              Builder_4_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		      Builder_4_Act.SendKeys(inputDiscord2MessageVar,"withdraw DOGE").Build().Perform();
+			  
+              Wait();
+			  
+              Enter_SendKeys_General_Discord_Input_Function();
+			  
+              Wait(2);
+			  
+              Actions Builder_5_Act = new Actions(Driver);			
+              Builder_5_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		      Builder_5_Act.SendKeys(inputDiscord2MessageVar, GetSetting("WalletAddress_DOGE") ).Build().Perform();
+			  
+              Wait();
+			  
+              Enter_SendKeys_General_Discord_Input_Function();
+			  
+              Wait(3);
+			  
+              Actions Builder_6_Act = new Actions(Driver);			
+              Builder_6_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		      Builder_6_Act.SendKeys(inputDiscord2MessageVar, "all" ).Build().Perform();
+			  
+              Wait();
+			  
+              Enter_SendKeys_General_Discord_Input_Function();
+			  
+              Wait(6);
+			   
+              var FeeVAR = ElementByXPath("//div[contains(@id,'chat-messages-')]//div[contains(@class,'embedFields-2IPs5Z')]/div[3]/div[2 and contains(., '$0.0') or contains(., '$0.00')  or contains(., '$0.000') ] ");
+              if (IsVisible(FeeVAR) )
+              {
+                  Log("LimitFee - the fee above -> not good");
+              }
+			   		    
+              if (IsVisible(FeeVAR)) 
+              {
+                 Log("LimitFee - the fee under <- good");		   
+                 Wait(3);
+                 Actions Builder_7_Act = new Actions(Driver);
+                 Builder_7_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		         Builder_7_Act.SendKeys(inputDiscord2MessageVar, "yes" ).Build().Perform();			
+                 Wait();
+                 Enter_SendKeys_General_Discord_Input_Function();
+			     Log("Withdraw_BTC - success");
+                 Wait(5);
+              }
+			}
 
 	    }// end LaccsFaucet_DOGE_AutoWithdraw
         //==============================//
@@ -1130,13 +1134,15 @@ public class DiscordScript: FaucetScript
       public int Enter_SendKeys_General_Discord_Input_Function()
       {
          var TextCommand = ElementByXPath("//div[contains(@class,'inner')]/div[contains(@class,'textArea')]");
-	     //Enter Keyboard
-         Log("TextCommand");
-         Actions Builder4Act = new Actions(Driver);
-         Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
-         Wait(3);
-         Builder4Act.SendKeys(Keys.Enter).Build().Perform(); 
-		 
+	     if (IsVisible(TextCommand))
+         {
+		   //Enter Keyboard
+           Log("Enter Keyboard");
+           Actions Builder4Act = new Actions(Driver);
+           Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
+           Wait(3);
+           Builder4Act.SendKeys(Keys.Enter).Build().Perform(); 
+		 }
 		 return 0;
       }
       //=================//	
@@ -1148,13 +1154,15 @@ public class DiscordScript: FaucetScript
       public int SetText_GridCoin_1_SendKeys_Way_Function()
       {
          var TextCommand = ElementByXPath("//div[contains(@class,'inner')]/div[contains(@class,'textArea')]");
-	     //SetText Keyboard
-         Log("TextCommand");
-         Actions Builder4Act = new Actions(Driver);
-         Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
-         Wait(3);
-         Builder4Act.SendKeys(TextCommand, "!agree").Build().Perform();
-		 
+	     if (IsVisible(TextCommand))
+         {
+		   //SetText Keyboard
+           Log("TextCommand - SetText_GridCoin_1");
+           Actions Builder4Act = new Actions(Driver);
+           Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
+           Wait(3);
+           Builder4Act.SendKeys(TextCommand, "!agree").Build().Perform();
+		 }
 		 return 0;
       }
       //=================//		  
@@ -1165,12 +1173,15 @@ public class DiscordScript: FaucetScript
       public int SetText_GridCoin_2_SendKeys_Way_Function()
       {
          var TextCommand = ElementByXPath("//div[contains(@class,'inner')]/div[contains(@class,'textArea')]");
-	     //SetText Keyboard
-         Log("TextCommand");
-         Actions Builder4Act = new Actions(Driver);
-         Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
-         Wait(3);
-         Builder4Act.SendKeys(TextCommand, "%new").Build().Perform();	
+	     if (IsVisible(TextCommand))
+         {
+		  //SetText Keyboard
+          Log("TextCommand - SetText_GridCoin_2");
+          Actions Builder4Act = new Actions(Driver);
+          Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
+          Wait(3);
+          Builder4Act.SendKeys(TextCommand, "%new").Build().Perform();	
+		 }
 		 return 0;
       }
       //=================//	
@@ -1181,12 +1192,16 @@ public class DiscordScript: FaucetScript
       public int SetText_GridCoin_3_SendKeys_Way_Function()
       {
          var TextCommand = ElementByXPath("//div[contains(@class,'inner')]/div[contains(@class,'textArea')]");
-	     //SetText Keyboard
-         Log("TextCommand");
-         Actions Builder4Act = new Actions(Driver);
-         Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
-         Wait(3);
-         Builder4Act.SendKeys(TextCommand, "%get").Build().Perform();
+	     if (IsVisible(TextCommand))
+         {
+	       //SetText Keyboard
+           Log("TextCommand - SetText_GridCoin_3");
+           Actions Builder4Act = new Actions(Driver);
+           Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
+           Wait(3);
+           Builder4Act.SendKeys(TextCommand, "%get").Build().Perform();
+		 }
+		 
 		 return 0;
       }
       //=================//	
@@ -1198,13 +1213,15 @@ public class DiscordScript: FaucetScript
       public int SetText_1_Laccs_SendKeys_Way_Function()
       {
          var TextCommand = ElementByXPath("//div[contains(@class,'inner')]/div[contains(@class,'textArea')]");
-	     //SetText Keyboard
-         Log("TextCommand");
-         Actions Builder4Act = new Actions(Driver);
-         Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
-         Wait(3);
-         Builder4Act.SendKeys(TextCommand, GetSetting("Command_1") ).Build().Perform(); 
-		 
+	     if (IsVisible(TextCommand))
+         {
+		   //SetText Keyboard
+           Log("TextCommand - SetText_1_Laccs");
+           Actions Builder4Act = new Actions(Driver);
+           Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
+           Wait(3);
+           Builder4Act.SendKeys(TextCommand, GetSetting("Command_1") ).Build().Perform(); 
+		 }
 		 return 0;
       }
       //=================//	
@@ -1216,12 +1233,15 @@ public class DiscordScript: FaucetScript
       public int SetText_2_Laccs_SendKeys_Way_Function()
       {
          var TextCommand = ElementByXPath("//div[contains(@class,'inner')]/div[contains(@class,'textArea')]");
-	     //SetText Keyboard
-         Log("TextCommand");
-         Actions Builder4Act = new Actions(Driver);
-         Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
-         Wait(3);
-         Builder4Act.SendKeys(TextCommand, GetSetting("Command_2") ).Build().Perform();
+	     if (IsVisible(TextCommand))
+         {
+		   //SetText Keyboard
+           Log("TextCommand - SetText_2_Laccs");
+           Actions Builder4Act = new Actions(Driver);
+           Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
+           Wait(3);
+           Builder4Act.SendKeys(TextCommand, GetSetting("Command_2") ).Build().Perform();
+		 }
 		 
 		 return 0;
       }
