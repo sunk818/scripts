@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 05/12/2018 06:00AM 
-//Last Update: 05/10/2020 15:30AM - Version 66
+//Last Update: 06/10/2020 01:30AM - Version 67
 //==================//
 
 using System;
@@ -10,7 +10,6 @@ using System.Text.RegularExpressions;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 //css_inc RecaptchaUtilities
-
 
 public class DiscordScript: FaucetScript
 {
@@ -1549,7 +1548,8 @@ public class DiscordScript: FaucetScript
   //=================//
   private int Reaction_while_Function()
   {
-	  
+
+
          var TimeToWaitForBreak = DateTime.Now.AddSeconds(360);
          while (true)
          {	
@@ -1558,7 +1558,7 @@ public class DiscordScript: FaucetScript
            Scroll_Function(); //call to scroll down
 		   
 		   Wait(4);
-		   
+		  
 		   var ReactionButton_Clean = ElementByXPath("//div[contains(@class,'reactionInner') and @aria-pressed='false' ]//img[contains(@src,'assets/b052a4bef57')]");
            
 		   if (!IsVisible(ReactionButton_Clean)) 
@@ -1569,8 +1569,12 @@ public class DiscordScript: FaucetScript
            } 
  	       
 		   if (IsVisible(ReactionButton_Clean))
-           {
-		   Log("Reaction is now Clean - call to function - to click"); 
+           {			   
+		   Log("Reaction is now Clean - call to function - to click");
+		   Wait(2);	   
+  		   int Count;			     
+		   var ReactionButton_2_Clean = ElementsByXPath("//div[contains(@class,'reactionInner') and @aria-pressed='false' ]//img[contains(@src,'assets/b052a4bef57')]"); //Elements
+		   Log("the amount of Reactions to do now is " + ReactionButton_2_Clean.Count);		   
 		   Reaction_Function(); //call to Reaction_Function
 		   }
 		   
