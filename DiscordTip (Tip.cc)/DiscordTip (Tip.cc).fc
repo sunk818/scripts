@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 05/12/2018 06:00AM 
-//Last Update: 05/10/2020 03:00AM - Version 65
+//Last Update: 05/10/2020 15:30AM - Version 66
 //==================//
 
 using System;
@@ -34,21 +34,22 @@ public class DiscordScript: FaucetScript
                 new FaucetSetting(){Name="ProtectionSetEnglishLanguage",Display="ProtectionSetEnglishLanguage - On/off",Type=EditorType.CheckBox,Default=true},	
 
                 new FaucetSetting(){Name="Discordtip_Main_vote_OnOff",Display="Discordtip Bot (Tip.cc) | Main - Vote - On/off",Type=EditorType.CheckBox,Default=true},						
-                new FaucetSetting(){Name="Discordtip_Main_Airdrop_1_OnOff",Display="Discordtip Bot (Tip.cc) | Main - Airdrop 1 - On/off",Type=EditorType.CheckBox,Default=true},						
-                new FaucetSetting(){Name="Discordtip_Main_Airdrop_2_OnOff",Display="Discordtip Bot (Tip.cc) | Main - Airdrop 2 - On/off",Type=EditorType.CheckBox,Default=true},						
+                new FaucetSetting(){Name="Discordtip_Main_Airdrop_1_OnOff",Display="Discordtip Bot (Tip.cc) | Main - Airdrop 1 - 'giveaways' channel - On/off",Type=EditorType.CheckBox,Default=true},						
+                new FaucetSetting(){Name="Discordtip_Main_Airdrop_2_OnOff",Display="Discordtip Bot (Tip.cc) | Main - Airdrop 2 - 'drops-and-begging' channel - On/off",Type=EditorType.CheckBox,Default=true},						
+                new FaucetSetting(){Name="Discordtip_Main_Airdrop_3_OnOff",Display="Discordtip Bot (Tip.cc) | Main - Airdrop 3 - 'promos' channel - On/off",Type=EditorType.CheckBox,Default=true},						
 
 				new FaucetSetting(){Name="Discordtip_Main_ID",Display="Discordtip Bot | Main - Vote and Claim between 100 to 500 satoshi - every 12 hours' ",Default="617037497574359050",Type=EditorType.TextBox,Required=true},
 				new FaucetSetting(){Name="Menu_Bot_Currency",Display="Discordtip Bot | Main - Menu Bot Currency - Select Favorite Currency (correctly available only 'BTC')",Type=EditorType.ComboBox,Default="btc",Items=new System.Collections.Generic.List<string>{"btc","bch","btg","dash","dgb","doge","eos","eth","ethos","ltc","omg","wax","xzc","zec"}},
 
-                new FaucetSetting(){Name="Discordtip_FaucetCollector_OnOff",Display="FaucetCollector - AirDrop - OnOff",Type=EditorType.CheckBox,Default=true},		
+                new FaucetSetting(){Name="Discordtip_FaucetCollector_OnOff",Display="FaucetCollector - AirDrop - 'giveaways' channel - OnOff",Type=EditorType.CheckBox,Default=true},		
                 
 				new FaucetSetting(){Name="Discordtip_LaccsFaucet_vote_OnOff",Display="Discordtip_LaccsFaucet_vote - On/off",Type=EditorType.CheckBox,Default=true},
 				new FaucetSetting(){Name="Discordtip_LaccsFaucet_Main_ID",Display="LaccsFaucet - Vote and Claim between 50 to 100 satoshi - every 12 hours' ",Default="719287586849423420",Type=EditorType.TextBox,Required=true},
-                new FaucetSetting(){Name="Discordtip_LaccsFaucet_BTC_OnOff",Display="LaccsFaucet BTC - AirDrop - On/off",Type=EditorType.CheckBox,Default=true},	
+                new FaucetSetting(){Name="Discordtip_LaccsFaucet_BTC_OnOff",Display="LaccsFaucet BTC - AirDrop - 'commands' channel - On/off",Type=EditorType.CheckBox,Default=true},	
 				new FaucetSetting(){Name="Command_1",Display="LaccsFaucet_BTC - Command_1",Default="!claim",Type=EditorType.TextBox,Required=true},
 				new FaucetSetting(){Name="Command_2",Display="LaccsFaucet_BTC - Command_2",Default="%claim",Type=EditorType.TextBox,Required=true},
 
-                new FaucetSetting(){Name="Discordtip_GridCoin_OnOff",Display="GridCoin - Faucet every 24h - OnOff",Type=EditorType.CheckBox,Default=true},		
+                new FaucetSetting(){Name="Discordtip_GridCoin_OnOff",Display="GridCoin - Faucet every 24h - 'wallet-bot' channel - OnOff",Type=EditorType.CheckBox,Default=true},		
               
 				new FaucetSetting(){Name="AutoWithdraw_BTC",Display="AutoWithdraw BTC - On/off",Type=EditorType.CheckBox,Default=false},		
 				new FaucetSetting(){Name="AutoWithdraw_DOGE",Display="AutoWithdraw DOGE - On/off",Type=EditorType.CheckBox,Default=false},		
@@ -636,7 +637,7 @@ public class DiscordScript: FaucetScript
         Wait(5);
         Title = "#giveaways";		
         GoToUrl("https://discordapp.com/channels/406508543034916865/566695331295920138");
-		Log("Discordtip_FaucetCollector: go to to claim in channel  | FaucetCollector "); 	
+		Log("Discordtip_FaucetCollector: go to to claim in 'giveaways' channel | FaucetCollector ");
 		Wait();
 		Wait(15);
 
@@ -683,7 +684,7 @@ public class DiscordScript: FaucetScript
         Wait(5);
         Title = "#giveaways";		
         GoToUrl("https://discord.com/channels/617034883503620167/639195586070839316");
-		Log("Discordtip_Main_Airdrop_1_OnOff: go to to claim in channel  | Discordtip "); 	
+		Log("Discordtip_Main_Airdrop_1_OnOff: go to to claim in 'giveaways' channel | Discordtip ");
 		Wait();
 		Wait(15);
 
@@ -730,7 +731,7 @@ public class DiscordScript: FaucetScript
         Wait(5);
         Title = "#drops-and-begging";		
         GoToUrl("https://discord.com/channels/617034883503620167/699702250531979325");
-		Log("Discordtip_Main_Airdrop_2_OnOff: go to to claim in channel  | Discordtip "); 	
+		Log("Discordtip_Main_Airdrop_2_OnOff: go to to claim in 'drops-and-begging' channel | Discordtip ");
 		Wait();
 		Wait(15);
 
@@ -739,6 +740,53 @@ public class DiscordScript: FaucetScript
         Wait(3);
 
      } //end Discordtip_Main_Airdrop_2_OnOff
+     //========================//
+
+
+      //=========================//
+      //Discordtip_Main_Airdrop_3_OnOff//
+      //=========================//
+      if (GetBoolSetting("Discordtip_Main_Airdrop_3_OnOff"))
+      {		
+	    Title = "TopSite";	
+		GoToUrl("http://bit.ly/TopSite-AD");
+		Log("WonPe TOP"); 
+        Wait();
+        Wait(17);
+
+		//first go to server
+	    Title = "Discord";	
+		GoToUrl("https://discord.gg/Rd2PgZy"); //Tip.cc server
+		Wait();	
+		Wait(5);		
+
+        Driver.Navigate().Refresh();
+		Wait();	
+		
+        var NitroGamesVAR = ElementByXPath("//div[@class='contents-18-Yxp' and contains(text(),'Cancel')]");
+	    if (IsVisible(NitroGamesVAR))
+        {
+		Log("NitroGamesVAR apper - Cancel this "); 	
+        Click(NitroGamesVAR);
+        }
+		
+		Wait(5);	
+		
+        inviteServer_Elements_Function(); //call
+		
+		Wait();
+        Wait(5);
+        Title = "#promos";		
+        GoToUrl("https://discord.com/channels/617034883503620167/755024910023131167");
+		Log("Discordtip_Main_Airdrop_3_OnOff: go to to claim in 'promos' channel | Discordtip ");
+		Wait();
+		Wait(15);
+
+        Reaction_while_Function(); //call	  
+		
+        Wait(3);
+
+     } //end Discordtip_Main_Airdrop_3_OnOff
      //========================//
 
 
@@ -1004,7 +1052,7 @@ public class DiscordScript: FaucetScript
         Wait(5);
         Title = "#commands";		
         GoToUrl("https://discord.com/channels/749393412238868571/749397869202505858"); //old channel https://discordapp.com/channels/529052821614493698/621344688393289728
-		Log("Discordtip_LaccsFaucet_BTC: go to to claim in channel  | LaccsFaucet - BTC "); 	
+		Log("Discordtip_LaccsFaucet_BTC: go to to claim in 'commands' channel  | LaccsFaucet - BTC "); 	
 		Wait();
 		Wait(6);
 		
@@ -1402,7 +1450,7 @@ public class DiscordScript: FaucetScript
                  return GetWaitSetting();		 
 				}
 				  
-                if (!GetBoolSetting("Discordtip_FaucetCollector_OnOff") && !GetBoolSetting("Discordtip_Main_Airdrop_1_OnOff")  && !GetBoolSetting("Discordtip_Main_Airdrop_2_OnOff") && !GetBoolSetting("Discordtip_LaccsFaucet_BTC_OnOff") && !GetBoolSetting("Discordtip_GridCoin_OnOff") )
+                if (!GetBoolSetting("Discordtip_FaucetCollector_OnOff") && !GetBoolSetting("Discordtip_Main_Airdrop_1_OnOff")  && !GetBoolSetting("Discordtip_Main_Airdrop_2_OnOff") && !GetBoolSetting("Discordtip_Main_Airdrop_3_OnOff") && !GetBoolSetting("Discordtip_LaccsFaucet_BTC_OnOff") && !GetBoolSetting("Discordtip_GridCoin_OnOff") )
                 {
 	             Notification("ThanksMessage' - appear && the all AirDrop from Discordtip are disabled");	
 		         Log(" 'ThanksMessage' - appear && the all AirDrop from Discordtip are disabled ");  
@@ -1423,7 +1471,7 @@ public class DiscordScript: FaucetScript
                  return GetWaitSetting();	
 				}
 				
-                if (!GetBoolSetting("Discordtip_FaucetCollector_OnOff") && !GetBoolSetting("Discordtip_Main_Airdrop_1_OnOff")  && !GetBoolSetting("Discordtip_Main_Airdrop_2_OnOff") && !GetBoolSetting("Discordtip_LaccsFaucet_BTC_OnOff") && !GetBoolSetting("Discordtip_GridCoin_OnOff") )
+                if (!GetBoolSetting("Discordtip_FaucetCollector_OnOff") && !GetBoolSetting("Discordtip_Main_Airdrop_1_OnOff")  && !GetBoolSetting("Discordtip_Main_Airdrop_2_OnOff") && !GetBoolSetting("Discordtip_Main_Airdrop_3_OnOff") && !GetBoolSetting("Discordtip_LaccsFaucet_BTC_OnOff") && !GetBoolSetting("Discordtip_GridCoin_OnOff") )
                 {
 	             Notification(" 'AlreadyVoted' - appear && the all AirDrop from Discordtip are disabled ");	
 		         Log(" 'AlreadyVoted' - appear && the all AirDrop from Discordtip are disabled ");  
