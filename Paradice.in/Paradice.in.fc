@@ -1,8 +1,7 @@
 
-
 //==================//
 //script Written by: ••AviramDayan•• 06/04/2020 00:15PM - Version 1
-//Last Update: 06/04/2020 00:15PM - Version 1
+//Last Update: 05/10/2020 15:10PM - Version 2
 //==================//
 
 using System;
@@ -29,8 +28,9 @@ public class Paradice : FaucetScript
                 new FaucetSetting(){Name="Email",Display="UserName",Type=EditorType.TextBox,Required=true},
                 new FaucetSetting(){Name="Password",Display="Password",Type=EditorType.Password,Required=true},
 				
-                new FaucetSetting(){Name="FaucetClaim",Display="FaucetClaim",Type=EditorType.CheckBox,Default=true},		
-                
+		        new FaucetSetting(){Name="DailyBonus",Display="DailyBonus - 7 days",Type=EditorType.CheckBox,Default=true},		             
+		        new FaucetSetting(){Name="LuckySpin",Display="LuckySpin - each day ",Type=EditorType.CheckBox,Default=true},		             
+                new FaucetSetting(){Name="FaucetClaim",Display="FaucetClaim - only if you have 0 in your balance",Type=EditorType.CheckBox,Default=false},	
 			
                 //insert user settings here
                 //new FaucetSetting { 
@@ -91,7 +91,7 @@ public class Paradice : FaucetScript
     {
 
         //In this case we check for en element with the class "loggedIn"
-		return ElementByXPath("//i[contains(@class,'i-user')]") != null;
+		return ElementByXPath("//div[@class='dropdown'] | //ul[contains(@class,'nav-list')]//a[@href='/account']") != null;
 		//return true;
     }
 //==================//
@@ -122,7 +122,7 @@ public class Paradice : FaucetScript
  public override int DoLogin()
  {
 	
-  var ExitButton = ElementByXPath ("//i[contains(@class,'i-user')]"); 
+  var ExitButton = ElementByXPath ("//div[@class='dropdown'] | //ul[contains(@class,'nav-list')]//a[@href='/account']"); 
 
   //if i NOT Login - go to Login Page
   if (!IsVisible(ExitButton))
@@ -146,19 +146,19 @@ public class Paradice : FaucetScript
          SetText(Password_VAR, GetPassword("Password"));
         }
 		
-		Wait(2);		
+		Wait(3);		
+		
+        Recaptcha_Function(); //call	
+
+		Wait(3);		
 		
         var ButtonLog = ElementByXPath("//button[contains(@class,'btn btn btn-primary')]");  
         if (IsVisible(ButtonLog))
         {
          Click(ButtonLog);
         }
-		
-		Wait(6);		
-		
-        Recaptcha_Function(); //call	
-		
-		Wait();
+			
+		Wait();		
 		
   } // end ExitButton
 
@@ -201,26 +201,6 @@ public class Paradice : FaucetScript
     if(ad)
 	{
         ad=false; //solve the problem in start - after he return to script again
-
-        var WaitTimerText = ElementByXPath("//div[contains(@class,'faucet-limit')]");
-        if (IsVisible(WaitTimerText))
-        {
-             var TimerVar = ElementByXPath("//span[contains(@class,'highlighted')]");
-			 if (IsVisible(TimerVar))
-			 {
-	           Log("FaucetClaim: WaitTimerText apper"); 
-               int min, sec;
-               min = Convert.ToInt32(TimerVar.Text.Split(':')[0])*60;
-               sec = Convert.ToInt32(TimerVar.Text.Split(':')[1]);
-               return min+sec;
-			 }
-			 
-			 if (!IsVisible(TimerVar))
-			 {
-			   return GetWaitSetting();  
-			 }
-			 
-        } // end WaitTimerText - visible
 		
     }	//end ad
 
@@ -275,37 +255,84 @@ public class Paradice : FaucetScript
 //=============//
   public override int DoSolveFaucet()
   {
+
+      //=============//
+      //DailyBonus
+      //=============//
+      if (GetBoolSetting("DailyBonus"))
+      {
+        Log("DailyBonus - go to page");
+		GoToUrl("https://paradice.in/?modal=/daily-goals");
+	    Wait();
+	    Wait(10);
+
+        var DailyBonus_Check = ElementByXPath("//span[contains(@class,'one') and contains(text(),'already received') ]"); //check
+        if (IsVisible(DailyBonus_Check))
+        {
+         Log("DailyBonus - already received - try tomorrow");
+		}
+		
+        if (!IsVisible(DailyBonus_Check))
+        {
+         Log("DailyBonus - Available - do stuff ");	
+         var Claim_Button = ElementByXPath("//div[contains(@class,'modal-content')]//span[contains(text(),'Claim')]");
+		 Click(Claim_Button);
+		 Wait(10);
+         var SuccessMessage = ElementByXPath("//span[contains(@class,'two')]//span");
+         Log("DailyBonus - Congratulations, You have received " + SuccessMessage.Text + " SATOSHI" );
+		 ClaimSuccess(); //Marks the claim as a success
+		 Wait();
+		}
+		
+      } //end DailyBonus
+	  
+
+      //=============//
+      //LuckySpin
+      //=============//
+      if (GetBoolSetting("LuckySpin"))
+      {
+        Log("LuckySpin - go to page");
+		GoToUrl("https://paradice.in/?modal=/lucky-spin");
+	    Wait();
+	    Wait(10);
+
+        var LuckySpin_Check = ElementByXPath("//span[contains(@class,'small purple') and contains(text(),':')]"); //check if time run
+        if (IsVisible(LuckySpin_Check))
+        {
+         Log("LuckySpin - already received - try tomorrow");
+		}
+		
+        if (!IsVisible(LuckySpin_Check))
+        {
+         Log("LuckySpin - Available - do stuff ");	
+         var Claim_Button = ElementByXPath("//div[contains(@class,'modal-content')]//span[contains(text(),'Spin')]");
+		 Click(Claim_Button);
+		 Wait(10);
+         var SuccessMessage = ElementByXPath("//span[contains(@class,'win-amount')]");
+         Log("LuckySpin - Congratulations, You have received " + SuccessMessage.Text);
+		 ClaimSuccess(); //Marks the claim as a success
+		 Wait();
+		}
+		
+      } //end LuckySpin
+  
 	
       //=============//
       //FaucetClaim
       //=============//
       if (GetBoolSetting("FaucetClaim"))
       {
-	
-        //else go to normal login
+		  
+        Log("FaucetClaim - go to page");
 		GoToUrl("https://paradice.in/account?modal=faucet");
-		
 	    Wait();
-	    Wait(4);
+	    Wait(10);
 
         var WaitTimerText = ElementByXPath("//div[contains(@class,'faucet-limit')]");
         if (IsVisible(WaitTimerText))
         {
-             var TimerVar = ElementByXPath("//span[contains(@class,'highlighted')]");
-			 if (IsVisible(TimerVar))
-			 {
-	           Log("FaucetClaim: WaitTimerText apper"); 
-               int min, sec;
-               min = Convert.ToInt32(TimerVar.Text.Split(':')[0])*60;
-               sec = Convert.ToInt32(TimerVar.Text.Split(':')[1]);
-               return min+sec;
-			 }
-			 
-			 if (!IsVisible(TimerVar))
-			 {
-			   return GetWaitSetting();  
-			 }
-			 
+           return Time_Function();
         } // end WaitTimerText - visible
 
 
@@ -333,21 +360,19 @@ public class Paradice : FaucetScript
           if (IsVisible(Success_Claim))
 		  {
 		  Log("FaucetClaim - Success_Claim ");  
-          ad = true; //do success
+		  ClaimSuccess(); //Marks the claim as a success
 		  }
 
         } // end WaitTimerText - not visible
 
       } //end FaucetClaim
 
-      return GetWaitSetting();  
+      return Time_Function();  
 	 
 	  //This faucet has nothing to do here. We will let Faucet Collector handle it.
       return base.DoSolveFaucet();
   }
 	
-	
-
 	
 	
     public override int AfterSolveFaucet()
@@ -355,8 +380,6 @@ public class Paradice : FaucetScript
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
         return base.AfterSolveFaucet();
     }
-	
-	
 	
 
     /// <summary>
@@ -373,29 +396,57 @@ public class Paradice : FaucetScript
     }
 	
 	
+	
+        //=================//
+       //Time_Function
+        //=================//
+        public int Time_Function()
+        {
+		
+          Log("Time_Function - return to your time"); 					
+	      return GetWaitSetting();  
+
+         return 0;		
+        }//end Time_Function
+        //=================//	
+		
+	
         //=================//
        //Recaptcha_Function
         //=================//
 
         public int Recaptcha_Function()
         {
-
+			
+          //DoSolveImageCaptcha
+          var SolveMedia = ElementByXPath ("//img[contains(@id,'adcopy-puzzle-image-image')]"); 
+          if (IsVisible(SolveMedia))
+		  {  
+            Log("DO SolveMedia");	  
+	        var result_2 = DoSolveImageCaptcha(ElementByXPath("//img[contains(@id,'adcopy-puzzle-image-image')]"),ElementByXPath("//input[@name='adcopy_response']")); 
+            if (result_2 > 0)
+            {
+                return Fail("SolveMedia - Fail solving captcha");
+            }
+		  }
+		  
 	     //for recaptcha popup after click on button - ("//button[contains(@class,'reload')] | //button[contains(@id,'reload')] ")
           var RecaptchaOpen_Iframe = ElementByXPath ("//iframe[contains(@src,'recaptcha/api2/anchor')]"); 
           if (IsVisible(RecaptchaOpen_Iframe))
 		  {
             //SolveCaptcha if apper
+            Log("DO Recaptcha");	  
             var result = base.DoSolveCaptcha();
             if (result > 0)
             {
-                return Fail("Fail solving captcha");
+                return Fail("Recaptcha - Fail solving captcha");
             }
             RecaptchaUtility utility = new RecaptchaUtility(this);
             utility.DoSolve();
 		  }
 
 		return 0;
-        }//end VOID_Template_Function
+        }//end Recaptcha_Function
         //=================//	
 	
 	
