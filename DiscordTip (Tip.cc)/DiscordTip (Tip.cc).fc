@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 05/12/2018 06:00AM 
-//Last Update: 04/10/2020 13:40AM - Version 64
+//Last Update: 05/10/2020 03:00AM - Version 65
 //==================//
 
 using System;
@@ -52,7 +52,6 @@ public class DiscordScript: FaucetScript
               
 				new FaucetSetting(){Name="AutoWithdraw_BTC",Display="AutoWithdraw BTC - On/off",Type=EditorType.CheckBox,Default=false},		
 				new FaucetSetting(){Name="AutoWithdraw_DOGE",Display="AutoWithdraw DOGE - On/off",Type=EditorType.CheckBox,Default=false},		
-
 				new FaucetSetting(){Name="WalletAddress_BTC",Display="WalletAddress BTC",Type=EditorType.TextBox,Required=false},
 				new FaucetSetting(){Name="WalletAddress_DOGE",Display="WalletAddress DOGE",Type=EditorType.TextBox,Required=false},
 
@@ -406,63 +405,80 @@ public class DiscordScript: FaucetScript
         //==============================//
         if (GetBoolSetting("AutoWithdraw_BTC"))
         {
-            Withdraw_Start_Function(); //call
-			
-            //Withdraw BTC		
-   			var inputDiscord2MessageVar = ElementByXPath("//div[contains(@class,'inner')]/div[contains(@class,'textArea')]");      
-	        if (IsVisible(inputDiscord2MessageVar))
+          Withdraw_Start_Function(); //call
+		
+          //Withdraw BTC		
+   		  var inputDiscord2MessageVar = ElementByXPath("//div[contains(@class,'inner')]/div[contains(@class,'textArea')]");      
+	      if (IsVisible(inputDiscord2MessageVar))
+          {
+            Wait(2);
+		  
+            Actions Builder_4_Act = new Actions(Driver);			
+            Builder_4_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		    Builder_4_Act.SendKeys(inputDiscord2MessageVar,"withdraw btc").Build().Perform();
+            Log("Withdraw BTC");				
+
+            Wait();
+
+            Enter_SendKeys_General_Discord_Input_Function();
+		   
+            Wait(2);
+
+   			var Error_No_Balance_Check = ElementByXPath("//div[contains(@class,'markup-2BOw-j') and contains(@style,'190')]//div[contains(@class,'grid-1nZz7S') and contains(., 'have any') ] [last()] ");      
+	        if (IsVisible(Error_No_Balance_Check))
             {
-              Wait(2);
-			  
-              Actions Builder_4_Act = new Actions(Driver);			
-              Builder_4_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		      Builder_4_Act.SendKeys(inputDiscord2MessageVar,"withdraw btc").Build().Perform();
-			  
-              Wait();
-			  
-              Enter_SendKeys_General_Discord_Input_Function();
-			  
-              Wait(2);
-			  
-              Actions Builder_5_Act = new Actions(Driver);			
-              Builder_5_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		      Builder_5_Act.SendKeys(inputDiscord2MessageVar, GetSetting("WalletAddress_BTC") ).Build().Perform();
-			  
-              Wait();
-			  
-              Enter_SendKeys_General_Discord_Input_Function();
-			  
-              Wait(3);
-			  
-              Actions Builder_6_Act = new Actions(Driver);			
-              Builder_6_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		      Builder_6_Act.SendKeys(inputDiscord2MessageVar, "all" ).Build().Perform();
-			  
-              Wait();
-			  
-              Enter_SendKeys_General_Discord_Input_Function();
-			  
-              Wait(6);
-			   
-              var FeeVAR = ElementByXPath("//div[contains(@id,'chat-messages-')]//div[contains(@class,'embedFields-2IPs5Z')]/div[3]/div[2 and contains(., '$0.0') or contains(., '$0.00')  or contains(., '$0.000') ] ");
-              if (IsVisible(FeeVAR) )
-              {
-                  Log("LimitFee - the fee above -> not good");
-              }
-			   		    
-              if (IsVisible(FeeVAR)) 
-              {
-                 Log("LimitFee - the fee under <- good");		   
-                 Wait(3);
-                 Actions Builder_7_Act = new Actions(Driver);
-                 Builder_7_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		         Builder_7_Act.SendKeys(inputDiscord2MessageVar, "yes" ).Build().Perform();			
-                 Wait();
-                 Enter_SendKeys_General_Discord_Input_Function();
-			     Log("Withdraw_BTC - success");
-                 Wait(5);
-              }
+                Log("You don't have any - BTC");				
 			}
+			
+	        if (!IsVisible(Error_No_Balance_Check)) //if the Error - red line - You don't have any - NOT visible - do stuff
+            {	
+                Log("Available - BTC - balance");				
+				
+                Actions Builder_5_Act = new Actions(Driver);			
+                Builder_5_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		        Builder_5_Act.SendKeys(inputDiscord2MessageVar, GetSetting("WalletAddress_BTC") ).Build().Perform();
+                Log("set BTC WalletAddress");
+				
+                Wait();
+			    
+                Enter_SendKeys_General_Discord_Input_Function();
+			    
+                Wait(3);
+			    
+                Actions Builder_6_Act = new Actions(Driver);			
+                Builder_6_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		        Builder_6_Act.SendKeys(inputDiscord2MessageVar, "all" ).Build().Perform();
+                Log("BTC - type - all");
+			    
+                Wait();
+			    
+                Enter_SendKeys_General_Discord_Input_Function();
+			    
+                Wait(6);
+			     
+                var FeeVAR = ElementByXPath("//div[contains(@id,'chat-messages-')]//div[contains(@class,'embedFields-2IPs5Z')]/div[3]/div[2 and contains(., '$0.0') or contains(., '$0.00')  or contains(., '$0.000') ] ");
+                if (IsVisible(FeeVAR) )
+                {
+                   Log("BTC - LimitFee -> NOT good - the 'fee' is 'HIGH' and above > 0.0$ or $0.00 or $0.000 ");
+                }
+			     		    
+                if (IsVisible(FeeVAR)) 
+                {
+                   Log("BTC - LimitFee <- good - the 'fee' is 'LOW' and under < 0.0$ or $0.00 or $0.000 ");	   
+                   Wait(3);
+                   Actions Builder_7_Act = new Actions(Driver);
+                   Builder_7_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		           Builder_7_Act.SendKeys(inputDiscord2MessageVar, "yes" ).Build().Perform();	
+                   Log("BTC - type - yes");
+                   Wait();
+                   Enter_SendKeys_General_Discord_Input_Function();
+			       Log("Withdraw_BTC - success");
+                   Wait(5);
+                }
+				
+			}// end Error_No_Balance_Check - NOT visible				
+				
+          }// end inputDiscord2MessageVar
 
 	    }// end LaccsFaucet_BTC_AutoWithdraw
         //==============================//
@@ -473,63 +489,80 @@ public class DiscordScript: FaucetScript
         //==============================//
         if (GetBoolSetting("AutoWithdraw_DOGE"))
         {
-            Withdraw_Start_Function(); //call
-			
-            //Withdraw DOGE		
-   			var inputDiscord2MessageVar = ElementByXPath("//div[contains(@class,'inner')]/div[contains(@class,'textArea')]");      
-	        if (IsVisible(inputDiscord2MessageVar))
+          Withdraw_Start_Function(); //call
+		
+          //Withdraw DOGE		
+   		  var inputDiscord2MessageVar = ElementByXPath("//div[contains(@class,'inner')]/div[contains(@class,'textArea')]");      
+	      if (IsVisible(inputDiscord2MessageVar))
+          {
+            Wait(2);
+		  
+            Actions Builder_4_Act = new Actions(Driver);			
+            Builder_4_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		    Builder_4_Act.SendKeys(inputDiscord2MessageVar,"withdraw DOGE").Build().Perform();
+            Log("Withdraw DOGE");				
+		  
+            Wait();
+		  
+            Enter_SendKeys_General_Discord_Input_Function();
+		  
+            Wait(2);
+
+   			var Error_No_Balance_Check = ElementByXPath("//div[contains(@class,'markup-2BOw-j') and contains(@style,'190')]//div[contains(@class,'grid-1nZz7S') and contains(., 'have any') ] [last()] ");      
+	        if (IsVisible(Error_No_Balance_Check))
             {
-              Wait(2);
-			  
-              Actions Builder_4_Act = new Actions(Driver);			
-              Builder_4_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		      Builder_4_Act.SendKeys(inputDiscord2MessageVar,"withdraw DOGE").Build().Perform();
-			  
-              Wait();
-			  
-              Enter_SendKeys_General_Discord_Input_Function();
-			  
-              Wait(2);
-			  
-              Actions Builder_5_Act = new Actions(Driver);			
-              Builder_5_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		      Builder_5_Act.SendKeys(inputDiscord2MessageVar, GetSetting("WalletAddress_DOGE") ).Build().Perform();
-			  
-              Wait();
-			  
-              Enter_SendKeys_General_Discord_Input_Function();
-			  
-              Wait(3);
-			  
-              Actions Builder_6_Act = new Actions(Driver);			
-              Builder_6_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		      Builder_6_Act.SendKeys(inputDiscord2MessageVar, "all" ).Build().Perform();
-			  
-              Wait();
-			  
-              Enter_SendKeys_General_Discord_Input_Function();
-			  
-              Wait(6);
-			   
-              var FeeVAR = ElementByXPath("//div[contains(@id,'chat-messages-')]//div[contains(@class,'embedFields-2IPs5Z')]/div[3]/div[2 and contains(., '$0.0') or contains(., '$0.00')  or contains(., '$0.000') ] ");
-              if (IsVisible(FeeVAR) )
-              {
-                  Log("LimitFee - the fee above -> not good");
-              }
-			   		    
-              if (IsVisible(FeeVAR)) 
-              {
-                 Log("LimitFee - the fee under <- good");		   
-                 Wait(3);
-                 Actions Builder_7_Act = new Actions(Driver);
-                 Builder_7_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		         Builder_7_Act.SendKeys(inputDiscord2MessageVar, "yes" ).Build().Perform();			
-                 Wait();
-                 Enter_SendKeys_General_Discord_Input_Function();
-			     Log("Withdraw_BTC - success");
-                 Wait(5);
-              }
+                Log("You don't have any - DOGE");				
 			}
+			
+	        if (!IsVisible(Error_No_Balance_Check)) //if the Error - red line - You don't have any - NOT visible - do stuff
+            {	
+                Log("Available - DOGE - balance");				
+							  
+                Actions Builder_5_Act = new Actions(Driver);			
+                Builder_5_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		        Builder_5_Act.SendKeys(inputDiscord2MessageVar, GetSetting("WalletAddress_DOGE") ).Build().Perform();
+                Log("set DOGE WalletAddress");
+			    
+                Wait();
+			    
+                Enter_SendKeys_General_Discord_Input_Function();
+			    
+                Wait(3);
+			    
+                Actions Builder_6_Act = new Actions(Driver);			
+                Builder_6_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		        Builder_6_Act.SendKeys(inputDiscord2MessageVar, "all" ).Build().Perform();
+                Log("DOGE - type - all");
+			    
+                Wait();
+			    
+                Enter_SendKeys_General_Discord_Input_Function();
+			    
+                Wait(6);
+			     
+                var FeeVAR = ElementByXPath("//div[contains(@id,'chat-messages-')]//div[contains(@class,'embedFields-2IPs5Z')]/div[3]/div[2 and contains(., '$0.0') or contains(., '$0.00')  or contains(., '$0.000') ] ");
+                if (IsVisible(FeeVAR) )
+                {
+                   Log("DOGE - LimitFee -> NOT good - the 'fee' is 'HIGH' and above > 0.0$ or $0.00 or $0.000 ");
+                }
+			     		    
+                if (IsVisible(FeeVAR)) 
+                {
+                   Log("DOGE - LimitFee <- good - the 'fee' is 'LOW' and under < 0.0$ or $0.00 or $0.000 ");		   
+                   Wait(3);
+                   Actions Builder_7_Act = new Actions(Driver);
+                   Builder_7_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		           Builder_7_Act.SendKeys(inputDiscord2MessageVar, "yes" ).Build().Perform();			
+                   Log("DOGE - type - yes");
+				   Wait();				   
+                   Enter_SendKeys_General_Discord_Input_Function();
+			       Log("Withdraw_BTC - success");
+                   Wait(5);
+                }
+				
+			}// end Error_No_Balance_Check - NOT visible				
+				
+          }// end inputDiscord2MessageVar
 
 	    }// end LaccsFaucet_DOGE_AutoWithdraw
         //==============================//
