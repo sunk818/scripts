@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 06/04/2020 00:15PM - Version 1
-//Last Update: 05/10/2020 15:10PM - Version 2
+//Last Update: 06/10/2020 01:40AM - Version 2
 //==================//
 
 using System;
@@ -279,7 +279,10 @@ public class Paradice : FaucetScript
 		 Click(Claim_Button);
 		 Wait(10);
          var SuccessMessage = ElementByXPath("//span[contains(@class,'two')]//span");
+         if (IsVisible(SuccessMessage))
+         {
          Log("DailyBonus - Congratulations, You have received " + SuccessMessage.Text + " SATOSHI" );
+		 }
 		 ClaimSuccess(); //Marks the claim as a success
 		 Wait();
 		}
@@ -310,7 +313,10 @@ public class Paradice : FaucetScript
 		 Click(Claim_Button);
 		 Wait(10);
          var SuccessMessage = ElementByXPath("//span[contains(@class,'win-amount')]");
+         if (IsVisible(SuccessMessage))
+         {
          Log("LuckySpin - Congratulations, You have received " + SuccessMessage.Text);
+		 }
 		 ClaimSuccess(); //Marks the claim as a success
 		 Wait();
 		}
@@ -450,4 +456,4 @@ public class Paradice : FaucetScript
         //=================//	
 	
 	
-} //public class dogeto
+} //public class 
