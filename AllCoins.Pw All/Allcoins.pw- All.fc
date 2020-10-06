@@ -278,7 +278,7 @@ public override int DoSolveFaucet()
 
 
     
-        var startClaimBtn = ElementsByXPath("//span[contains(@data-href,'./faucet.php?coin')]")
+        var startClaimBtn = ElementsByXPath("//span[contains(@data-href,'./faucet.php?coin') and contains(@class,'w3-blue')]")
             .FirstOrDefault(button=>IsVisible(button));
         if (! IsVisible ( startClaimBtn ) )
         {
