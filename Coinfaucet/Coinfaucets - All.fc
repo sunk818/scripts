@@ -1,4 +1,5 @@
 ﻿using FaucetCollector.Script;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 //css_ref FaucetCollector.Utilities
@@ -16,7 +17,8 @@ class Coinfaucets : FaucetScript
                 new FaucetSetting(){Name="User",Display="Email",Type=EditorType.TextBox,Required=true},
                 new FaucetSetting(){Name="Pass",Display="Password",Type=EditorType.Password,Required=true},
                 new FaucetSetting(){Name="Faucet",Display="Faucet Selected",Type=EditorType.ComboBox,Items=Faucets.Keys.ToList(),Default=Faucets.Keys.FirstOrDefault()},
-                new FaucetSetting(){Name="AutoWithdraw",Display="AutoWithdraw",Type=EditorType.CheckBox,Default=false }
+                new FaucetSetting(){Name="AutoWithdraw",Display="AutoWithdraw",Type=EditorType.CheckBox,Default=false },
+                new FaucetSetting(){Name="Retry", Display="Number of Retries without refresh" , Type=EditorType.Numeric , Default=1  }
             };
         }
     }
@@ -119,7 +121,7 @@ class Coinfaucets : FaucetScript
 
                 return Faucets[Key].Url;
             }
-           
+
             return Faucets.Values.FirstOrDefault( ).Url;
 
         }
@@ -133,6 +135,13 @@ class Coinfaucets : FaucetScript
         }
     }
 
+    private int Retries
+    {
+        get
+        {
+            return GetIntSetting("Retry" , 1);
+        }
+    }
     private string KeySelected
     {
         get
@@ -253,22 +262,45 @@ class Coinfaucets : FaucetScript
     }
     public override int DoSolveFaucet( )
     {
-        GoToUrl(FaucetUrl);
-        Wait(2);
 
-        var ClaimBtn=ElementByXPath("//button[@class='main-button-2 roll-button bg-2']");
+        int retries= this.Retries;
 
-        if ( !IsVisible(ClaimBtn) )
+        int actualClaim  = 0;
+        while ( actualClaim<retries )
         {
-            return Fail("Claim btn is not visible");
-        }
 
-        DoSolveCaptcha( );
+            GoToUrl(FaucetUrl);
+            Wait(2);
 
+            var ClaimBtn=ElementByXPath("//button[@class='main-button-2 roll-button bg-2']");
 
-        if ( IsVisible(ClaimBtn) )
-        {
+            if ( !IsVisible(ClaimBtn) )
+            {
+                return Fail("Claim btn is not visible");
+            }
+
+            DoSolveCaptcha( );
+
             Click(ClaimBtn);
+
+            DateTime timeout= DateTime.Now.AddSeconds(20);
+            var successElem = ElementByXPath(SuccessXPath);
+            while ( DateTime.Now<timeout&&!IsVisible(successElem) )
+            {
+
+                Wait( );
+                successElem=ElementByXPath(SuccessXPath);
+
+
+            }
+
+            if ( IsVisible(successElem) )
+            {
+                break;
+            }
+
+            actualClaim++;
+
         }
 
         return base.DoSolveFaucet( );
@@ -291,7 +323,7 @@ class Coinfaucets : FaucetScript
     }
     public override int DoSolveCaptcha( )
     {
-        if ( IsVisible(ElementByXPath("//div[@class='g-recaptcha']")) && IsVisible(ElementByXPath("//iframe[contains(@src,'recaptcha')]")) )
+        if ( IsVisible(ElementByXPath("//div[@class='g-recaptcha']"))&&IsVisible(ElementByXPath("//iframe[contains(@src,'recaptcha')]")) )
         {
             var result=base.DoSolveCaptcha ( );
             if ( result>0 )
