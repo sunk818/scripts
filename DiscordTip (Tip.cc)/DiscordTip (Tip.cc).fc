@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 05/12/2018 06:00AM 
-//Last Update: 05/10/2020 15:30AM - Version 66
+//Last Update: 06/10/2020 09:00AM - Version 67
 //==================//
 
 using System;
@@ -10,7 +10,6 @@ using System.Text.RegularExpressions;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 //css_inc RecaptchaUtilities
-
 
 public class DiscordScript: FaucetScript
 {
@@ -224,30 +223,19 @@ public class DiscordScript: FaucetScript
 
         }
 		
-        Wait(3);
-
+        Wait(4);
 		
         if (ElementByXPath("//div[@class='g-recaptcha']") != null)
         {
-            //SolveCaptcha if apper
-            int result = DoSolveCaptcha();
-            if (result > 0)
-            {
-                return Fail("Fail solving recaptcha");
-            }
-            RecaptchaUtility utility = new RecaptchaUtility(this);
-            utility.DoSolve();
-			
-            Wait(3);
+            Recaptcha_Function(); //call
+            
+			Wait(3);
 			
             var Button_2_Log = ElementByXPath("//button[@type='submit']");
             Click(Button_2_Log);
 			
             Wait(3);
         }
-
-		
-            Wait();
 
         //This faucet has nothing to do here.    
         return base.DoLogin();
@@ -1353,7 +1341,7 @@ public class DiscordScript: FaucetScript
   //=================//
   //CheckCloudFlare Function
   //=================//	
- public void CheckCloudFlare()
+ public int CheckCloudFlare()
     {
         int Count = 0;
         while (IsVisible(ElementByXPath("//h1[@data-translate='challenge_headline']")) && Count<5)
@@ -1365,12 +1353,12 @@ public class DiscordScript: FaucetScript
                 continue;
             }
 
-
             RecaptchaUtility BypassRecaptcha = new RecaptchaUtility(this);
             BypassRecaptcha.DoSolve();
             Wait(2);
             Count++;
         }
+		 return 0;
     }
   //=================//
 
@@ -1382,57 +1370,97 @@ public class DiscordScript: FaucetScript
       {
 
 	        CheckCloudFlare(); //call to CheckCloudFlare Function
-            Wait(3);
+            Wait(6);
 			
-            var discordbotsLogin = ElementByXPath("//a[@href='/login']");
-            if (IsVisible(discordbotsLogin))
+            var PopUp_1_Login = ElementByXPath("//div[@class='modal is-active']"); //("//div[@class='modal is-active']")		
+            if (IsVisible(PopUp_1_Login))
             {
-                Click(discordbotsLogin);
-                Wait(3);
+				Log("PopUp_1_Login visible - click on DiscordBots LoginButton");
+                var DiscordBotsLogin_1_Button = ElementByXPath("//strong[contains(text(),'Login')]"); //("//a[contains(@href,'login')]")
+                Click(DiscordBotsLogin_1_Button);
+				Wait();
             }
 
-            var AuthorizeButton = ElementByXPath("//button/div[contains(text(),'Authorize')]");   //("//button[@class='primary'] [text()='Authorize']")
+            Wait(5);
+			
+            var Authorize_1_Button = ElementByXPath("//button/div[contains(text(),'Authorize')]");   //("//button[@class='primary'] [text()='Authorize']")
 
-            if (IsVisible(AuthorizeButton))
+            if (IsVisible(Authorize_1_Button))
             {
-                Click(AuthorizeButton);
-                Log("AfterLogin: Click AuthorizeButton");
+                Click(Authorize_1_Button);
+                Log("AfterLogin: Click Authorize_1_Button");
             }
 
-            if (!IsVisible(AuthorizeButton))
+            if (!IsVisible(Authorize_1_Button))
             {
-                Log("AfterLogin: Success - We Already Login with Authorize");
+                Log("AfterLogin: Success - We Already Login with Authorize_1_Button");
             }
+
+            Wait(5);
 
             //vote button
             var VoteButton = ElementByXPath("//span[@id='votingvoted']");
             if (IsVisible(VoteButton))
             {
+                Log("VoteButton - 1");
                 Click(VoteButton);
+				
+            }
+			
+            Wait(3);
+			
+            var PopUp_2_Login = ElementByXPath("//div[@class='modal is-active']"); //("//div[@class='modal is-active']")		
+            if (IsVisible(PopUp_2_Login))
+            {
+				Log("PopUp_2_Login visible - click on DiscordBots LoginButton");
+                var DiscordBotsLogin_2_Button = ElementByXPath("//strong[contains(text(),'Login')]"); //("//a[contains(@href,'login')]")
+                Click(DiscordBotsLogin_2_Button);
+				Wait();
             }
 
-            Wait(2, 3);
+            Wait(4);
 
-            var LogAccessButton = ElementByXPath("//strong[contains(text(),'Login')]");
-
-            if (IsVisible(LogAccessButton))
+            var invisible_Recaptcha_1_VAR = ElementByXPath("//button[contains(@class,'reload')] | //button[contains(@id,'reload')] ");
+            if (invisible_Recaptcha_1_VAR !=null)
             {
-                Click(LogAccessButton);
-                Log("AfterLogin: Click LogAccessButton");
+                Log("invisible_Recaptcha_1_VAR");
+				invisible_Recaptcha_Function(); //call
+			}
+			
+            Wait();
+	
+            var Authorize_2_Button = ElementByXPath("//button/div[contains(text(),'Authorize')]");   //("//button[@class='primary'] [text()='Authorize']")
+
+            if (IsVisible(Authorize_2_Button))
+            {
+                Click(Authorize_2_Button);
+                Log("AfterLogin: Click Authorize_2_Button");
             }
-            Wait(1);
-            var Autorizate = ElementByXPath("//button/div[contains(text(),'Authorize')]");  //("//button[contains(@class,'primary')]")
-            if (IsVisible(Autorizate))
+
+            if (!IsVisible(Authorize_2_Button))
             {
-                Click(Autorizate);
+                Log("AfterLogin: Success - We Already Login with Authorize_2_Button");
             }
 
             Wait(2);
 
             //vote button
-            var Vote2Button = ElementByXPath("//span[@id='votingvoted']");
-            Click(Vote2Button);
+            if (IsVisible(VoteButton))
+            {
+                Log("VoteButton - 2");
+                Click(VoteButton);
+            }
+			
             Wait(3);
+
+            var invisible_Recaptcha_2_VAR = ElementByXPath("//button[contains(@class,'reload')] | //button[contains(@id,'reload')] ");
+            if (invisible_Recaptcha_2_VAR !=null)
+            {
+                Log("invisible_Recaptcha_2_VAR");
+				invisible_Recaptcha_Function(); //call
+			}
+
+            Wait(4);
 
             var ThanksMessage = ElementByXPath("//div[@id='reminder']/p[text()='Thanks for voting!']");
             var AlreadyVoted = ElementByXPath("//span[@id='votingvoted'] [text()='You already voted for this bot. Try again in 12 hours.']");
@@ -1549,7 +1577,8 @@ public class DiscordScript: FaucetScript
   //=================//
   private int Reaction_while_Function()
   {
-	  
+
+
          var TimeToWaitForBreak = DateTime.Now.AddSeconds(360);
          while (true)
          {	
@@ -1558,7 +1587,7 @@ public class DiscordScript: FaucetScript
            Scroll_Function(); //call to scroll down
 		   
 		   Wait(4);
-		   
+		  
 		   var ReactionButton_Clean = ElementByXPath("//div[contains(@class,'reactionInner') and @aria-pressed='false' ]//img[contains(@src,'assets/b052a4bef57')]");
            
 		   if (!IsVisible(ReactionButton_Clean)) 
@@ -1569,8 +1598,12 @@ public class DiscordScript: FaucetScript
            } 
  	       
 		   if (IsVisible(ReactionButton_Clean))
-           {
-		   Log("Reaction is now Clean - call to function - to click"); 
+           {			   
+		   Log("Reaction is now Clean - call to function - to click");
+		   Wait(2);	   
+  		   int Count;			     
+		   var ReactionButton_2_Clean = ElementsByXPath("//div[contains(@class,'reactionInner') and @aria-pressed='false' ]//img[contains(@src,'assets/b052a4bef57')]"); //Elements
+		   Log("the amount of Reactions to do now is " + ReactionButton_2_Clean.Count);		   
 		   Reaction_Function(); //call to Reaction_Function
 		   }
 		   
@@ -1978,6 +2011,72 @@ public class DiscordScript: FaucetScript
   } //end ADFunction_String_URL_DiscordBotsTip
   //====================//
 
+
+
+
+        //=================//
+       //invisible_Recaptcha_Function
+        //=================//
+        public int invisible_Recaptcha_Function()
+        {
+			
+          var RecaptchaOpen_Iframe = ElementByXPath ("//button[contains(@class,'reload')] | //button[contains(@id,'reload')] "); 
+          if (RecaptchaOpen_Iframe !=null)          
+		  {
+            //SolveCaptcha if apper
+            Log("DO invisible_Recaptcha");	  
+            var result = base.DoSolveCaptcha();
+            if (result > 0)
+            {
+                return Fail("Recaptcha - Fail solving captcha");
+            }
+            RecaptchaUtility utility = new RecaptchaUtility(this);
+            utility.DoSolve();
+		  }
+			
+		return 0;
+        }//end invisible_Recaptcha_Function
+        //=================//	
+
+
+
+        //=================//
+       //Recaptcha_Function
+        //=================//
+
+        public int Recaptcha_Function()
+        {
+			
+          //DoSolveImageCaptcha
+          var SolveMedia = ElementByXPath ("//img[contains(@id,'adcopy-puzzle-image-image')]"); 
+          if (IsVisible(SolveMedia))
+		  {  
+            Log("DO SolveMedia");	  
+	        var result_2 = DoSolveImageCaptcha(ElementByXPath("//img[contains(@id,'adcopy-puzzle-image-image')]"),ElementByXPath("//input[@name='adcopy_response']")); 
+            if (result_2 > 0)
+            {
+                return Fail("SolveMedia - Fail solving captcha");
+            }
+		  }
+		  
+	     //for recaptcha popup after click on button - ("//button[contains(@class,'reload')] | //button[contains(@id,'reload')] ")
+          var RecaptchaOpen_Iframe = ElementByXPath ("//iframe[contains(@src,'recaptcha/api2/anchor')]"); 
+          if (IsVisible(RecaptchaOpen_Iframe))
+		  {
+            //SolveCaptcha if apper
+            Log("DO Recaptcha");	  
+            var result = base.DoSolveCaptcha();
+            if (result > 0)
+            {
+                return Fail("Recaptcha - Fail solving captcha");
+            }
+            RecaptchaUtility utility = new RecaptchaUtility(this);
+            utility.DoSolve();
+		  }
+
+		return 0;
+        }//end Recaptcha_Function
+        //=================//	
 
 
 } //public class discordapp
