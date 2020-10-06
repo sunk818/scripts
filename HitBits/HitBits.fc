@@ -30,7 +30,7 @@ class HitBits : FaucetScript
 
         SuccessXPath="//span[@class='tag is-primary is-medium']//span";
 
-        Title="HitBits";
+        Title="HitBits|Hit Bits";
         base.Start ( );
     }
     public override int DoLogin ( )
@@ -107,6 +107,16 @@ class HitBits : FaucetScript
 
     }
    
+    private void TryHideChat( )
+    {
+        //sometimes the chat block the captcha
+        var hideChatBtn=ElementByXPath("//button[@title='Hide']");
+        if ( IsVisible(hideChatBtn) )
+        {
+            Click(hideChatBtn);
+            Wait(2);
+        }
+    }
     public override int DoSolveFaucet ( )
     {
         if ( Driver.Url!=FaucetUrl )
@@ -120,6 +130,7 @@ class HitBits : FaucetScript
             Click ( GotoFaucetButton );
             Wait ( 2 );
         }
+        TryHideChat( );
         var NextBtn=ElementByXPath("//div[contains(@class,'level-item')]//div//button[contains(@class,'button is-primary')]");
         DateTime timeout=DateTime.Now.AddSeconds(10);
         while((!IsVisible(NextBtn) ||!NextBtn.Enabled) && DateTime.Now<timeout )
