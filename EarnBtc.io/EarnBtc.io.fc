@@ -2,13 +2,16 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 26/06/2019 00:30PM - Version 1
-//Last Update: 14/03/2020 19:10PM - Version 7
+//Last Update: 07/10/2020 15:00PM - Version 10
 //==================//
-using FaucetCollector.Script;
+
 using System;
-using System.Linq;
-//css_ref FaucetCollector.Utilities
-//css_ref FaucetCollector.Captcha
+using FaucetCollector.Script;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
+using System.Text.RegularExpressions;
+//css_inc RecaptchaUtilities
+//css_inc ShortLinkUtilities
 
 
 public class EarnBtc : FaucetScript
@@ -22,11 +25,13 @@ public class EarnBtc : FaucetScript
     {
         get
         {
-
+			
             return new FaucetSettings("https://earnbtc.io/user/dashboard.page")
             {
                 new FaucetSetting(){Name="Email",Display="Email",Type=EditorType.TextBox,Required=false},
                 new FaucetSetting(){Name="Password",Display="Password",Type=EditorType.Password,Required=false},
+			    //new FaucetSetting(){Name="StoreCookies",Display="StoreCookies - ON/OFF ",Type=EditorType.CheckBox,Default=true },
+                new FaucetSetting() { Name = "FaucetClaim", Display = "FaucetClaim - ON/OFF", Type = EditorType.CheckBox, Default = true},
                 new FaucetSetting() { Name = "FramedAds", Display = "FramedAds - ON/OFF", Type = EditorType.CheckBox, Default = true},
                 new FaucetSetting() { Name = "Choose_Captcha", Display = "Choose_Captcha - ON/OFF - ON Recaptcha - Off SolveMedia", Type = EditorType.CheckBox, Default = false},
 
@@ -35,294 +40,572 @@ public class EarnBtc : FaucetScript
     }
 
 
-
-    //============================================================//
-    //the number of "successes" in the script - when are finished  
-    //============================================================//
-    public override void Start( )
+	
+//============================================================//
+//the number of "successes" in the script - when are finished  
+//============================================================//
+    public override void Start()
     {
+        ad = false;
+       
+        //Title that shows in the browser. Is used to identify and close popup windows
+        Title = "Earn B";
 
-        Title="Earn B";
+		SuccessXPath = "//*";  //*[@id='']
+        FailXPath = "//*"; //*[@id='']
+	
+        //TimerIsCountingUp = true;
 
-        SuccessXPath="//div[@class='alert alert-success mt-3']//strong";
-        FailXPath="//div[@class='alert']"; //*[@id='']
-
-
-        base.Start( );
-    }
-    //============================================================//
-    //the number of "successes" in the script - when are finished  
-    //============================================================//
-
-
-
-
-
-    public void CheckDashboardAd( )
-    {
-
-        var Adbtn=ElementByXPath("//button[@id='opener']");
-        if ( IsVisible(Adbtn) )
+        // Save/Store Cookies OR NOT 
+        if (GetBoolSetting("StoreCookies"))            
         {
-            try
-            {
+         StoreCookies = true;
+		}
+		
+        if (!GetBoolSetting("StoreCookies"))            
+        {
+         StoreCookies = false;
+		}	
+		//======================//
+		
+        //Let Faucet Collector start up everything
+        base.Start();
+    }
+//============================================================//
+//the number of "successes" in the script - when are finished  
+//============================================================//
 
-                CheckForPopupsEnabled=false;
-                Click(Adbtn , false);
-                Wait(1);
-                Driver.SwitchTo( ).Window(Driver.WindowHandles[0]);
-                var timer=ElementByXPath("//div[@id='_time']");
-                DateTime timeout=DateTime.Now.AddSeconds(30);
-                while ( IsVisible(timer)&&DateTime.Now<timeout )
-                {
-                    Wait( );
-                    timer=ElementByXPath("//div[@id='_time']");
-                }
+	
+    bool ad; //custom bool
 
 
-            }
-            finally
-            {
-                CheckForPopupsEnabled=true;
-                CheckForPopups( );
+    public override int DoInit()
+    {
+			
 
-            }
-        }
+		
+        //Let Faucet Collector continue.
+        return base.DoInit();
     }
 
-
-    public override bool IsLoggedIn( )
+	
+//==================//
+//save Login Cookies 
+//==================//
+    public override bool IsLoggedIn()
     {
-        return ElementByXPath("//a[contains(@href,'logout')]")!=null;
-
+	    //save Login Cookies - Check if the "Logout" exist
+        return ElementByXPath("//span[contains(text(),'Logout')] | //a[contains(text(),'Logout')]") != null;
+	 
+	    //return true;
+	 
+        //return base.IsLoggedIn();
     }
+//==================//
+//save Login Cookies 
+//==================//	
 
 
-    //=============//
-    //BeforeLogin
-    //=============//
-    public override int BeforeLogin( )
+
+
+//=============//
+//BeforeLogin
+//=============//
+    public override int BeforeLogin()
     {
+		
 
+     GoToUrl("https://earnbtc.io/user/dashboard.page");
 
-        GoToUrl("https://earnbtc.io/user/dashboard.page");
-
-
+		
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.BeforeLogin( );
+        return base.BeforeLogin();
     }
-    //=============//
-    //BeforeLogin
-    //=============//
+//=============//
+//BeforeLogin
+//=============//
+
+	
 
 
-
-
-
-    //========//
-    //DoLogin
-    //========//
-    public override int DoLogin( )
+	
+//========//
+//DoLogin
+//========//
+    public override int DoLogin()
     {
+	
+     var ExitButton = ElementByXPath("//span[contains(text(),'Logout')] | //a[contains(text(),'Logout')]");
 
-        GoToUrl("https://earnbtc.io/login.page");
 
-        Wait(2);
+	 //if i NOT Login - go to Login Page
+	 if (!IsVisible(ExitButton))
+	 {
 
+		GoToUrl("https://earnbtc.io/login.page");
+		Wait();		
+		Wait(2);
+/*     
+        var StartOpenLogin = ElementByXPath("//div[@class='AuthPage___controls']/button[contains(text(),'Sign In')]");
+	    if (IsVisible(StartOpenLogin))
+	    { 
+        Click(StartOpenLogin);
+		}
+*/
+		Wait(2);
+		
         var box_user = ElementByXPath("//input[@name='email']");
-        if ( !IsVisible(box_user) )
-        {
-            return Fail("username box not found or not visible");
-        }
-        SetText(box_user , GetSetting("Email"));
-
-
-
+        SetText(box_user, GetSetting("Email"));
+		
+		Wait(2);
+		
         var box_pass = ElementByXPath("//input[@name='password']");
-        if ( !IsVisible(box_pass) )
-        {
-            return Fail("password box not found or not visible");
-        }
-        SetText(box_pass , GetPassword("Password"));
+        SetText(box_pass, GetPassword("Password"));	
+		
+		Wait(2);
+		
+        Choose_Captcha_Function(); //call
 
+		Wait(2);
+		
+        var LogButton = ElementByXPath("//button[@type='submit']");
+        Click(LogButton);
+		
+		Wait(2);
+		
+		GoToUrl("https://earnbtc.io/user/dashboard.page");
+		Wait();	
+		Wait(3);	
+		
+        //Title = "test Wallet";
+		
+		Wait();	
 
-        var result=DoSolveCaptcha();
-        if ( result>0 )
-        {
-            return result;
-        }
+	 } // end ExitButton
 
-
-        var btnLogin=ElementByXPath("//button[@class='btn btn-primary btn-block']");
-        if ( !IsVisible(btnLogin) )
-        {
-            return Fail("Btn login not visible or not found");
-        }
-
-        Click(btnLogin);
-        Wait(2);
-
-
-        GoToUrl("https://earnbtc.io/user/dashboard.page");
-
-
-        Wait(2);
-
-    
-
-        return base.DoLogin( );
+        
+       return base.DoLogin();
     }
-    //========//
-    //DoLogin
-    //========//
+//========//
+//DoLogin
+//========//
+ 
 
 
+//========//
+//AfterLogin
+//========//
+ public override int AfterLogin()
+ {
+ 
+  
+    //we are good to continue
+    return base.AfterLogin();
 
-    //================//
-    //GetFaucetWaitTime
-    //================//
-    public override int GetFaucetWaitTime( )
+ }
+//========//
+//AfterLogin
+//========//
+
+
+	
+
+//================//
+//GetFaucetWaitTime
+//================//
+    public override int GetFaucetWaitTime()
     {
 
-        var minutes=ElementByXPath("//span[@id='minutes']");
-        var seconds=ElementByXPath("//span[@id='seconds']");
-        // Timer is visible
-        if(IsVisible(minutes) &&IsVisible(seconds) )
+        if (ad)
         {
-            int m,s;
 
-            if(int.TryParse(minutes.Text,out m) && int.TryParse(seconds.Text,out s) )
-            {
+		 ad=false;
+		 
+        }// end ad
 
-                return m*60+s; 
-            }
+		//let Faucet Collector continue.
+        return base.GetFaucetWaitTime();
+    }
+//================//
+//GetFaucetWaitTime
+//================//
 
-        }
 
 
-        //let Faucet Collector continue.
-        return base.GetFaucetWaitTime( );
+    public override int BeforeSolveCaptcha()
+    {
+ 
+        //Return we are ready to proceed
+        return base.BeforeSolveFaucet();
     }
 
-
-
-    public override int DoSolveCaptcha( )
+	
+    public override int DoSolveCaptcha()
     {
-        // We define if we need to use reacaptcha
-        bool useRecaptcha=GetBoolSetting("Choose_Captcha");
-        // Define correct xpath
-        var changeCaptchaXPath=useRecaptcha?"//li[@class='nav-item']//a[contains(text(),'RECAPTCHA')]"
-            :"//li[@class='nav-item']//a[contains(text(),'SOLVEMEDIA')]";
-        // We try to find the captcha change button
-        var ChangeCaptchaBtn=ElementByXPath(changeCaptchaXPath);
-        if ( IsVisible(ChangeCaptchaBtn) )
-        {
-            Click(ChangeCaptchaBtn);
-        }
-
-        Wait( );
-
-        // We solve the captcha
-        var result=base.DoSolveCaptcha();
-        // if something went wrong or we was solving solvemedia we return result
-        if ( result>0||!useRecaptcha )
-        {
-            return result;
-        }
-        // We call the callback and them  return the result
-        var recaptchaBypass=new FaucetCollector.Captcha.RecaptchaUtility(this);
-
-        recaptchaBypass.DoSolve( );
-
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return result;
+        return base.DoSolveCaptcha();
     }
 
-
-
-    public override int DoSolveFaucet( )
+	
+    public override int AfterSolveCaptcha()
     {
-
-        if ( GetBoolSetting("FramedAds") )
-        {
-            GoToUrl("http://earnbtc.io/watch-afa.page");
-            Wait(2);
-            var Ads=ElementsByXPath("//div[@class='card']//div[@class='card-header'").Where(X=>IsVisible(X)).ToList();
-            int N=0;
-            while ( Ads.Count>N )
-            {
-                try
-                {
-                    CheckForPopupsEnabled=false;
-                    Click(Ads[N] , false);
-                    Driver.SwitchTo( ).Window(Driver.WindowHandles.LastOrDefault( ));
-                    var result=DoSolveCaptcha();
-                    if ( result>0 )
-                    {
-                        continue;
-                    }
-                    var adBtn=ElementByXPath("//button[@id='openAdvertisement']");
-                    if ( !IsVisible(adBtn) )
-                    {
-                        continue;
-                    }
-                    Click(adBtn);
-                    Wait(2 , 3);
-
-                    var adCredited=ElementByXPath("//div[@id='viewCredited']");
-                    DateTime timeout=DateTime.Now.AddSeconds(45);
-                    while ( !IsVisible(adCredited) )
-                    {
-                        Wait(1 , 2);
-                        adCredited=ElementByXPath("//div[@id='viewCredited']");
-                    }
-                    Wait(1);
-
-                }
-                finally
-                {
-                    CheckForPopupsEnabled=true;
-                    CheckForPopups( );
-                    Driver.SwitchTo( ).Window(Driver.WindowHandles[0]);
-                    Wait(1);
-                    Ads=ElementsByXPath("//div[@class='card']//div[@class='card-header'");
-                }
-
-            }
-        }
-
-
-
-        GoToUrl("https://earnbtc.io/user/roll-win.page");
-        Wait(2);
-
-        var getRewardBtn=ElementByXPath("//button[@class='btn btn-primary']");
-        if ( !IsVisible(getRewardBtn) )
-        {
-            return Fail("getRewardBtn not visible");
-        }
-        var resultCaptcha=DoSolveCaptcha();
-        if ( resultCaptcha>0 )
-        {
-            return resultCaptcha;
-        }
-
-        Click(getRewardBtn);
-
-
-
-        Wait(2);
-
-        return base.DoSolveFaucet( );
-
-
+        //This faucet has nothing to do here. We will let Faucet Collector handle it.
+        return base.AfterSolveCaptcha();
     }
 
+	
+    public override int BeforeSolveFaucet()
+    {
+        //Return we can continue
+        return base.BeforeSolveFaucet();
+    }
+  
+	
+	
+//==============//
+//DoSolveFaucet
+//==============//
+ public override int DoSolveFaucet()
+  {
+
+
+//==============//
+//FramedAds//
+//==============//
+if (GetBoolSetting("FramedAds"))
+{
+
+   Title = "Watch & Earn";
+   GoToUrl("http://earnbtc.io/watch-afa.page");
+   Wait();	
+   Wait(6);	
+
+   var TimeToWaitForBreak = DateTime.Now.AddSeconds(480);
+   while (true)
+   {
+       
+     var Card_Exist = ElementByXPath("//div[* and contains(@class,'col-md-3')]/div[@class='card']/div[contains(@class,'header')]");         
+     if(IsVisible(Card_Exist)) //Visible
+     {
+	   Wait(3);
+	   
+       Title = "";	   
+   	   //Click(Card_Exist);
+	   ExecuteScript("arguments[0].click()", Card_Exist);
+   	   Log("Card_Exist"); 
+
+       CheckForPopupsEnabled = false; //disable  
+   	
+       Wait();
+       Wait(4);
+   
+       Choose_Captcha_Function(); //call
+   
+       Wait(2); 
+     	
+       var FaucetButton = ElementByXPath("//button[@id='openAdvertisement']");
+       //Click(FaucetButton);
+ 	   ExecuteScript("arguments[0].click()", FaucetButton);
+  
+       var Time_2_Break = DateTime.Now.AddSeconds(65);
+       var WaitForCongratulations = ElementByXPath("//div[contains(@id,'viewCredited') and contains(text(),'You earned') ]");
+       while (!IsVisible(WaitForCongratulations)) //not Visible
+       {
+   	     Wait();
+   	     Log("Framed Ads - wait");
+   	  
+         if (DateTime.Now > Time_2_Break) //if the time above 65 sec 
+         {
+         Log("Framed Ads - longer - break - Time_2_Break");
+         break; //break the wait loop
+         }
+       } //end while NOT Visible WaitForCongratulations
+   
+       var SuccessCheck = ElementByXPath("//div[contains(@id,'viewCredited') and contains(text(),'You earned') ]");
+       if (IsVisible(SuccessCheck))
+       {
+       var SuccessMessage = ElementByXPath("//div[contains(@id,'viewCredited')]");
+       Log(SuccessMessage.Text);
+       ClaimSuccess();
+       }
+   
+       Wait(2);
+   
+       Title = "Watch & Earn";
+   
+       CheckForPopupsEnabled = true; //enable
+       CheckForPopups(); //call
+   
+       Wait(1);
+   
+     }// end Card_Exist
+   
+     if (!IsVisible(Card_Exist))
+     {
+     Log("Framed Ads - break - not Available");
+     break;
+     }
+   
+     if (DateTime.Now > TimeToWaitForBreak) //if the time above 65 sec 
+     {
+     Log("Framed Ads - break - TimeToWaitForBreak");
+     break; //break the wait loop
+     }
+   
+   } //end while true	
+			
+			
+} // end FramedAds
+//===========//
+
+			
+
+		//==============//
+		//FaucetClaim//
+		//==============//
+        if (GetBoolSetting("FaucetClaim"))
+        {
+			
+         Title = "Free Faucet";
+         GoToUrl("https://earnbtc.io/user/roll-win.page");
+		 Log("FaucetClaim - go to page");					 
+		 Wait();
+		 Wait(8);		
+
+         //Time
+         var Time_Min_Checking_Exist = ElementByXPath("//div[@id='timer']");         
+         if(IsVisible(Time_Min_Checking_Exist)) //Visible
+         {	 
+         Log("CountDownTimer here - need to wait more");  
+         return Time_Function();
+         }
+		//=======//
+		
+        Wait();
+        Wait(3);
+
+        var ButtonSrart_1_Cap = ElementByXPath ("//button[contains(text(),'start')]");
+        if (IsVisible(ButtonSrart_1_Cap)) //if NOT visible 
+        {
+        GoToUrl("https://earnbtc.io/url-shortners/generate");
+		Wait();
+		Wait(2);		
+        ShortLink_Function(); //call
+		} //end ButtonSrart_1_Cap
+	
+        Choose_Captcha_Function(); //call
+		
+		Wait();	
+		Wait(5);
+  
+        var ButtonCap = ElementByXPath ("//button[@class='btn btn-primary'] | //button[contains(text(),'Roll') or contains(text(),'Get Reward')]");
+        if (IsVisible(ButtonCap)) //if visible "disabled" 
+        {
+	     Click(ButtonCap);
+		 //ExecuteScript("arguments[0].click()", ButtonCap);
+         Log("Captcha_Function - ButtonCap");
+        }			
+  		  		
+         Wait(2);
+  
+        var ButtonSrart_2_Cap = ElementByXPath ("//button[contains(text(),'start')]");
+        if (!IsVisible(ButtonSrart_2_Cap)) //if NOT visible 
+        {
+          var Error_Message = ElementByXPath ("//div/strong[contains(text(),'invalid')]");
+          if (IsVisible(Error_Message))
+          {
+              Log("Error_Message - Appear - we return after 1 min ");
+              return 1*60; //we return after 1 min
+          }
+	
+        } //end ButtonSrart_2_Cap
+  
+        Wait();
+
+        Driver.Navigate().Refresh();
+		
+		Wait();	
+		Wait(2);
+
+        } // end FaucetClaim
+	 //===========//
+
+        return Time_Function();	
+
+        //We are good to continue
+        return base.DoSolveFaucet();
+ }
+//==============//
+//DoSolveFaucet
+//==============///
+	
+	
+	
+	
+	
+//==============//
+//AfterSolveFaucet
+//==============//
+  public override int AfterSolveFaucet()
+  {
+
+   //This faucet has nothing to do here. We will let Faucet Collector handle it.
+   return base.AfterSolveFaucet();
+   
+  }
+	
+//==============//
+//AfterSolveFaucet
+//==============//
 
 
 
+    /// <summary>
+    /// This method gets called in the end after the BeforeSolveFaucet/DoSolveFaucet and AfterSolveFaucet methods were done.
+    /// The base.CheckFaucetResult will try to find a visible element on the page using the XPath from SuccessXPath and FailXPath (see the Start method)
+    /// These properties should contain XPath expressions to find certain elements on the page.
+    /// For example if it finds one of the elements from the SuccessXPath, and it is visible, then it will flag the claim attempt as a success.
+    /// Or if it finds one of the elements from the FailXPath, and it is visible, then it will flag the claim attempt as a failure.
+    /// </summary>
+    public override int CheckFaucetResult()
+    {
+        //This faucet has nothing to do here. We will let Faucet Collector handle it.
+        return base.CheckFaucetResult();
+    }
+	
+
+ 
+        //=================//
+       //ShortLink_Function
+        //=================//
+
+        public void ShortLink_Function()
+        {
+			
+        //call to ShortLink
+        ShortLinkBypasser bypasser = new ShortLinkBypasser(this);
+        bool ShorBool = bypasser.DoShortLink();
+        if (!ShorBool)
+        {
+            Log("Fail shortlink");
+        }
+
+        }//end ShortLink_Function
+        //=================//
 
 
 
+        //=================//
+       //Time_Function
+        //=================//
+        public int Time_Function()
+        {
+			
+           var Time_Min_Checking_Exist = ElementByXPath("//div[@id='timer']");         
+		   
+           if(IsVisible(Time_Min_Checking_Exist)) //Visible
+           {
+		   
+	       Log("Time_Function - return to site time"); 
+ 		   
+           var MinVAR = ElementByXPath("//span[@id='minutes']"); 
+           var SecVAR = ElementByXPath("//span[@id='seconds']");
+		   
+           int MinINT = Convert.ToInt32(MinVAR.Text)*60;
+           int SecINT = Convert.ToInt32(SecVAR.Text);
+		  		
+           return MinINT + SecINT;
+           }
+
+           if (!IsVisible(Time_Min_Checking_Exist))
+           {
+	            Log("Time_Function - return to your time"); 
+		        return GetWaitSetting();
+           }
+
+           return 0;		
+        }//end Time_Function
+        //=================//	
+
+
+        //=================//
+       //Choose_Captcha_Function
+        //=================//
+
+        public int Choose_Captcha_Function()
+        {
+
+          if (GetBoolSetting("Choose_Captcha"))
+          {   
+	  
+            var RecaptchaChoose = ElementByXPath("//li[@class='nav-item']//a[contains(text(),'RECAPTCHA') or contains(text(),'Re-Captcha')]");
+			Click(RecaptchaChoose);
+			//ExecuteScript("arguments[0].click()", RecaptchaChoose);
+			Log("RecaptchaChoose");
+
+            Wait();
+            Wait(2);
+		    
+            Captcha_Function(); //call
+		  }
+		  
+          if (!GetBoolSetting("Choose_Captcha"))
+          { 
+            var SolveMediaChoose = ElementByXPath("//li[@class='nav-item']//a[contains(text(),'SOLVEMEDIA') or contains(text(),'SolveMedia')]");
+			Click(SolveMediaChoose);
+ 			//ExecuteScript("arguments[0].click()", SolveMediaChoose);
+			Log("SolveMediaChoose");
+        
+		    Wait();
+            Wait(2);
+			
+            Captcha_Function(); //call
+		  }
+
+        return 0;
+		  
+        }//end Captcha_Function
+        //=================//
+
+
+        //=================//
+       //Captcha_Function
+        //=================//
+
+        public int Captcha_Function()
+        {
+			
+          //DoSolveImageCaptcha
+          var SolveMedia = ElementByXPath ("//img[contains(@id,'adcopy-puzzle-image-image')]"); 
+          if (IsVisible(SolveMedia))
+		  {  
+            Log("DO SolveMedia");	  
+	        var result_2 = DoSolveImageCaptcha(ElementByXPath("//img[contains(@id,'adcopy-puzzle-image-image')]"),ElementByXPath("//input[@name='adcopy_response']")); 
+            if (result_2 > 0)
+            {
+                return Fail("SolveMedia - Fail solving captcha");
+            }
+		  }
+		  
+	     //for recaptcha popup after click on button - ("//button[contains(@class,'reload')] | //button[contains(@id,'reload')] ")    // ("//input[contains(@id,'recaptcha-token') ] | //div[contains(@id,'rc-imageselect') ]")
+          var RecaptchaOpen_Iframe = ElementByXPath ("//iframe[contains(@src,'recaptcha/api2/anchor')]"); 
+          if (IsVisible(RecaptchaOpen_Iframe))
+		  {
+            //SolveCaptcha if apper
+            Log("DO Recaptcha");	  
+            var result = base.DoSolveCaptcha();
+            if (result > 0)
+            {
+                return Fail("Recaptcha - Fail solving captcha");
+            }
+            RecaptchaUtility utility = new RecaptchaUtility(this);
+            utility.DoSolve();
+		  }
+
+		return 0;
+        }//end Captcha_Function
+        //=================//	
+
+	
 } //end public class
 
