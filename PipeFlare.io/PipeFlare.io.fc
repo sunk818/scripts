@@ -1,16 +1,17 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 03/10/2020 03:00AM - Version 1
-//Last Update: 03/10/2020 03:30AM - Version 1
+//Last Update: 07/10/2020 13:00PM - Version 2
 //==================//
 
 using System;
 using System.IO;
 using FaucetCollector.Script;
+using System.Text.RegularExpressions;
 using OpenQA.Selenium;
 //css_inc ShortLinkUtilities
 //css_inc RecaptchaUtilities
-
+//css_ref FaucetCollector.Utilities
 
 public class PipeFlare : FaucetScript
 {
@@ -29,7 +30,7 @@ public class PipeFlare : FaucetScript
                 new FaucetSetting(){Name="Pass",Display="Password",Type=EditorType.Password,Required=true},
                 //new FaucetSetting(){Name="Address",Display="Address HORIZEN - ZEN ",Type=EditorType.TextBox,Required=true},
 				
-                new FaucetSetting(){Name="FaucetClaim",Display="FaucetClaim - ZEC,PIVX,DASH - all in one",Type=EditorType.CheckBox,Default=true},
+                new FaucetSetting(){Name="FaucetClaim",Display="FaucetClaim - ZEC,PIVX,DASH,FLR - all in one",Type=EditorType.CheckBox,Default=true},
                 new FaucetSetting(){Name="Bonus_5_days",Display="Bonus_5_days",Type=EditorType.CheckBox,Default=false},
                 new FaucetSetting(){Name="Bonus_Aff",Display="Bonus_Aff",Type=EditorType.CheckBox,Default=false},
 				
@@ -395,68 +396,120 @@ public class PipeFlare : FaucetScript
 		} 
 */
 	
-        var Claim_Available_ZEC = ElementByXPath("//a[contains(@href,'ZEC') and @class='nav-link available']");       
-		if (IsVisible(Claim_Available_ZEC))
-        {
-           Log("Claim_Available_ZEC - do stuff");		   
-           Click(Claim_Available_ZEC);
-	       Wait(4);
-           Recaptcha_Function(); //call		   
-	       Wait(2);
-           var Claim_Start_ZEC = ElementByXPath("//div[contains(@id,'ZEC')]//button[@type='submit']");       
-           Click(Claim_Start_ZEC);
-	       Wait(4);	   
-           FaucetClaim_END_Function(); //call		   
-		   
-		} //end ZEC
-		
-		if (!IsVisible(Claim_Available_ZEC))
-        {
-           Log("ZEC - not available");		   
-		}
+       var Available_Check_General = ElementByXPath("//span[@class='green-dot']");       
 
-		
-        var Claim_Available_PIVX = ElementByXPath("//a[contains(@href,'PIVX') and @class='nav-link available']");       
-		if (IsVisible(Claim_Available_PIVX))
-        {
-           Log("Claim_Available_PIVX - do stuff");		   
-           Click(Claim_Available_PIVX);
-	       Wait(4);
-           Recaptcha_Function(); //call		   
-	       Wait(2);
-           var Claim_Start_PIVX = ElementByXPath("//div[contains(@id,'PIVX')]//button[@type='submit']");       
-           Click(Claim_Start_PIVX);
-	       Wait(4);	   
-           FaucetClaim_END_Function(); //call		   
-		   
-		} //end PIVX
-		
-		if (!IsVisible(Claim_Available_PIVX))
-        {
-           Log("PIVX - not available");		   
-		}
-		
-		
-        var Claim_Available_DASH = ElementByXPath("//a[contains(@href,'DASH') and @class='nav-link available']");       
-		if (IsVisible(Claim_Available_DASH))
-        {
-           Log("Claim_Available_DASH - do stuff");		   
-           Click(Claim_Available_DASH);
-	       Wait(4);
-           Recaptcha_Function(); //call		   
-	       Wait(2);
-           var Claim_Start_DASH = ElementByXPath("//div[contains(@id,'DASH')]//button[@type='submit']");       
-           Click(Claim_Start_DASH);
-	       Wait(4);	   
-           FaucetClaim_END_Function(); //call		   
-		   
-		} //end DASH
-		
-		if (!IsVisible(Claim_Available_DASH))
-        {
-           Log("DASH - not available");		   
-		}
+	   if (!IsVisible(Available_Check_General))
+       {
+           Log("FaucetClaim - dailyrewards - all done - try tomorrow");
+	   }
+	   
+	   if (IsVisible(Available_Check_General))
+       {		
 
+    	   GoToUrl("https://pipeflare.io/dailyrewards");
+           Log("FaucetClaim - dailyrewards - some available");		
+	       Wait();
+	       Wait(4);
+
+           var Claim_Available_ZEC = ElementByXPath("//a[contains(@href,'ZEC') and @class='nav-link available'] | //a[contains(@href,'ZEC') and @class='nav-link available active'] ");       
+		   if (IsVisible(Claim_Available_ZEC))
+           {
+              Log("Claim_Available_ZEC - do stuff");	
+			  Wait(2);
+              Click(Claim_Available_ZEC);		  
+	          Wait(3);
+              if (IsVisible(ElementByXPath ("//div[contains(@id,'ZEC')]//div[@class='grecaptcha-badge']") )) 
+              {	
+              invisible_Recaptcha_Function(); //call	
+			  }			  
+	          Wait(5);
+              var Claim_Start_ZEC = ElementByXPath("//div[contains(@id,'ZEC')]//button[@type='submit']");       
+              Click(Claim_Start_ZEC);
+			  Wait(5);
+              FaucetClaim_END_Function(); //call		   
+			  Wait(2);  
+		   } //end ZEC
+		   
+		   if (!IsVisible(Claim_Available_ZEC))
+           {
+              Log("ZEC - not available");		   
+		   }
+		   
+		   
+           var Claim_Available_PIVX = ElementByXPath("//a[contains(@href,'PIVX') and @class='nav-link available'] | //a[contains(@href,'PIVX') and @class='nav-link available active'] ");       
+		   if (IsVisible(Claim_Available_PIVX))
+           {
+              Log("Claim_Available_PIVX - do stuff");	
+			  Wait(2);
+              Click(Claim_Available_PIVX);		  
+	          Wait(3);
+              if (IsVisible(ElementByXPath ("//div[contains(@id,'PIVX')]//div[@class='grecaptcha-badge']") )) 
+              {	
+              invisible_Recaptcha_Function(); //call		  
+			  }
+			  Wait(5);
+              var Claim_Start_PIVX = ElementByXPath("//div[contains(@id,'PIVX')]//button[@type='submit']");       
+              Click(Claim_Start_PIVX);
+			  Wait(5);
+              FaucetClaim_END_Function(); //call		   
+			  Wait(2);
+		   } //end PIVX
+		   
+		   if (!IsVisible(Claim_Available_PIVX))
+           {
+              Log("PIVX - not available");		   
+		   }
+		   
+		   
+           var Claim_Available_DASH = ElementByXPath("//a[contains(@href,'DASH') and @class='nav-link available'] | //a[contains(@href,'DASH') and @class='nav-link available active'] ");       
+		   if (IsVisible(Claim_Available_DASH))
+           {
+              Log("Claim_Available_DASH - do stuff");	
+			  Wait(2);
+              Click(Claim_Available_DASH);		  
+	          Wait(3);
+              if (IsVisible(ElementByXPath ("//div[contains(@id,'DASH')]//div[@class='grecaptcha-badge']") )) 
+              {		
+              invisible_Recaptcha_Function(); //call	
+			  }			  
+	          Wait(5);
+              var Claim_Start_DASH = ElementByXPath("//div[contains(@id,'DASH')]//button[@type='submit']");       
+              Click(Claim_Start_DASH);
+			  Wait(5);
+              FaucetClaim_END_Function(); //call		   
+			  Wait(2);
+		   } //end DASH
+		   
+		   if (!IsVisible(Claim_Available_DASH))
+           {
+              Log("DASH - not available");		   
+		   }
+		   
+		   
+           var Claim_Available_FLR = ElementByXPath("//a[contains(@href,'FLR') and @class='nav-link available'] | //a[contains(@href,'FLR') and @class='nav-link available active'] ");       
+		   if (IsVisible(Claim_Available_FLR))
+           {
+              Log("Claim_Available_FLR - do stuff");	
+			  Wait(2);
+              Click(Claim_Available_FLR);		  
+	          Wait(3);
+              if (IsVisible(ElementByXPath ("//div[contains(@id,'FLR')]//div[@class='grecaptcha-badge']") )) 
+              {			  			  
+              invisible_Recaptcha_Function(); //call
+	          Wait(5);			  
+			  }			  
+              var Claim_Start_FLR = ElementByXPath("//div[contains(@id,'FLR')]//button[@type='submit']");       
+              Click(Claim_Start_FLR);
+			  Wait(5);
+              FaucetClaim_END_Function(); //call		   
+			  Wait(2);
+		   } //end FLR
+		   
+		   if (!IsVisible(Claim_Available_FLR))
+           {
+              Log("FLR - not available");		   
+		   }
+	   } // end Available_Check_General
 
       } //end FaucetClaim
       //=============//
@@ -489,37 +542,6 @@ public class PipeFlare : FaucetScript
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
         return base.CheckFaucetResult();
     }
-	
-	
-
-      //=================//
-      //FaucetClaim_END_Function
-      //=================//
-
-      public int FaucetClaim_END_Function()
-      {
-         var ProceedToClaimButton = ElementByXPath("//button[contains(@class,'js-Claim')]");       
-		 if (IsVisible(ProceedToClaimButton))
-         {
-          Log("ProceedToClaimButton");
-          Click(ProceedToClaimButton);
-		 }
-
-		 Wait(5);
-		 
-         //var StatusCheck_Success = ElementByXPath("//td[text()='You Won:']");       
-		 //if (IsVisible(StatusCheck_Success))
-         //{
-          var SuccessAmountMessage = ElementByXPath("//div[@id='result1']//tr[1]/td[2] | //div[@id='result1']//strong ");        
-          Log("success "+SuccessAmountMessage.Text);		
-		  ClaimSuccess(); //Marks the claim as a success
-		 //}
-	      
-	    return 0;
-      }//end FaucetClaim_END_Function
-      //=================//		
-	
-	
 	
 	
       //=================//
@@ -573,6 +595,34 @@ public class PipeFlare : FaucetScript
 
 
 
+      //=================//
+      //FaucetClaim_END_Function
+      //=================//
+
+      public int FaucetClaim_END_Function()
+      {
+         var ProceedToClaimButton = ElementByXPath("//button[contains(@class,'js-Claim')]");       
+		 if (IsVisible(ProceedToClaimButton))
+         {
+          Log("ProceedToClaimButton");
+          Click(ProceedToClaimButton);
+		 }
+
+		 Wait(5);
+		 
+         //var StatusCheck_Success = ElementByXPath("//td[text()='You Won:']");       
+		 //if (IsVisible(StatusCheck_Success))
+         //{
+          var SuccessAmountMessage = ElementByXPath("//div[@id='result1']//tr[1]/td[2] | //div[@id='result1']//strong ");        
+          Log("success "+SuccessAmountMessage.Text);		
+		  ClaimSuccess(); //Marks the claim as a success
+		 //}
+	      
+	    return 0;
+      }//end FaucetClaim_END_Function
+      //=================//		
+	
+
 
         //=================//
        //Time_Function
@@ -605,6 +655,37 @@ public class PipeFlare : FaucetScript
 	
 	
         //=================//
+       //invisible_Recaptcha_Function
+        //=================//
+        public int invisible_Recaptcha_Function()
+        {
+			
+          //var RecaptchaOpen_Iframe = ElementByXPath("//div[contains(@class,'active')]//div[@class='grecaptcha-badge']"); //("//button[contains(@class,'reload')] | //button[contains(@id,'reload')] | //input[contains(@id,'recaptcha-token') ] | //div[contains(@id,'rc-imageselect') ] ")  
+          //if (RecaptchaOpen_Iframe !=null)          
+		  //{
+            //SolveCaptcha if apper
+            Log("DO invisible_Recaptcha");	  
+
+			var result = base.DoSolveCaptcha();
+            if (result > 0)
+            {
+                return Fail("Recaptcha - Fail solving captcha");
+            }
+		    RecaptchaUtility utility = new RecaptchaUtility(this);
+            utility.DoSolve();
+			
+            Wait();
+		    
+            ExecuteScript("afterResolveCaptcha");
+		  //}
+		
+		return 0;
+        }//end invisible_Recaptcha_Function
+        //=================//	
+
+
+
+        //=================//
        //Recaptcha_Function
         //=================//
 
@@ -617,9 +698,13 @@ public class PipeFlare : FaucetScript
 		  {  
             Log("DO SolveMedia");	  
 	        var result_2 = DoSolveImageCaptcha(ElementByXPath("//img[contains(@id,'adcopy-puzzle-image-image')]"),ElementByXPath("//input[@name='adcopy_response']")); 
+            if (result_2 > 0)
+            {
+                return Fail("SolveMedia - Fail solving captcha");
+            }
 		  }
 		  
-	     //for recaptcha popup after click on button - ("//button[contains(@class,'reload')] | //button[contains(@id,'reload')] ")
+	     //for recaptcha popup after click on button - ("//button[contains(@class,'reload')] | //button[contains(@id,'reload')] ")    // ("//input[contains(@id,'recaptcha-token') ] | //div[contains(@id,'rc-imageselect') ]")
           var RecaptchaOpen_Iframe = ElementByXPath ("//iframe[contains(@src,'recaptcha/api2/anchor')]"); 
           if (IsVisible(RecaptchaOpen_Iframe))
 		  {
@@ -628,7 +713,7 @@ public class PipeFlare : FaucetScript
             var result = base.DoSolveCaptcha();
             if (result > 0)
             {
-                return Fail("Fail solving captcha");
+                return Fail("Recaptcha - Fail solving captcha");
             }
             RecaptchaUtility utility = new RecaptchaUtility(this);
             utility.DoSolve();
