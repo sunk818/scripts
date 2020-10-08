@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 05/12/2018 06:00AM 
-//Last Update: 08/10/2020 15:30PM - Version 68
+//Last Update: 08/10/2020 22:00PM - Version 69
 //==================//
 
 using System;
@@ -1646,18 +1646,21 @@ public class DiscordScript: FaucetScript
   //=================//
   private int Reaction_while_Function()
   {
-
-
-         var TimeToWaitForBreak = DateTime.Now.AddSeconds(360);
+	  
+         var CustomTime = 360;
+         var TimeToWaitForBreak = DateTime.Now.AddSeconds(CustomTime);//DateTime.Now.AddSeconds
          while (true)
          {	
-		   Wait(2);
+	 
+		   Log("Time left to break is " + CustomTime);
+	 
+		   Wait(2);	   
 		   
            Scroll_Function(); //call to scroll down
 		   
-		   Wait(4);
-		  
-		   var ReactionButton_Clean = ElementByXPath("//div[contains(@class,'reactionInner') and @aria-pressed='false' ]//img[contains(@src,'assets/b052a4bef57')]");
+		   Wait(2);
+		
+		   var ReactionButton_Clean = ElementByXPath("//div[contains(@class,'container-1ov-mD') and contains(., 'airdrop appear')]//div[contains(@class,'reactionInner') and @aria-pressed='false' ]//img[contains(@src,'assets/b052a4bef57')]");
            
 		   if (!IsVisible(ReactionButton_Clean)) 
            {
@@ -1669,9 +1672,9 @@ public class DiscordScript: FaucetScript
 		   if (IsVisible(ReactionButton_Clean))
            {			   
 		   Log("Reaction is now Clean - call to function - to click");
-		   Wait(2);	   
-  		   int Count;			     
-		   var ReactionButton_2_Clean = ElementsByXPath("//div[contains(@class,'reactionInner') and @aria-pressed='false' ]//img[contains(@src,'assets/b052a4bef57')]"); //Elements
+		   Wait(2);	 
+  		   int Count;			     		   
+		   var ReactionButton_2_Clean = ElementsByXPath("//div[contains(@class,'container-1ov-mD') and contains(., 'airdrop appear')]//div[contains(@class,'reactionInner') and @aria-pressed='false' ]//img[contains(@src,'assets/b052a4bef57')]"); //Elements
 		   Log("the amount of Reactions to do now is " + ReactionButton_2_Clean.Count);		   
 		   Reaction_Function(); //call to Reaction_Function
 		   }
@@ -1710,7 +1713,7 @@ public class DiscordScript: FaucetScript
 		  Wait(3);
 
           var Reaction_General_apper = ElementByXPath("//div[contains(@class,'embedTitle') and contains(text(),'airdrop')]");
-          var ReactionButton_Clean = ElementByXPath("//div[contains(@class,'reactionInner') and @aria-pressed='false' ]//img[contains(@src,'assets/b052a4bef57')]");
+          var ReactionButton_Clean = ElementByXPath("//div[contains(@class,'container-1ov-mD') and contains(., 'airdrop appear')]//div[contains(@class,'reactionInner') and @aria-pressed='false' ]//img[contains(@src,'assets/b052a4bef57')]");
 
           if (!IsVisible(Reaction_General_apper)) //if not apper at all "An airdrop appears"
           {
