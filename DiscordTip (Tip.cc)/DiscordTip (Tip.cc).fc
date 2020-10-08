@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 05/12/2018 06:00AM 
-//Last Update: 06/10/2020 09:00AM - Version 67
+//Last Update: 08/10/2020 15:30PM - Version 68
 //==================//
 
 using System;
@@ -47,9 +47,11 @@ public class DiscordScript: FaucetScript
                 new FaucetSetting(){Name="Discordtip_LaccsFaucet_BTC_OnOff",Display="LaccsFaucet BTC - AirDrop - 'commands' channel - On/off",Type=EditorType.CheckBox,Default=true},	
 				new FaucetSetting(){Name="Command_1",Display="LaccsFaucet_BTC - Command_1",Default="!claim",Type=EditorType.TextBox,Required=true},
 				new FaucetSetting(){Name="Command_2",Display="LaccsFaucet_BTC - Command_2",Default="%claim",Type=EditorType.TextBox,Required=true},
+                
+				new FaucetSetting(){Name="Discordtip_DreamTeam_Airdrop_1_OnOff",Display="DreamTeam - AirDrop 1 - 'give-aways' channel - OnOff",Type=EditorType.CheckBox,Default=true},		
 
                 new FaucetSetting(){Name="Discordtip_GridCoin_OnOff",Display="GridCoin - Faucet every 24h - 'wallet-bot' channel - OnOff",Type=EditorType.CheckBox,Default=true},		
-              
+ 
 				new FaucetSetting(){Name="AutoWithdraw_BTC",Display="AutoWithdraw BTC - On/off",Type=EditorType.CheckBox,Default=false},		
 				new FaucetSetting(){Name="AutoWithdraw_DOGE",Display="AutoWithdraw DOGE - On/off",Type=EditorType.CheckBox,Default=false},		
 				new FaucetSetting(){Name="WalletAddress_BTC",Display="WalletAddress BTC",Type=EditorType.TextBox,Required=false},
@@ -74,12 +76,12 @@ public class DiscordScript: FaucetScript
 
 	
 	
-	
     //My ServerNameID
-    string ServerNameID_String = "tip.cc#7731";
+    string TipCC_NameID_String = "tip.cc#7731";
     //==========//
 
-
+    string ServerCaptchaBot_NameID_String = "Server Captcha Bot#3928";
+    //==========//
 
 	
 	
@@ -227,7 +229,7 @@ public class DiscordScript: FaucetScript
 		
         if (ElementByXPath("//div[@class='g-recaptcha']") != null)
         {
-            Recaptcha_Function(); //call
+            Captcha_All_Function(); //call
             
 			Wait(3);
 			
@@ -394,7 +396,7 @@ public class DiscordScript: FaucetScript
         //==============================//
         if (GetBoolSetting("AutoWithdraw_BTC"))
         {
-          Withdraw_Start_Function(); //call
+          Start_SearchBar_TipCC_Function(); //call
 		
           //Withdraw BTC		
    		  var inputDiscord2MessageVar = ElementByXPath("//div[contains(@class,'inner')]/div[contains(@class,'textArea')]");      
@@ -413,7 +415,7 @@ public class DiscordScript: FaucetScript
 		   
             Wait(2);
 
-   			var Error_No_Balance_Check = ElementByXPath("//div[contains(@class,'markup-2BOw-j') and contains(@style,'190')]//div[contains(@class,'grid-1nZz7S') and contains(., 'have any') ] [last()] ");      
+   			var Error_No_Balance_Check = ElementByXPath("//div[contains(@id,'chat-messages-') and position()=last()-1]//div[contains(@class,'markup-2BOw-j') and contains(@style,'190')]//div[contains(@class,'grid-1nZz7S') and contains(., 'have any')]");      
 	        if (IsVisible(Error_No_Balance_Check))
             {
                 Log("You don't have any - BTC");				
@@ -445,7 +447,7 @@ public class DiscordScript: FaucetScript
 			    
                 Wait(6);
 			     
-                var FeeVAR = ElementByXPath("//div[contains(@id,'chat-messages-')]//div[contains(@class,'embedFields-2IPs5Z')]/div[3]/div[2 and contains(., '$0.0') or contains(., '$0.00')  or contains(., '$0.000') ] ");
+                var FeeVAR = ElementByXPath("//div[contains(@id,'chat-messages-') and position()=last()-1]//div[contains(@class,'embedFields-2IPs5Z') and position()=last()-1 ]/div[3]/div[2 and contains(., '$0.0') or contains(., '$0.00')  or contains(., '$0.000') ]");
                 if (IsVisible(FeeVAR) )
                 {
                    Log("BTC - LimitFee -> NOT good - the 'fee' is 'HIGH' and above > 0.0$ or $0.00 or $0.000 ");
@@ -478,7 +480,7 @@ public class DiscordScript: FaucetScript
         //==============================//
         if (GetBoolSetting("AutoWithdraw_DOGE"))
         {
-          Withdraw_Start_Function(); //call
+          Start_SearchBar_TipCC_Function(); //call
 		
           //Withdraw DOGE		
    		  var inputDiscord2MessageVar = ElementByXPath("//div[contains(@class,'inner')]/div[contains(@class,'textArea')]");      
@@ -497,7 +499,7 @@ public class DiscordScript: FaucetScript
 		  
             Wait(2);
 
-   			var Error_No_Balance_Check = ElementByXPath("//div[contains(@class,'markup-2BOw-j') and contains(@style,'190')]//div[contains(@class,'grid-1nZz7S') and contains(., 'have any') ] [last()] ");      
+   			var Error_No_Balance_Check = ElementByXPath("//div[contains(@id,'chat-messages-') and position()=last()-1]//div[contains(@class,'markup-2BOw-j') and contains(@style,'190')]//div[contains(@class,'grid-1nZz7S') and contains(., 'have any')]");      
 	        if (IsVisible(Error_No_Balance_Check))
             {
                 Log("You don't have any - DOGE");				
@@ -529,7 +531,7 @@ public class DiscordScript: FaucetScript
 			    
                 Wait(6);
 			     
-                var FeeVAR = ElementByXPath("//div[contains(@id,'chat-messages-')]//div[contains(@class,'embedFields-2IPs5Z')]/div[3]/div[2 and contains(., '$0.0') or contains(., '$0.00')  or contains(., '$0.000') ] ");
+                var FeeVAR = ElementByXPath("//div[contains(@id,'chat-messages-') and position()=last()-1]//div[contains(@class,'embedFields-2IPs5Z') and position()=last()-1 ]/div[3]/div[2 and contains(., '$0.0') or contains(., '$0.00')  or contains(., '$0.000') ]");
                 if (IsVisible(FeeVAR) )
                 {
                    Log("DOGE - LimitFee -> NOT good - the 'fee' is 'HIGH' and above > 0.0$ or $0.00 or $0.000 ");
@@ -595,11 +597,7 @@ public class DiscordScript: FaucetScript
         if (GetBoolSetting("Discordtip_FaucetCollector_OnOff"))
         {
 			
-	    Title = "TopSite";	
-		GoToUrl("http://bit.ly/TopSite-AD");
-		Log("WonPe TOP"); 
-        Wait();
-        Wait(17);
+        TopSite_Function(); //call
 
 		//first go to server
 	    Title = "Discord";	
@@ -641,12 +639,9 @@ public class DiscordScript: FaucetScript
       //Discordtip_Main_Airdrop_1_OnOff//
       //=========================//
       if (GetBoolSetting("Discordtip_Main_Airdrop_1_OnOff"))
-      {			
-	    Title = "TopSite";	
-		GoToUrl("http://bit.ly/TopSite-AD");
-		Log("WonPe TOP"); 
-        Wait();
-        Wait(17);
+      {		
+  
+        TopSite_Function(); //call
 
 		//first go to server
 	    Title = "Discord";	
@@ -689,11 +684,8 @@ public class DiscordScript: FaucetScript
       //=========================//
       if (GetBoolSetting("Discordtip_Main_Airdrop_2_OnOff"))
       {		
-	    Title = "TopSite";	
-		GoToUrl("http://bit.ly/TopSite-AD");
-		Log("WonPe TOP"); 
-        Wait();
-        Wait(17);
+  
+        TopSite_Function(); //call
 
 		//first go to server
 	    Title = "Discord";	
@@ -735,12 +727,9 @@ public class DiscordScript: FaucetScript
       //Discordtip_Main_Airdrop_3_OnOff//
       //=========================//
       if (GetBoolSetting("Discordtip_Main_Airdrop_3_OnOff"))
-      {		
-	    Title = "TopSite";	
-		GoToUrl("http://bit.ly/TopSite-AD");
-		Log("WonPe TOP"); 
-        Wait();
-        Wait(17);
+      {	
+  
+        TopSite_Function(); //call
 
 		//first go to server
 	    Title = "Discord";	
@@ -777,6 +766,57 @@ public class DiscordScript: FaucetScript
      } //end Discordtip_Main_Airdrop_3_OnOff
      //========================//
 
+
+
+        //================//
+        //Discordtip_DreamTeam_Airdrop_1_OnOff//
+        //================//
+        if (GetBoolSetting("Discordtip_DreamTeam_Airdrop_1_OnOff"))
+        {
+		  //first go to server
+          GoToUrl("https://discord.gg/TVyN4xF"); // my link never expire
+		  Log("Discordtip_DreamTeam_Airdrop_1");
+          Wait();
+          Wait(2);
+          inviteServer_Elements_Function(); //call
+          Wait(2);		  
+          Start_SearchBar_ServerCaptchaBot_Function(); //call
+          Wait(2);
+          Captcha_All_Function();
+          Wait(2);
+		  
+          var ThankYou_General = ElementByXPath("//div[contains(@id,'chat-messages') and position()=last()-1]//div[contains(text(),'Thank you')]");
+          var ServerIDName_Here_Successfully = ElementByXPath("//div[contains(@id,'chat-messages') and position()=last()-1]//strong[contains(text(),'DreamTeam')]");
+
+		  if (IsVisible(ThankYou_General))
+	      {		
+			Log("ServerCaptchaBot - Thank you - general here ");	  
+	  
+		    if (IsVisible(ServerIDName_Here_Successfully))
+	        {			  
+			  Log("Discordtip_DreamTeam_Airdrop_1 - ServerCaptchaBot - Successfully Solved ");	
+              Wait(2);	
+			  
+              TopSite_Function(); //call
+			  
+              Title = "#give-aways";		
+              GoToUrl("https://discord.com/channels/458955603650281484/477928814299578369");
+		      Log("Discordtip_DreamTeam_Airdrop_1 - go to 'give-aways' channel ");	  
+		      Wait(6);
+
+              Reaction_while_Function(); //call	  
+		
+              Wait(3);
+			  
+			} //end ServerIDName_Here_Successfully
+			
+		  } //end ThankYou_General
+
+		  
+        } //end Discordtip_DreamTeam_Airdrop_1_OnOff	
+     //========================//
+		
+		
 
         //================//
         //Discordtip_GridCoin_OnOff//
@@ -874,12 +914,7 @@ public class DiscordScript: FaucetScript
 		//TOP //
 		//=====//	
 
-        //Title = "Won.pe";
-	    Title = "TopSite";	
-		GoToUrl("http://bit.ly/TopSite-AD"); //go to Top https://won.pe/TopSite2
-		Log("WonPe TOP"); 
-        Wait();
-        Wait(17);
+        TopSite_Function(); //call
 		
         var WonPe_ButtonRobot = ElementByXPath("//*[@id='robot_button'] | //div[contains(text(),'robot')]"); //WonPe - robot button
 	    if (IsVisible(WonPe_ButtonRobot))
@@ -1143,9 +1178,9 @@ public class DiscordScript: FaucetScript
 
 
   //=================//
-  //Withdraw_Start_Function
+  //Start_SearchBar_TipCC_Function
   //=================//
-  private int Withdraw_Start_Function()
+  private int Start_SearchBar_TipCC_Function()
   {
        Title = "Discord";	
        GoToUrl("https://discordapp.com/activity");
@@ -1159,7 +1194,7 @@ public class DiscordScript: FaucetScript
        Click(SearchBarMainVar);
        Wait();
        var SearchBar2Var = ElementByXPath("//input[@class='input-2VB9rf'] | //div[3]/div/div/input");		
-       SetText(SearchBar2Var,ServerNameID_String); // set text & find @Discordtip#2087
+       SetText(SearchBar2Var,TipCC_NameID_String); // set text & find @Discordtip#2087
        Wait();
 	   
        Enter_SearchBar_Start_Function();
@@ -1172,9 +1207,43 @@ public class DiscordScript: FaucetScript
 
      return 0;
 	 
-  } //end Withdraw_Start_Function
+  } //end Start_SearchBar_TipCC_Function
   //====================//
  
+ 
+ 
+   //=================//
+  //Start_SearchBar_ServerCaptchaBot_Function
+  //=================//
+  private int Start_SearchBar_ServerCaptchaBot_Function()
+  {
+       Title = "Discord";	
+       GoToUrl("https://discordapp.com/activity");
+       Wait();
+       Driver.Navigate().Refresh();
+       Wait();
+       Driver.Navigate().Refresh();
+       Wait();
+       Wait(5);
+       var SearchBarMainVar = ElementByXPath("//div[contains(@class,'searchBar')]"); //button[contains(text(),'Find or start')]
+       Click(SearchBarMainVar);
+       Wait();
+       var SearchBar2Var = ElementByXPath("//input[@class='input-2VB9rf'] | //div[3]/div/div/input");		
+       SetText(SearchBar2Var,ServerCaptchaBot_NameID_String); // set text & find @Discordtip#2087
+       Wait();
+	   
+       Enter_SearchBar_Start_Function();
+	   
+       Wait();		
+	   
+       Enter_SendKeys_General_Discord_Input_Function();
+	   
+       Wait(4);
+
+     return 0;
+	 
+  } //end Start_SearchBar_ServerCaptchaBot_Function
+  //====================//
  
  
    //=================//
@@ -2013,6 +2082,22 @@ public class DiscordScript: FaucetScript
 
 
 
+        //=================//
+       //TopSite_Function
+        //=================//
+        public int TopSite_Function()
+        {
+			
+	      Title = "TopSite";	
+		  GoToUrl("http://bit.ly/TopSite-AD");
+		  Log("WonPe TOP"); 
+          Wait();
+          Wait(17);
+		  
+		return 0;
+        }//end TopSite_Function
+        //=================//			  
+
 
         //=================//
        //invisible_Recaptcha_Function
@@ -2041,13 +2126,55 @@ public class DiscordScript: FaucetScript
 
 
         //=================//
-       //Recaptcha_Function
+       //Captcha_All_Function
         //=================//
 
-        public int Recaptcha_Function()
+        public int Captcha_All_Function()
         {
+
+		  //ServerCaptchaBot - in Discord - user inbox
+          var ServerCaptchaBot = ElementByXPath("//div[contains(@id,'chat-messages') and position()=last()-1]//img[contains(@src,'captcha') ] | //div[contains(@id,'chat-messages') and position()=last()-1]//strong[contains(text(),'Attempt Failed')] "); 
+          if (IsVisible(ServerCaptchaBot))
+		  {  
+	  
+              Log("DO ServerCaptchaBot");
+			  
+ 		      var ImageVAR = ElementByXPath("//div[contains(@id,'chat-messages') and position()=last()-1]//img[contains(@src,'captcha') ]");           
+		      var TextVAR = ElementByXPath("//div[contains(@class,'inner')]/div[contains(@class,'textArea')]"); 
+			  
+	          var BotResult = DoSolveImageCaptcha(ImageVAR,TextVAR);
+              if (BotResult > 0)
+              {
+                  return Fail("ServerCaptchaBot - Fail solving captcha");
+              }
+			  
+              Actions Builder9Act = new Actions(Driver);
+              Builder9Act.MoveToElement(TextVAR).Build().Perform(); 
+              Wait(3);
+              Builder9Act.SendKeys(TextVAR, Context.CaptchaResult.Result ).Build().Perform();
+			  
+              Wait(3);
+			  	      
+		      Enter_SendKeys_General_Discord_Input_Function();	//call to enter
+		      
+              Wait(2);	
+
+              var Captcha_Check = ElementByXPath("//div[contains(@id,'chat-messages') and position()=last()-1]//strong[contains(text(),'Attempt Failed')]"); 
+              if (IsVisible(Captcha_Check))
+		      {  
+		         Log("ServerCaptchaBot - Failed");
+			  }
+              if (!IsVisible(Captcha_Check))
+		      {
+		         Log("ServerCaptchaBot - Success");
+			  }		
+			  
+              Wait();
+			  
+		  } //end ServerCaptchaBot
+
 			
-          //DoSolveImageCaptcha
+          //SolveMedia
           var SolveMedia = ElementByXPath ("//img[contains(@id,'adcopy-puzzle-image-image')]"); 
           if (IsVisible(SolveMedia))
 		  {  
@@ -2057,9 +2184,10 @@ public class DiscordScript: FaucetScript
             {
                 return Fail("SolveMedia - Fail solving captcha");
             }
-		  }
+		  } //end SolveMedia
+
 		  
-	     //for recaptcha popup after click on button - ("//button[contains(@class,'reload')] | //button[contains(@id,'reload')] ")
+	      //for recaptcha popup after click on button - ("//button[contains(@class,'reload')] | //button[contains(@id,'reload')] ")
           var RecaptchaOpen_Iframe = ElementByXPath ("//iframe[contains(@src,'recaptcha/api2/anchor')]"); 
           if (IsVisible(RecaptchaOpen_Iframe))
 		  {
@@ -2072,10 +2200,10 @@ public class DiscordScript: FaucetScript
             }
             RecaptchaUtility utility = new RecaptchaUtility(this);
             utility.DoSolve();
-		  }
+		  } //end Recaptcha
 
 		return 0;
-        }//end Recaptcha_Function
+        }//end Captcha_All_Function
         //=================//	
 
 
