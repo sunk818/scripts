@@ -280,12 +280,17 @@ public override int DoSolveFaucet()
     
         var startClaimBtn = ElementsByXPath("//span[contains(@data-href,'./faucet.php?coin') and contains(@class,'w3-blue')]")
             .FirstOrDefault(button=>IsVisible(button));
-        if (! IsVisible ( startClaimBtn ) )
+        var captchaResolvedBtn=ElementByXPath ("//button[contains(text(),'Captcha is resolved')]");
+        if (! IsVisible ( startClaimBtn ) && !IsVisible(captchaResolvedBtn) )
         {
 
             return Fail("start claim button not found");
         }
-        ExecuteScript("arguments[0].click()" , startClaimBtn);
+
+        if ( IsVisible(startClaimBtn) )
+        {
+            Click(startClaimBtn);
+        }
         CheckAntiBot ( );
 
         DateTime timeout=DateTime.Now.AddSeconds(20);
@@ -295,7 +300,7 @@ public override int DoSolveFaucet()
 
         }
 
-        var captchaResolvedBtn=ElementByXPath ("//button[contains(text(),'Captcha is resolved')]");
+        captchaResolvedBtn=ElementByXPath ("//button[contains(text(),'Captcha is resolved')]");
         if ( !IsVisible(captchaResolvedBtn) )
         {
             // We check if there are a button to process the antibot
@@ -305,7 +310,7 @@ public override int DoSolveFaucet()
             {
                 FaucetCollector.Utilities.ShortLinkBypasser bypasser =new FaucetCollector.Utilities.ShortLinkBypasser(this);
 
-                ExecuteScript("arguments[0].click" , shortlinkBtn);
+                Click(shortlinkBtn);
                 Wait(1);
 
                 bypasser.DoShortLink( );
@@ -335,7 +340,7 @@ public override int DoSolveFaucet()
         }
         //Click ( captchaResolvedBtn );
 
-        ExecuteScript("arguments[0].click()" , captchaResolvedBtn);
+        Click(captchaResolvedBtn);
         Wait(1);
         CheckFaucetResult( );
 
