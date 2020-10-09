@@ -4,22 +4,10 @@
 //Last Update: 20/09/2020 05:30AM - Version 3
 //==================//
 
-using System;
-using System.IO;
 using FaucetCollector.Script;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Interactions;
-using System.Drawing;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-
-//css_inc ShortLinkUtilities
+using System;
 //css_ref FaucetCollector.Utilities
-//css_inc RecaptchaUtilities
-//css_inc AntiBotLinksUtility
-//css_ref ImageProcessing
-//css_ref ProcessingImagesUsingLockBits
-//css_inc GetestCaptcha
+//css_ref FaucetCollector.Captcha
 
 
 public class FocusGames : FaucetScript
@@ -37,9 +25,9 @@ public class FocusGames : FaucetScript
             {
                 new FaucetSetting(){Name="Email",Display="UserName",Type=EditorType.TextBox,Required=true},
                 new FaucetSetting(){Name="Password",Display="Password",Type=EditorType.Password,Required=true},
-				
-                new FaucetSetting(){Name="FaucetClaim",Display="FaucetClaim",Type=EditorType.CheckBox,Default=true},			
-                new FaucetSetting(){Name="DailyActiveClaim",Display="DailyActiveClaim",Type=EditorType.CheckBox,Default=true},               
+
+                new FaucetSetting(){Name="FaucetClaim",Display="FaucetClaim",Type=EditorType.CheckBox,Default=true},
+                new FaucetSetting(){Name="DailyActiveClaim",Display="DailyActiveClaim",Type=EditorType.CheckBox,Default=true},
                 new FaucetSetting() { Name = "CaptchaChoose", Display = "ON SolveMedia / OFF ReCaptcha", Type = EditorType.CheckBox, Default = true },			
 			
 			
@@ -59,335 +47,336 @@ public class FocusGames : FaucetScript
 
     //My DomainName
     //string DomainName_String = "https://FocusGames.io";
-	//example - GoToUrl(DomainName_String);
+    //example - GoToUrl(DomainName_String);
     //==========//
-	
-	
-//============================================================//
-//the number of "successes" in the script - when are finished  
-//============================================================//
-    public override void Start()
+
+
+    //============================================================//
+    //the number of "successes" in the script - when are finished  
+    //============================================================//
+    public override void Start( )
     {
-		ad=false;
-		
+        ad=false;
+
         //Title that shows in the browser. Is used to identify and close popup windows
-        Title = "FocusGames";
+        Title="FocusGames";
 
         //After we did try to claim on the faucet we search for these elements to determine if it was a success or a fail
-        SuccessXPath = "//*"; //*[text()='']
-        FailXPath = "//*"; //*[text()='']
+        SuccessXPath="//*"; //*[text()='']
+        FailXPath="//*"; //*[text()='']
 
         //Let Faucet Collector start up everything
-        base.Start();
+        base.Start( );
     }
-//============================================================//
-//the number of "successes" in the script - when are finished  
-//============================================================//
-	
-	
-	
-	bool ad;
-	
-	
-    public override int DoInit()
+    //============================================================//
+    //the number of "successes" in the script - when are finished  
+    //============================================================//
+
+
+
+    bool ad;
+
+
+    public override int DoInit( )
     {
 
-	   
+
         //Let Faucet Collector continue.
-        return base.DoInit();
+        return base.DoInit( );
     }
 
-	
-	
-	
-//==================//
-//save Login Cookies 
-//==================//
-    public override bool IsLoggedIn()
+
+
+
+    //==================//
+    //save Login Cookies 
+    //==================//
+    public override bool IsLoggedIn( )
     {
         //In this case we check for en element with the class "loggedIn"
-		return ElementByXPath("//div[contains(@class,'dropdown-toggle')]") != null;
-		//return true;
+        return ElementByXPath("//div[contains(@class,'dropdown-toggle')]")!=null;
+        //return true;
     }
-//==================//
-//save Login Cookies 
-//==================//
-	
-	
-	
-	
-	
+    //==================//
+    //save Login Cookies 
+    //==================//
+
+
+
+
+
     /// <summary>
     /// This method gets called if IsLoggedIn returned false, right before the DoLogin method is called.
     /// </summary>
-    public override int BeforeLogin()
+    public override int BeforeLogin( )
     {
-		
-		
+
+
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.BeforeLogin();
-    }
-	
-	
-	
-
-//========//
-//DoLogin
-//========//
- public override int DoLogin()
- {
-	
-  var ExitButton = ElementByXPath("//div[contains(@class,'dropdown-toggle')]"); 
-
-  //if i NOT Login - go to Login Page
-  if (!IsVisible(ExitButton))
-  {
-
-        GoToUrl("https://focusgames.io/login");
-        Wait();		
-        Wait(2);
-
-        var Email_VAR = ElementByXPath("//input[@name='username']");      
-        if (IsVisible(Email_VAR))
-        {
-         SetText(Email_VAR, GetSetting("Email"));
-        }
-        
-        Wait(2);
-
-        var Password_VAR = ElementByXPath("//input[@name='password']");      
-        if (IsVisible(Password_VAR))
-        {
-         SetText(Password_VAR, GetPassword("Password"));
-        }
-		
-		Wait(4);
-		
-		Recaptcha_Function(); //call
-		
-		Wait(2);		
-		
-        var ButtonLog = ElementByXPath("//button[@type='submit']");  
-        if (IsVisible(ButtonLog))
-        {
-         Click(ButtonLog);
-        }
-		
-		Wait();		
-		
-  } // end ExitButton
-
-        
-       return base.DoLogin();
-    }
-//========//
-//DoLogin
-//========//
-	
-
-	
-	
-	
-	
-//==========//
-//AfterLogin
-//=========//
- public override int AfterLogin()
- {
- 
-	 
-        //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.AfterLogin();
- }
-//==========//
-//AfterLogin
-//=========//
-	
-	
-	
-
-	
-//=============//
-//GetFaucetWaitTime
-//=============//
- public override int GetFaucetWaitTime()
- {
-
-    if(ad)
-	{
-        ad=false; //solve the problem in start - after he return to script again
-        return GetWaitSetting();  
-    }	//end ad
-		
-   //let Faucet Collector continue.
-   return base.GetFaucetWaitTime();
- }
-//=============//
-//GetFaucetWaitTime
-//=============//
-	
-	
-	
-	
-
-    public override int BeforeSolveCaptcha()
-    {
-        //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.BeforeSolveCaptcha();
+        return base.BeforeLogin( );
     }
 
 
-    public override int DoSolveCaptcha()
+
+
+    //========//
+    //DoLogin
+    //========//
+    public override int DoLogin( )
     {
 
+        var ExitButton = ElementByXPath("//div[contains(@class,'dropdown-toggle')]");
+
+        //if i NOT Login - go to Login Page
+        if ( !IsVisible(ExitButton) )
+        {
+
+            GoToUrl("https://focusgames.io/login");
+            Wait( );
+            Wait(2);
+
+            var Email_VAR = ElementByXPath("//input[@name='username']");
+            if ( IsVisible(Email_VAR) )
+            {
+                SetText(Email_VAR , GetSetting("Email"));
+            }
+
+            Wait(2);
+
+            var Password_VAR = ElementByXPath("//input[@name='password']");
+            if ( IsVisible(Password_VAR) )
+            {
+                SetText(Password_VAR , GetPassword("Password"));
+            }
+
+            Wait(4);
+
+            Recaptcha_Function( ); //call
+
+            Wait(2);
+
+            var ButtonLog = ElementByXPath("//button[@type='submit']");
+            if ( IsVisible(ButtonLog) )
+            {
+                Click(ButtonLog);
+            }
+
+            Wait( );
+
+        } // end ExitButton
+
+
+        return base.DoLogin( );
+    }
+    //========//
+    //DoLogin
+    //========//
+
+
+
+
+
+
+    //==========//
+    //AfterLogin
+    //=========//
+    public override int AfterLogin( )
+    {
+
+
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.DoSolveCaptcha();
+        return base.AfterLogin( );
+    }
+    //==========//
+    //AfterLogin
+    //=========//
+
+
+
+
+
+    //=============//
+    //GetFaucetWaitTime
+    //=============//
+    public override int GetFaucetWaitTime( )
+    {
+
+        if ( ad )
+        {
+            ad=false; //solve the problem in start - after he return to script again
+            return GetWaitSetting( );
+        }   //end ad
+
+        //let Faucet Collector continue.
+        return base.GetFaucetWaitTime( );
+    }
+    //=============//
+    //GetFaucetWaitTime
+    //=============//
+
+
+
+
+
+    public override int BeforeSolveCaptcha( )
+    {
+        //This faucet has nothing to do here. We will let Faucet Collector handle it.
+        return base.BeforeSolveCaptcha( );
     }
 
 
-    public override int AfterSolveCaptcha()
+    public override int DoSolveCaptcha( )
+    {
+
+        //This faucet has nothing to do here. We will let Faucet Collector handle it.
+        return base.DoSolveCaptcha( );
+    }
+
+
+    public override int AfterSolveCaptcha( )
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.AfterSolveCaptcha();
+        return base.AfterSolveCaptcha( );
     }
-	
-	
 
-    public override int BeforeSolveFaucet()
+
+
+    public override int BeforeSolveFaucet( )
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.BeforeSolveCaptcha();
+        return base.BeforeSolveCaptcha( );
     }
-	
-	
-	
 
 
-//=============//
-//DoSolveFaucet
-//=============//
-    public override int DoSolveFaucet()
+
+
+
+    //=============//
+    //DoSolveFaucet
+    //=============//
+    public override int DoSolveFaucet( )
     {
 
-      //=============//
-      //DailyActiveClaim
-      //=============//
-      if (GetBoolSetting("DailyActiveClaim"))
-      {
-
-		GoToUrl("https://focusgames.io/bonus");
-		Log("DailyActiveClaim - go to ");  		
-	    Wait();
-	    Wait(4);
-
-        var ClaimAvailable = ElementByXPath("//div[contains(@class,'page-content-holder')]//div[contains(@class,'card-body')]//button[contains(text(),'CLAIM')]");
-
-        if (!IsVisible(ClaimAvailable))
+        //=============//
+        //DailyActiveClaim
+        //=============//
+        if ( GetBoolSetting("DailyActiveClaim") )
         {
-		  Log("DailyActiveClaim - Not here - try next time ");  			
-        }
-		
-        if (IsVisible(ClaimAvailable))
+
+            GoToUrl("https://focusgames.io/bonus");
+            Log("DailyActiveClaim - go to ");
+            Wait( );
+            Wait(4);
+
+            var ClaimAvailable = ElementByXPath("//div[contains(@class,'page-content-holder')]//div[contains(@class,'card-body')]//button[contains(text(),'CLAIM')]");
+
+            if ( !IsVisible(ClaimAvailable) )
+            {
+                Log("DailyActiveClaim - Not here - try next time ");
+            }
+
+            if ( IsVisible(ClaimAvailable) )
+            {
+                Log("DailyActiveClaim - Available ");
+                Click(ClaimAvailable);
+                Wait(6);
+                Log("DailyActiveClaim - Success ");
+                var SuccessMessage = ElementByXPath("//div[contains(@class,'alert-success alert-dismissible')]");
+                Log(SuccessMessage.Text);
+                ClaimSuccess( ); //Marks the claim as a success
+            }
+
+        } //end DailyActiveClaim
+          //=============//
+
+
+        //=============//
+        //FaucetClaim
+        //=============//
+        if ( GetBoolSetting("FaucetClaim") )
         {
-		  Log("DailyActiveClaim - Available ");  			
-		  Click(ClaimAvailable);
-          Wait(6); 
-		  Log("DailyActiveClaim - Success "); 
-          var SuccessMessage = ElementByXPath("//div[contains(@class,'alert-success alert-dismissible')]");
-		  Log(SuccessMessage.Text); 
-		  ClaimSuccess(); //Marks the claim as a success
-        }
-		
-      } //end DailyActiveClaim
-      //=============//
-	  
-	
-      //=============//
-      //FaucetClaim
-      //=============//
-      if (GetBoolSetting("FaucetClaim"))
-      {
 
-        var TimeToWaitForBreak = DateTime.Now.AddSeconds(1200); //1200sec = 20min
-        while (true)
-        {
-		    
-		  GoToUrl("https://focusgames.io/faucet");
-		  Log("FaucetClaim - go to ");  		
-	      Wait();
-	      Wait(4);
-		  
-          var CheckStuff = ElementByXPath("//button[contains(text(),'Claim FREE')] | //button[contains(text(),'Complete')] ");		
-		  
-          if (!IsVisible(CheckStuff))
-          {
-		    Log("FaucetClaim - Not here - try next time - break the loop ");  
-            break;
-		  }
-		  
-          if (IsVisible(CheckStuff))
-          {
-		      Log("FaucetClaim - Available ");  
-              var ClaimButton = ElementByXPath("//button[contains(text(),'Claim FREE')]");	
-		      Click(ClaimButton);
-              
-		      Wait(5);
+            var TimeToWaitForBreak = DateTime.Now.AddSeconds(1200); //1200sec = 20min
+            while ( true )
+            {
 
-		      Recaptcha_Function (); //call if apper
-		      
-              var CompleteClaimButton = ElementByXPath("//button[contains(text(),'Complete')]");	
-              
-			  if (!IsVisible(CompleteClaimButton))
-              {
-              Log("FaucetClaim - break - not Available");
-              break;
-              }
-			  
-              if (IsVisible(CompleteClaimButton))
-              {
-		      Log("FaucetClaim - CompleteClaimButton");
-		      Click(CompleteClaimButton);	
-			  
-		      Wait(2);
-			  
-              var SuccessMessage = ElementByXPath("//div[contains(@class,'alert alert-success')]");
-		      Log(SuccessMessage.Text); 
-		      ClaimSuccess(); //Marks the claim as a success			  
-			  }
-			  
-		      Wait(3);  
+                GoToUrl("https://focusgames.io/faucet");
+                Log("FaucetClaim - go to ");
+                Wait( );
+                Wait(4);
 
-		  } //end CheckStuff
+                var CheckStuff = ElementByXPath("//button[contains(text(),'Claim FREE')] | //button[contains(text(),'Complete')] ");
 
-          if (DateTime.Now > TimeToWaitForBreak) //if the time above 65 sec 
-          {
-          Log("FaucetClaim - break - TimeToWaitForBreak");
-          break; //break the wait loop
-          }
-		  
-	    }//end while
+                if ( !IsVisible(CheckStuff) )
+                {
+                    Log("FaucetClaim - Not here - try next time - break the loop ");
+                    break;
+                }
 
-      } //end FaucetClaim
-      //=============//
-	  
+                if ( IsVisible(CheckStuff) )
+                {
+                    Log("FaucetClaim - Available ");
+                    var ClaimButton = ElementByXPath("//button[contains(text(),'Claim FREE')]");
+                    Click(ClaimButton);
+                    FaucetCollector.Utilities.Adblock adblock= new FaucetCollector.Utilities.Adblock(this);
+                    adblock.DestroyAds( );
+                    Wait(5);
+
+                    Recaptcha_Function( ); //call if apper
+
+                    var CompleteClaimButton = ElementByXPath("//button[contains(text(),'Complete')]");
+
+                    if ( !IsVisible(CompleteClaimButton) )
+                    {
+                        Log("FaucetClaim - break - not Available");
+                        break;
+                    }
+
+                    if ( IsVisible(CompleteClaimButton) )
+                    {
+                        Log("FaucetClaim - CompleteClaimButton");
+                        Click(CompleteClaimButton);
+
+                        Wait(2);
+
+                        var SuccessMessage = ElementByXPath("//div[contains(@class,'alert alert-success')]");
+                        Log(SuccessMessage.Text);
+                        ClaimSuccess( ); //Marks the claim as a success			  
+                    }
+
+                    Wait(3);
+
+                } //end CheckStuff
+
+                if ( DateTime.Now>TimeToWaitForBreak ) //if the time above 65 sec 
+                {
+                    Log("FaucetClaim - break - TimeToWaitForBreak");
+                    break; //break the wait loop
+                }
+
+            }//end while
+
+        } //end FaucetClaim
+          //=============//
+
         //ad = true; //call to timer / and do success		
-		return Time_Function();
-	
+        return Time_Function( );
+
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.DoSolveFaucet();
+        return base.DoSolveFaucet( );
     }
-	
-	
 
 
-    public override int AfterSolveFaucet()
+
+
+    public override int AfterSolveFaucet( )
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.AfterSolveFaucet();
+        return base.AfterSolveFaucet( );
     }
-	
-	
-	
+
+
+
 
     /// <summary>
     /// This method gets called in the end after the BeforeSolveFaucet/DoSolveFaucet and AfterSolveFaucet methods were done.
@@ -396,87 +385,87 @@ public class FocusGames : FaucetScript
     /// For example if it finds one of the elements from the SuccessXPath, and it is visible, then it will flag the claim attempt as a success.
     /// Or if it finds one of the elements from the FailXPath, and it is visible, then it will flag the claim attempt as a failure.
     /// </summary>
-    public override int CheckFaucetResult()
+    public override int CheckFaucetResult( )
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.CheckFaucetResult();
+        return base.CheckFaucetResult( );
     }
-	
-	
-	
-        //=================//
-       //Time_Function
-        //=================//
-        public int Time_Function()
+
+
+
+    //=================//
+    //Time_Function
+    //=================//
+    public int Time_Function( )
+    {
+
+        var MinVar = ElementByXPath("//article[contains(@class,'maincontent')]//span[2]/span[1]") ;
+        var SecVar = ElementByXPath("//article[contains(@class,'maincontent')]//span[3]/span[1]") ;
+
+        if ( IsVisible(MinVar) )
         {
-			
-           var MinVar = ElementByXPath("//article[contains(@class,'maincontent')]//span[2]/span[1]") ;
-		   var SecVar = ElementByXPath("//article[contains(@class,'maincontent')]//span[3]/span[1]") ;
+            Log("ClaimBTC - WaitTimerText apper - return to site time");
+            int min,sec;
+            min=Convert.ToInt32(MinVar.Text.Trim( ).Replace("m." , "").Replace("s." , "").Split(' ')[0])*60;
+            sec=Convert.ToInt32(SecVar.Text.Trim( ).Replace("m." , "").Replace("s." , "").Split(' ')[1]);
+            return min+sec;
+        }
 
-           if (IsVisible(MinVar))
-           {
-	         Log("ClaimBTC - WaitTimerText apper - return to site time"); 
-             int min,sec;
-             min = Convert.ToInt32(MinVar.Text.Trim().Replace("m.", "").Replace("s.", "").Split(' ')[0])*60;
-             sec = Convert.ToInt32(SecVar.Text.Trim().Replace("m.", "").Replace("s.", "").Split(' ')[1]);
-             return min+sec;
-           } 
-
-           if (!IsVisible(MinVar))
-           {
-	            Log("ClaimBTC - return to your time"); 
-		        return GetWaitSetting();
-           }
-
-           return 0;		
-        }//end Time_Function
-        //=================//	
-		
-	
-        //=================//
-       //Recaptcha_Function
-        //=================//
-
-        public int Recaptcha_Function()
+        if ( !IsVisible(MinVar) )
         {
+            Log("ClaimBTC - return to your time");
+            return GetWaitSetting( );
+        }
 
-          //CaptchaChoose
-          var dropdown = ElementByXPath("//select[contains(@name,'captcha_type')]");
-          if (GetBoolSetting("CaptchaChoose"))
-          {
-              SelectOptionByValue(dropdown, "1"); //SolveMedia
-          }
-          if (!GetBoolSetting("CaptchaChoose"))
-          {
-              SelectOptionByValue(dropdown, "0"); //ReCaptcha
-          }
-		
-          //DoSolveImageCaptcha
-          var SolveMedia = ElementByXPath ("//img[contains(@id,'adcopy-puzzle-image-image')]"); 
-          if (IsVisible(SolveMedia))
-		  {  
-            Log("DO SolveMedia");	  
-	        var result_2 = DoSolveImageCaptcha(ElementByXPath("//img[contains(@id,'adcopy-puzzle-image-image')]"),ElementByXPath("//input[@name='adcopy_response']")); 
-		  }
-		  
-	     //for recaptcha popup after click on button - ("//button[contains(@class,'reload')] | //button[contains(@id,'reload')] ")
-          var RecaptchaOpen_Iframe = ElementByXPath ("//iframe[contains(@src,'recaptcha/api2/anchor')]"); 
-          if (IsVisible(RecaptchaOpen_Iframe))
-		  {
+        return 0;
+    }//end Time_Function
+     //=================//	
+
+
+    //=================//
+    //Recaptcha_Function
+    //=================//
+
+    public int Recaptcha_Function( )
+    {
+
+        //CaptchaChoose
+        var dropdown = ElementByXPath("//select[contains(@name,'captcha_type')]");
+        if ( GetBoolSetting("CaptchaChoose") )
+        {
+            SelectOptionByValue(dropdown , "1"); //SolveMedia
+        }
+        if ( !GetBoolSetting("CaptchaChoose") )
+        {
+            SelectOptionByValue(dropdown , "0"); //ReCaptcha
+        }
+
+        //DoSolveImageCaptcha
+        var SolveMedia = ElementByXPath ("//img[contains(@id,'adcopy-puzzle-image-image')]");
+        if ( IsVisible(SolveMedia) )
+        {
+            Log("DO SolveMedia");
+            var result_2 = DoSolveImageCaptcha(ElementByXPath("//img[contains(@id,'adcopy-puzzle-image-image')]"),ElementByXPath("//input[@name='adcopy_response']"));
+        }
+
+        //for recaptcha popup after click on button - ("//button[contains(@class,'reload')] | //button[contains(@id,'reload')] ")
+        var RecaptchaOpen_Iframe = ElementByXPath ("//iframe[contains(@src,'recaptcha/api2/anchor')]");
+        if ( IsVisible(RecaptchaOpen_Iframe) )
+        {
             //SolveCaptcha if apper
-            Log("DO Recaptcha");	  
+            Log("DO Recaptcha");
             var result = base.DoSolveCaptcha();
-            if (result > 0)
+            if ( result>0 )
             {
                 return Fail("Fail solving captcha");
             }
-            RecaptchaUtility utility = new RecaptchaUtility(this);
-            utility.DoSolve();
-		  }
+            FaucetCollector.Captcha.RecaptchaUtility utility = new FaucetCollector.Captcha.RecaptchaUtility(this);
+            utility.DoSolve( );
+        }
 
-		return 0;
-        }//end Recaptcha_Function
-        //=================//	
+        return 0;
+    }//end Recaptcha_Function
+     //=================//	
 
 
 
