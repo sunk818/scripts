@@ -110,7 +110,7 @@ namespace Adbtc
             {
                 return Fail("Fail To login address box is not visible");
             }
-            var PasswordBox = ElementByXPath("//input[@id='password']");
+            var PasswordBox = ElementByXPath("//input[@type='password']");
             if ( !IsVisible(PasswordBox) )
             {
                 return Fail("Fail login Password box not visible");
@@ -128,7 +128,7 @@ namespace Adbtc
             {
                 return Fail("Fail To login address box is not visible  after solve login captcha");
             }
-            PasswordBox=ElementByXPath("//input[@type='password' and @class='validate invalid']");
+            PasswordBox=ElementByXPath("//input[@type='password']");
             if ( !IsVisible(PasswordBox) )
             {
                 return Fail("Fail login Password box not visible after solve login captcha");
