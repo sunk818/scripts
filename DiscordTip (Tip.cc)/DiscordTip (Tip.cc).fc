@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 05/12/2018 06:00AM 
-//Last Update: 08/10/2020 22:00PM - Version 69
+//Last Update: 10/10/2020 09:00AM - Version 70
 //==================//
 
 using System;
@@ -48,6 +48,12 @@ public class DiscordScript: FaucetScript
 				new FaucetSetting(){Name="Command_1",Display="LaccsFaucet_BTC - Command_1",Default="!claim",Type=EditorType.TextBox,Required=true},
 				new FaucetSetting(){Name="Command_2",Display="LaccsFaucet_BTC - Command_2",Default="%claim",Type=EditorType.TextBox,Required=true},
                 
+				new FaucetSetting(){Name="Discordtip_CryptoMoon_Airdrop_1_OnOff",Display="CryptoMoon - AirDrop 1 - '💲-raining-🏙' channel - OnOff",Type=EditorType.CheckBox,Default=true},		
+				new FaucetSetting(){Name="Discordtip_CryptoMoon_Airdrop_2_OnOff",Display="CryptoMoon - AirDrop 2 - '💲-airdrops-🎉' channel - OnOff",Type=EditorType.CheckBox,Default=true},		
+				new FaucetSetting(){Name="Discordtip_CryptoMoon_Airdrop_3_OnOff",Display="CryptoMoon - AirDrop 3 - 'tip-cc' channel - OnOff",Type=EditorType.CheckBox,Default=true},		
+				new FaucetSetting(){Name="Discordtip_CryptoMoon_Airdrop_4_OnOff",Display="CryptoMoon - AirDrop 4 - '🌚🌂black-rain-event☂' channel - OnOff",Type=EditorType.CheckBox,Default=true},		
+				new FaucetSetting(){Name="Discordtip_CryptoMoon_Faucet_1_OnOff",Display="CryptoMoon - Faucet 1 - 'tipbot-faucet' channel - OnOff",Type=EditorType.CheckBox,Default=true},		
+				
 				new FaucetSetting(){Name="Discordtip_DreamTeam_Airdrop_1_OnOff",Display="DreamTeam - AirDrop 1 - 'give-aways' channel - OnOff",Type=EditorType.CheckBox,Default=true},		
 
                 new FaucetSetting(){Name="Discordtip_GridCoin_OnOff",Display="GridCoin - Faucet every 24h - 'wallet-bot' channel - OnOff",Type=EditorType.CheckBox,Default=true},		
@@ -404,9 +410,9 @@ public class DiscordScript: FaucetScript
           {
             Wait(2);
 		  
-            Actions Builder_4_Act = new Actions(Driver);			
-            Builder_4_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		    Builder_4_Act.SendKeys(inputDiscord2MessageVar,"withdraw btc").Build().Perform();
+            Actions Builder_1_Act = new Actions(Driver);			
+            Builder_1_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		    Builder_1_Act.SendKeys(inputDiscord2MessageVar,"withdraw btc").Build().Perform();
             Log("Withdraw BTC");				
 
             Wait();
@@ -425,9 +431,9 @@ public class DiscordScript: FaucetScript
             {	
                 Log("Available - BTC - balance");				
 				
-                Actions Builder_5_Act = new Actions(Driver);			
-                Builder_5_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		        Builder_5_Act.SendKeys(inputDiscord2MessageVar, GetSetting("WalletAddress_BTC") ).Build().Perform();
+                Actions Builder_2_Act = new Actions(Driver);			
+                Builder_2_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		        Builder_2_Act.SendKeys(inputDiscord2MessageVar, GetSetting("WalletAddress_BTC") ).Build().Perform();
                 Log("set BTC WalletAddress");
 				
                 Wait();
@@ -436,9 +442,9 @@ public class DiscordScript: FaucetScript
 			    
                 Wait(3);
 			    
-                Actions Builder_6_Act = new Actions(Driver);			
-                Builder_6_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		        Builder_6_Act.SendKeys(inputDiscord2MessageVar, "all" ).Build().Perform();
+                Actions Builder_3_Act = new Actions(Driver);			
+                Builder_3_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		        Builder_3_Act.SendKeys(inputDiscord2MessageVar, "all" ).Build().Perform();
                 Log("BTC - type - all");
 			    
                 Wait();
@@ -457,9 +463,9 @@ public class DiscordScript: FaucetScript
                 {
                    Log("BTC - LimitFee <- good - the 'fee' is 'LOW' and under < 0.0$ or $0.00 or $0.000 ");	   
                    Wait(3);
-                   Actions Builder_7_Act = new Actions(Driver);
-                   Builder_7_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		           Builder_7_Act.SendKeys(inputDiscord2MessageVar, "yes" ).Build().Perform();	
+                   Actions Builder_4_Act = new Actions(Driver);
+                   Builder_4_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		           Builder_4_Act.SendKeys(inputDiscord2MessageVar, "yes" ).Build().Perform();	
                    Log("BTC - type - yes");
                    Wait();
                    Enter_SendKeys_General_Discord_Input_Function();
@@ -488,9 +494,9 @@ public class DiscordScript: FaucetScript
           {
             Wait(2);
 		  
-            Actions Builder_4_Act = new Actions(Driver);			
-            Builder_4_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		    Builder_4_Act.SendKeys(inputDiscord2MessageVar,"withdraw DOGE").Build().Perform();
+            Actions Builder_5_Act = new Actions(Driver);			
+            Builder_5_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		    Builder_5_Act.SendKeys(inputDiscord2MessageVar,"withdraw DOGE").Build().Perform();
             Log("Withdraw DOGE");				
 		  
             Wait();
@@ -509,9 +515,9 @@ public class DiscordScript: FaucetScript
             {	
                 Log("Available - DOGE - balance");				
 							  
-                Actions Builder_5_Act = new Actions(Driver);			
-                Builder_5_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		        Builder_5_Act.SendKeys(inputDiscord2MessageVar, GetSetting("WalletAddress_DOGE") ).Build().Perform();
+                Actions Builder_6_Act = new Actions(Driver);			
+                Builder_6_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		        Builder_6_Act.SendKeys(inputDiscord2MessageVar, GetSetting("WalletAddress_DOGE") ).Build().Perform();
                 Log("set DOGE WalletAddress");
 			    
                 Wait();
@@ -520,9 +526,9 @@ public class DiscordScript: FaucetScript
 			    
                 Wait(3);
 			    
-                Actions Builder_6_Act = new Actions(Driver);			
-                Builder_6_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		        Builder_6_Act.SendKeys(inputDiscord2MessageVar, "all" ).Build().Perform();
+                Actions Builder_7_Act = new Actions(Driver);			
+                Builder_7_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		        Builder_7_Act.SendKeys(inputDiscord2MessageVar, "all" ).Build().Perform();
                 Log("DOGE - type - all");
 			    
                 Wait();
@@ -541,9 +547,9 @@ public class DiscordScript: FaucetScript
                 {
                    Log("DOGE - LimitFee <- good - the 'fee' is 'LOW' and under < 0.0$ or $0.00 or $0.000 ");		   
                    Wait(3);
-                   Actions Builder_7_Act = new Actions(Driver);
-                   Builder_7_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		           Builder_7_Act.SendKeys(inputDiscord2MessageVar, "yes" ).Build().Perform();			
+                   Actions Builder_8_Act = new Actions(Driver);
+                   Builder_8_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		           Builder_8_Act.SendKeys(inputDiscord2MessageVar, "yes" ).Build().Perform();			
                    Log("DOGE - type - yes");
 				   Wait();				   
                    Enter_SendKeys_General_Discord_Input_Function();
@@ -625,7 +631,7 @@ public class DiscordScript: FaucetScript
         GoToUrl("https://discordapp.com/channels/406508543034916865/566695331295920138");
 		Log("Discordtip_FaucetCollector: go to to claim in 'giveaways' channel | FaucetCollector ");
 		Wait();
-		Wait(15);
+		Wait(8);
 
         Reaction_while_Function(); //call	  
 		
@@ -669,7 +675,7 @@ public class DiscordScript: FaucetScript
         GoToUrl("https://discord.com/channels/617034883503620167/639195586070839316");
 		Log("Discordtip_Main_Airdrop_1_OnOff: go to to claim in 'giveaways' channel | Discordtip ");
 		Wait();
-		Wait(15);
+		Wait(8);
 
         Reaction_while_Function(); //call	  
 		
@@ -713,7 +719,7 @@ public class DiscordScript: FaucetScript
         GoToUrl("https://discord.com/channels/617034883503620167/699702250531979325");
 		Log("Discordtip_Main_Airdrop_2_OnOff: go to to claim in 'drops-and-begging' channel | Discordtip ");
 		Wait();
-		Wait(15);
+		Wait(8);
 
         Reaction_while_Function(); //call	  
 		
@@ -757,7 +763,7 @@ public class DiscordScript: FaucetScript
         GoToUrl("https://discord.com/channels/617034883503620167/755024910023131167");
 		Log("Discordtip_Main_Airdrop_3_OnOff: go to to claim in 'promos' channel | Discordtip ");
 		Wait();
-		Wait(15);
+		Wait(8);
 
         Reaction_while_Function(); //call	  
 		
@@ -767,6 +773,207 @@ public class DiscordScript: FaucetScript
      //========================//
 
 
+      //=========================//
+      //Discordtip_CryptoMoon_Airdrop_1_OnOff//
+      //=========================//
+      if (GetBoolSetting("Discordtip_CryptoMoon_Airdrop_1_OnOff"))
+      {		
+  
+        TopSite_Function(); //call
+
+		//first go to server
+	    Title = "Discord";	
+		GoToUrl("https://discord.gg/k6K347V"); //Tip.cc server
+		Wait();	
+		Wait(5);		
+
+        Driver.Navigate().Refresh();
+		Wait();	
+		
+        var NitroGamesVAR = ElementByXPath("//div[@class='contents-18-Yxp' and contains(text(),'Cancel')]");
+	    if (IsVisible(NitroGamesVAR))
+        {
+		Log("NitroGamesVAR apper - Cancel this "); 	
+        Click(NitroGamesVAR);
+        }
+		
+		Wait(5);	
+		
+        inviteServer_Elements_Function(); //call
+		
+		Wait();
+        Wait(5);
+        Title = "#💲-raining-🏙";		
+        GoToUrl("https://discord.com/channels/596834389778759690/683726808616927273");
+		Log("Discordtip_CryptoMoon_Airdrop_1_OnOff: go to to claim in '💲-raining-🏙' channel | Discordtip ");
+		Wait();
+		Wait(8);
+
+        Reaction_while_Function(); //call	  
+		
+        Wait(3);
+
+     } //end Discordtip_CryptoMoon_Airdrop_1_OnOff
+     //========================//
+	 
+
+      //=========================//
+      //Discordtip_CryptoMoon_Airdrop_2_OnOff//
+      //=========================//
+      if (GetBoolSetting("Discordtip_CryptoMoon_Airdrop_2_OnOff"))
+      {		
+  
+        TopSite_Function(); //call
+
+		//first go to server
+	    Title = "Discord";	
+		GoToUrl("https://discord.gg/k6K347V"); //Tip.cc server
+		Wait();	
+		Wait(5);		
+
+        Driver.Navigate().Refresh();
+		Wait();	
+		
+        var NitroGamesVAR = ElementByXPath("//div[@class='contents-18-Yxp' and contains(text(),'Cancel')]");
+	    if (IsVisible(NitroGamesVAR))
+        {
+		Log("NitroGamesVAR apper - Cancel this "); 	
+        Click(NitroGamesVAR);
+        }
+		
+		Wait(5);	
+		
+        inviteServer_Elements_Function(); //call
+		
+		Wait();
+        Wait(5);
+        Title = "#💲-airdrops-🎉";		
+        GoToUrl("https://discord.com/channels/596834389778759690/683726957019791419");
+		Log("Discordtip_CryptoMoon_Airdrop_2_OnOff: go to to claim in '💲-airdrops-🎉' channel | Discordtip ");
+		Wait();
+		Wait(8);
+
+        Reaction_while_Function(); //call	  
+		
+        Wait(3);
+
+     } //end Discordtip_CryptoMoon_Airdrop_2_OnOff
+     //========================//
+	 
+	 
+      //=========================//
+      //Discordtip_CryptoMoon_Airdrop_3_OnOff//
+      //=========================//
+      if (GetBoolSetting("Discordtip_CryptoMoon_Airdrop_3_OnOff"))
+      {		
+  
+        TopSite_Function(); //call
+
+		//first go to server
+	    Title = "Discord";	
+		GoToUrl("https://discord.gg/k6K347V"); //Tip.cc server
+		Wait();	
+		Wait(5);		
+
+        Driver.Navigate().Refresh();
+		Wait();	
+		
+        var NitroGamesVAR = ElementByXPath("//div[@class='contents-18-Yxp' and contains(text(),'Cancel')]");
+	    if (IsVisible(NitroGamesVAR))
+        {
+		Log("NitroGamesVAR apper - Cancel this "); 	
+        Click(NitroGamesVAR);
+        }
+		
+		Wait(5);	
+		
+        inviteServer_Elements_Function(); //call
+		
+		Wait();
+        Wait(5);
+        Title = "#tip-cc";		
+        GoToUrl("https://discord.com/channels/596834389778759690/683731676995649700");
+		Log("Discordtip_CryptoMoon_Airdrop_3_OnOff: go to to claim in 'tip-cc' channel | Discordtip ");
+		Wait();
+		Wait(8);
+
+        Reaction_while_Function(); //call	  
+		
+        Wait(3);
+
+     } //end Discordtip_CryptoMoon_Airdrop_3_OnOff
+     //========================//
+
+
+      //=========================//
+      //Discordtip_CryptoMoon_Airdrop_4_OnOff//
+      //=========================//
+      if (GetBoolSetting("Discordtip_CryptoMoon_Airdrop_4_OnOff"))
+      {		
+  
+        TopSite_Function(); //call
+
+		//first go to server
+	    Title = "Discord";	
+		GoToUrl("https://discord.gg/k6K347V"); //Tip.cc server
+		Wait();	
+		Wait(5);		
+
+        Driver.Navigate().Refresh();
+		Wait();	
+		
+        var NitroGamesVAR = ElementByXPath("//div[@class='contents-18-Yxp' and contains(text(),'Cancel')]");
+	    if (IsVisible(NitroGamesVAR))
+        {
+		Log("NitroGamesVAR apper - Cancel this "); 	
+        Click(NitroGamesVAR);
+        }
+		
+		Wait(5);	
+		
+        inviteServer_Elements_Function(); //call
+		
+		Wait();
+        Wait(5);
+        Title = "#🌚🌂black-rain-event☂";		
+        GoToUrl("https://discord.com/channels/596834389778759690/683726909648928806");
+		Log("Discordtip_CryptoMoon_Airdrop_4_OnOff: go to to claim in '#🌚🌂black-rain-event☂' channel | Discordtip ");
+		Wait();
+		Wait(8);
+
+        Reaction_while_Function(); //call	  
+		
+        Wait(3);
+
+     } //end Discordtip_CryptoMoon_Airdrop_4_OnOff
+     //========================//
+
+
+        //================//
+        //Discordtip_CryptoMoon_Faucet_1_OnOff//
+        //================//
+        if (GetBoolSetting("Discordtip_CryptoMoon_Faucet_1_OnOff"))
+        {
+		  Title = "Discord";
+          GoToUrl("https://discord.gg/k6K347V"); // my link never expire
+		  Log("Discordtip_CryptoMoon_Faucet_1");
+          Wait();
+          Wait(2);
+          inviteServer_Elements_Function(); //call
+          Wait(2);
+		  
+		  Title = "#tipbot-faucet";		  
+          GoToUrl("https://discord.com/channels/596834389778759690/691496374658662470");
+		  Log("Discordtip_GridCoin - go to 'tipbot-faucet' channel ");	  
+		  Wait(6);
+		  SetText_CryptoMoon_Faucet_1_SendKeys_Way_Function();  //call to set text %get
+		  Wait(2);
+		  Enter_SendKeys_General_Discord_Input_Function(); //call to do enter	
+		  Wait(3);
+		  
+        } //end Discordtip_CryptoMoon_Faucet_1_OnOff	
+     //========================//
+	 
 
         //================//
         //Discordtip_DreamTeam_Airdrop_1_OnOff//
@@ -774,6 +981,7 @@ public class DiscordScript: FaucetScript
         if (GetBoolSetting("Discordtip_DreamTeam_Airdrop_1_OnOff"))
         {
 		  //first go to server
+		  Title = "Discord";
           GoToUrl("https://discord.gg/TVyN4xF"); // my link never expire
 		  Log("Discordtip_DreamTeam_Airdrop_1");
           Wait();
@@ -823,7 +1031,7 @@ public class DiscordScript: FaucetScript
         //================//
         if (GetBoolSetting("Discordtip_GridCoin_OnOff"))
         {
-
+		  Title = "Discord";		
           GoToUrl("https://discord.gg/QMJZnEx"); // my link never expire
 		  Log("Discordtip_GridCoin");
           Wait();
@@ -834,15 +1042,17 @@ public class DiscordScript: FaucetScript
           var UnVerifiedStart = ElementByXPath("//div[contains(text(),'unverified')]");
           if (IsVisible(UnVerifiedStart))
 	      {
+			Title = "#unverified";		
             GoToUrl("https://discord.com/channels/211637812968161280/448301760730234880");
-			Log("Discordtip_GridCoin - do verify in your account ");
+			Log("Discordtip_GridCoin - do verify in your account in 'unverified' channel ");
 			Wait(6);
 			SetText_GridCoin_1_SendKeys_Way_Function();  //call to set text !agree
 			Wait(2);
 			Enter_SendKeys_General_Discord_Input_Function(); //call to do enter	
 		    Wait(3);
           }
-
+		  
+		  Title = "#wallet-bot";		
           GoToUrl("https://discord.com/channels/211637812968161280/424786671360409611");
 		  Log("Discordtip_GridCoin - go to 'wallet-bot' channel ");	  
 		  Wait(6);
@@ -1276,10 +1486,10 @@ public class DiscordScript: FaucetScript
          {
 		   //Enter Keyboard
            Log("Enter Keyboard");
-           Actions Builder4Act = new Actions(Driver);
-           Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
+           Actions Builder_9_Act = new Actions(Driver);
+           Builder_9_Act.MoveToElement(TextCommand).Build().Perform(); 
            Wait(3);
-           Builder4Act.SendKeys(Keys.Enter).Build().Perform(); 
+           Builder_9_Act.SendKeys(Keys.Enter).Build().Perform(); 
 		 }
 		 return 0;
       }
@@ -1296,10 +1506,10 @@ public class DiscordScript: FaucetScript
          {
 		   //SetText Keyboard
            Log("TextCommand - SetText_GridCoin_1");
-           Actions Builder4Act = new Actions(Driver);
-           Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
+           Actions Builder_10_Act = new Actions(Driver);
+           Builder_10_Act.MoveToElement(TextCommand).Build().Perform(); 
            Wait(3);
-           Builder4Act.SendKeys(TextCommand, "!agree").Build().Perform();
+           Builder_10_Act.SendKeys(TextCommand, "!agree").Build().Perform();
 		 }
 		 return 0;
       }
@@ -1315,10 +1525,10 @@ public class DiscordScript: FaucetScript
          {
 		  //SetText Keyboard
           Log("TextCommand - SetText_GridCoin_2");
-          Actions Builder4Act = new Actions(Driver);
-          Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
+          Actions Builder_11_Act = new Actions(Driver);
+          Builder_11_Act.MoveToElement(TextCommand).Build().Perform(); 
           Wait(3);
-          Builder4Act.SendKeys(TextCommand, "%new").Build().Perform();	
+          Builder_11_Act.SendKeys(TextCommand, "%new").Build().Perform();	
 		 }
 		 return 0;
       }
@@ -1334,16 +1544,36 @@ public class DiscordScript: FaucetScript
          {
 	       //SetText Keyboard
            Log("TextCommand - SetText_GridCoin_3");
-           Actions Builder4Act = new Actions(Driver);
-           Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
+           Actions Builder_12_Act = new Actions(Driver);
+           Builder_12_Act.MoveToElement(TextCommand).Build().Perform(); 
            Wait(3);
-           Builder4Act.SendKeys(TextCommand, "%get").Build().Perform();
+           Builder_12_Act.SendKeys(TextCommand, "%get").Build().Perform();
 		 }
 		 
 		 return 0;
       }
       //=================//	
 	
+
+      //=================//
+      //SetText_CryptoMoon_Faucet_1_SendKeys_Way_Function
+      //=================//	
+      public int SetText_CryptoMoon_Faucet_1_SendKeys_Way_Function()
+      {
+         var TextCommand = ElementByXPath("//div[contains(@class,'inner')]/div[contains(@class,'textArea')]");
+	     if (IsVisible(TextCommand))
+         {
+	       //SetText Keyboard
+           Log("TextCommand - SetText_CryptoMoon_Faucet_1");
+           Actions Builder_13_Act = new Actions(Driver);
+           Builder_13_Act.MoveToElement(TextCommand).Build().Perform(); 
+           Wait(3);
+           Builder_13_Act.SendKeys(TextCommand, ".take").Build().Perform();
+		 }
+		 
+		 return 0;
+      }
+      //=================//	
 	
       //=================//
       //SetText_1_Laccs_SendKeys_Way_Function
@@ -1355,10 +1585,10 @@ public class DiscordScript: FaucetScript
          {
 		   //SetText Keyboard
            Log("TextCommand - SetText_1_Laccs");
-           Actions Builder4Act = new Actions(Driver);
-           Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
+           Actions Builder_14_Act = new Actions(Driver);
+           Builder_14_Act.MoveToElement(TextCommand).Build().Perform(); 
            Wait(3);
-           Builder4Act.SendKeys(TextCommand, GetSetting("Command_1") ).Build().Perform(); 
+           Builder_14_Act.SendKeys(TextCommand, GetSetting("Command_1") ).Build().Perform(); 
 		 }
 		 return 0;
       }
@@ -1375,10 +1605,10 @@ public class DiscordScript: FaucetScript
          {
 		   //SetText Keyboard
            Log("TextCommand - SetText_2_Laccs");
-           Actions Builder4Act = new Actions(Driver);
-           Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
+           Actions Builder_15_Act = new Actions(Driver);
+           Builder_15_Act.MoveToElement(TextCommand).Build().Perform(); 
            Wait(3);
-           Builder4Act.SendKeys(TextCommand, GetSetting("Command_2") ).Build().Perform();
+           Builder_15_Act.SendKeys(TextCommand, GetSetting("Command_2") ).Build().Perform();
 		 }
 		 
 		 return 0;
@@ -1395,10 +1625,10 @@ public class DiscordScript: FaucetScript
         var ElementToEnter = ElementByClass("input-2VB9rf");
 	    if (IsVisible(ElementToEnter))
         {
-        Actions BuilderAct = new Actions(Driver);
-        BuilderAct.MoveToElement(ElementToEnter).Build().Perform(); 
+        Actions Builder_16_Act = new Actions(Driver);
+        Builder_16_Act.MoveToElement(ElementToEnter).Build().Perform(); 
         Wait(3);
-        BuilderAct.SendKeys(Keys.Enter).Build().Perform(); 
+        Builder_16_Act.SendKeys(Keys.Enter).Build().Perform(); 
 		}
 
 		 return 0;
@@ -1647,12 +1877,11 @@ public class DiscordScript: FaucetScript
   private int Reaction_while_Function()
   {
 	  
-         var CustomTime = 360;
-         var TimeToWaitForBreak = DateTime.Now.AddSeconds(CustomTime);//DateTime.Now.AddSeconds
+         var TimeToWaitForBreak = DateTime.Now.AddSeconds(360);//DateTime.Now.AddSeconds
          while (true)
          {	
 	 
-		   Log("Time left to break is " + CustomTime);
+		   Log("Time left to break is " + TimeToWaitForBreak);
 	 
 		   Wait(2);	   
 		   
@@ -1660,11 +1889,11 @@ public class DiscordScript: FaucetScript
 		   
 		   Wait(2);
 		
-		   var ReactionButton_Clean = ElementByXPath("//div[contains(@class,'container-1ov-mD') and contains(., 'airdrop appear')]//div[contains(@class,'reactionInner') and @aria-pressed='false' ]//img[contains(@src,'assets/b052a4bef57')]");
+		   var ReactionButton_Clean = ElementByXPath("//div[contains(@class,'container-1ov-mD') and contains(., 'airdrop appear') and contains(., 'Ends') ]//div[contains(@class,'reactionInner') and @aria-pressed='false' ]//img[contains(@src,'assets/b052a4bef57')]");
            
 		   if (!IsVisible(ReactionButton_Clean)) 
            {
-            Log("Reaction - already claimed full");
+            Log("Reaction - already claimed full OR Ended");
             Notification("Reaction - already claimed full");
 		    break; //after break the while
            } 
@@ -1674,7 +1903,7 @@ public class DiscordScript: FaucetScript
 		   Log("Reaction is now Clean - call to function - to click");
 		   Wait(2);	 
   		   int Count;			     		   
-		   var ReactionButton_2_Clean = ElementsByXPath("//div[contains(@class,'container-1ov-mD') and contains(., 'airdrop appear')]//div[contains(@class,'reactionInner') and @aria-pressed='false' ]//img[contains(@src,'assets/b052a4bef57')]"); //Elements
+		   var ReactionButton_2_Clean = ElementsByXPath("//div[contains(@class,'container-1ov-mD') and contains(., 'airdrop appear') and contains(., 'Ends') ]//div[contains(@class,'reactionInner') and @aria-pressed='false' ]//img[contains(@src,'assets/b052a4bef57')]"); //Elements
 		   Log("the amount of Reactions to do now is " + ReactionButton_2_Clean.Count);		   
 		   Reaction_Function(); //call to Reaction_Function
 		   }
@@ -1713,7 +1942,7 @@ public class DiscordScript: FaucetScript
 		  Wait(3);
 
           var Reaction_General_apper = ElementByXPath("//div[contains(@class,'embedTitle') and contains(text(),'airdrop')]");
-          var ReactionButton_Clean = ElementByXPath("//div[contains(@class,'container-1ov-mD') and contains(., 'airdrop appear')]//div[contains(@class,'reactionInner') and @aria-pressed='false' ]//img[contains(@src,'assets/b052a4bef57')]");
+          var ReactionButton_Clean = ElementByXPath("//div[contains(@class,'container-1ov-mD') and contains(., 'airdrop appear') and contains(., 'Ends') ]//div[contains(@class,'reactionInner') and @aria-pressed='false' ]//img[contains(@src,'assets/b052a4bef57')]");
 
           if (!IsVisible(Reaction_General_apper)) //if not apper at all "An airdrop appears"
           {
@@ -2151,10 +2380,10 @@ public class DiscordScript: FaucetScript
                   return Fail("ServerCaptchaBot - Fail solving captcha");
               }
 			  
-              Actions Builder9Act = new Actions(Driver);
-              Builder9Act.MoveToElement(TextVAR).Build().Perform(); 
+              Actions Builder_17_Act = new Actions(Driver);
+              Builder_17_Act.MoveToElement(TextVAR).Build().Perform(); 
               Wait(3);
-              Builder9Act.SendKeys(TextVAR, Context.CaptchaResult.Result ).Build().Perform();
+              Builder_17_Act.SendKeys(TextVAR, Context.CaptchaResult.Result ).Build().Perform();
 			  
               Wait(3);
 			  	      
