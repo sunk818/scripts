@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 05/12/2018 06:00AM 
-//Last Update: 10/10/2020 06:50PM - Version 70
+//Last Update: 10/10/2020 09:00AM - Version 70
 //==================//
 
 using System;
@@ -410,9 +410,9 @@ public class DiscordScript: FaucetScript
           {
             Wait(2);
 		  
-            Actions Builder_4_Act = new Actions(Driver);			
-            Builder_4_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		    Builder_4_Act.SendKeys(inputDiscord2MessageVar,"withdraw btc").Build().Perform();
+            Actions Builder_1_Act = new Actions(Driver);			
+            Builder_1_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		    Builder_1_Act.SendKeys(inputDiscord2MessageVar,"withdraw btc").Build().Perform();
             Log("Withdraw BTC");				
 
             Wait();
@@ -431,9 +431,9 @@ public class DiscordScript: FaucetScript
             {	
                 Log("Available - BTC - balance");				
 				
-                Actions Builder_5_Act = new Actions(Driver);			
-                Builder_5_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		        Builder_5_Act.SendKeys(inputDiscord2MessageVar, GetSetting("WalletAddress_BTC") ).Build().Perform();
+                Actions Builder_2_Act = new Actions(Driver);			
+                Builder_2_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		        Builder_2_Act.SendKeys(inputDiscord2MessageVar, GetSetting("WalletAddress_BTC") ).Build().Perform();
                 Log("set BTC WalletAddress");
 				
                 Wait();
@@ -442,9 +442,9 @@ public class DiscordScript: FaucetScript
 			    
                 Wait(3);
 			    
-                Actions Builder_6_Act = new Actions(Driver);			
-                Builder_6_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		        Builder_6_Act.SendKeys(inputDiscord2MessageVar, "all" ).Build().Perform();
+                Actions Builder_3_Act = new Actions(Driver);			
+                Builder_3_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		        Builder_3_Act.SendKeys(inputDiscord2MessageVar, "all" ).Build().Perform();
                 Log("BTC - type - all");
 			    
                 Wait();
@@ -463,9 +463,9 @@ public class DiscordScript: FaucetScript
                 {
                    Log("BTC - LimitFee <- good - the 'fee' is 'LOW' and under < 0.0$ or $0.00 or $0.000 ");	   
                    Wait(3);
-                   Actions Builder_7_Act = new Actions(Driver);
-                   Builder_7_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		           Builder_7_Act.SendKeys(inputDiscord2MessageVar, "yes" ).Build().Perform();	
+                   Actions Builder_4_Act = new Actions(Driver);
+                   Builder_4_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		           Builder_4_Act.SendKeys(inputDiscord2MessageVar, "yes" ).Build().Perform();	
                    Log("BTC - type - yes");
                    Wait();
                    Enter_SendKeys_General_Discord_Input_Function();
@@ -494,9 +494,9 @@ public class DiscordScript: FaucetScript
           {
             Wait(2);
 		  
-            Actions Builder_4_Act = new Actions(Driver);			
-            Builder_4_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		    Builder_4_Act.SendKeys(inputDiscord2MessageVar,"withdraw DOGE").Build().Perform();
+            Actions Builder_5_Act = new Actions(Driver);			
+            Builder_5_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		    Builder_5_Act.SendKeys(inputDiscord2MessageVar,"withdraw DOGE").Build().Perform();
             Log("Withdraw DOGE");				
 		  
             Wait();
@@ -515,9 +515,9 @@ public class DiscordScript: FaucetScript
             {	
                 Log("Available - DOGE - balance");				
 							  
-                Actions Builder_5_Act = new Actions(Driver);			
-                Builder_5_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		        Builder_5_Act.SendKeys(inputDiscord2MessageVar, GetSetting("WalletAddress_DOGE") ).Build().Perform();
+                Actions Builder_6_Act = new Actions(Driver);			
+                Builder_6_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		        Builder_6_Act.SendKeys(inputDiscord2MessageVar, GetSetting("WalletAddress_DOGE") ).Build().Perform();
                 Log("set DOGE WalletAddress");
 			    
                 Wait();
@@ -526,9 +526,9 @@ public class DiscordScript: FaucetScript
 			    
                 Wait(3);
 			    
-                Actions Builder_6_Act = new Actions(Driver);			
-                Builder_6_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		        Builder_6_Act.SendKeys(inputDiscord2MessageVar, "all" ).Build().Perform();
+                Actions Builder_7_Act = new Actions(Driver);			
+                Builder_7_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		        Builder_7_Act.SendKeys(inputDiscord2MessageVar, "all" ).Build().Perform();
                 Log("DOGE - type - all");
 			    
                 Wait();
@@ -547,9 +547,9 @@ public class DiscordScript: FaucetScript
                 {
                    Log("DOGE - LimitFee <- good - the 'fee' is 'LOW' and under < 0.0$ or $0.00 or $0.000 ");		   
                    Wait(3);
-                   Actions Builder_7_Act = new Actions(Driver);
-                   Builder_7_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
-		           Builder_7_Act.SendKeys(inputDiscord2MessageVar, "yes" ).Build().Perform();			
+                   Actions Builder_8_Act = new Actions(Driver);
+                   Builder_8_Act.MoveToElement(inputDiscord2MessageVar).Build().Perform(); 
+		           Builder_8_Act.SendKeys(inputDiscord2MessageVar, "yes" ).Build().Perform();			
                    Log("DOGE - type - yes");
 				   Wait();				   
                    Enter_SendKeys_General_Discord_Input_Function();
@@ -1486,10 +1486,10 @@ public class DiscordScript: FaucetScript
          {
 		   //Enter Keyboard
            Log("Enter Keyboard");
-           Actions Builder4Act = new Actions(Driver);
-           Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
+           Actions Builder_9_Act = new Actions(Driver);
+           Builder_9_Act.MoveToElement(TextCommand).Build().Perform(); 
            Wait(3);
-           Builder4Act.SendKeys(Keys.Enter).Build().Perform(); 
+           Builder_9_Act.SendKeys(Keys.Enter).Build().Perform(); 
 		 }
 		 return 0;
       }
@@ -1506,10 +1506,10 @@ public class DiscordScript: FaucetScript
          {
 		   //SetText Keyboard
            Log("TextCommand - SetText_GridCoin_1");
-           Actions Builder4Act = new Actions(Driver);
-           Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
+           Actions Builder_10_Act = new Actions(Driver);
+           Builder_10_Act.MoveToElement(TextCommand).Build().Perform(); 
            Wait(3);
-           Builder4Act.SendKeys(TextCommand, "!agree").Build().Perform();
+           Builder_10_Act.SendKeys(TextCommand, "!agree").Build().Perform();
 		 }
 		 return 0;
       }
@@ -1525,10 +1525,10 @@ public class DiscordScript: FaucetScript
          {
 		  //SetText Keyboard
           Log("TextCommand - SetText_GridCoin_2");
-          Actions Builder4Act = new Actions(Driver);
-          Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
+          Actions Builder_11_Act = new Actions(Driver);
+          Builder_11_Act.MoveToElement(TextCommand).Build().Perform(); 
           Wait(3);
-          Builder4Act.SendKeys(TextCommand, "%new").Build().Perform();	
+          Builder_11_Act.SendKeys(TextCommand, "%new").Build().Perform();	
 		 }
 		 return 0;
       }
@@ -1544,10 +1544,10 @@ public class DiscordScript: FaucetScript
          {
 	       //SetText Keyboard
            Log("TextCommand - SetText_GridCoin_3");
-           Actions Builder4Act = new Actions(Driver);
-           Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
+           Actions Builder_12_Act = new Actions(Driver);
+           Builder_12_Act.MoveToElement(TextCommand).Build().Perform(); 
            Wait(3);
-           Builder4Act.SendKeys(TextCommand, "%get").Build().Perform();
+           Builder_12_Act.SendKeys(TextCommand, "%get").Build().Perform();
 		 }
 		 
 		 return 0;
@@ -1565,10 +1565,10 @@ public class DiscordScript: FaucetScript
          {
 	       //SetText Keyboard
            Log("TextCommand - SetText_CryptoMoon_Faucet_1");
-           Actions Builder4Act = new Actions(Driver);
-           Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
+           Actions Builder_13_Act = new Actions(Driver);
+           Builder_13_Act.MoveToElement(TextCommand).Build().Perform(); 
            Wait(3);
-           Builder4Act.SendKeys(TextCommand, ".take").Build().Perform();
+           Builder_13_Act.SendKeys(TextCommand, ".take").Build().Perform();
 		 }
 		 
 		 return 0;
@@ -1585,10 +1585,10 @@ public class DiscordScript: FaucetScript
          {
 		   //SetText Keyboard
            Log("TextCommand - SetText_1_Laccs");
-           Actions Builder4Act = new Actions(Driver);
-           Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
+           Actions Builder_14_Act = new Actions(Driver);
+           Builder_14_Act.MoveToElement(TextCommand).Build().Perform(); 
            Wait(3);
-           Builder4Act.SendKeys(TextCommand, GetSetting("Command_1") ).Build().Perform(); 
+           Builder_14_Act.SendKeys(TextCommand, GetSetting("Command_1") ).Build().Perform(); 
 		 }
 		 return 0;
       }
@@ -1605,10 +1605,10 @@ public class DiscordScript: FaucetScript
          {
 		   //SetText Keyboard
            Log("TextCommand - SetText_2_Laccs");
-           Actions Builder4Act = new Actions(Driver);
-           Builder4Act.MoveToElement(TextCommand).Build().Perform(); 
+           Actions Builder_15_Act = new Actions(Driver);
+           Builder_15_Act.MoveToElement(TextCommand).Build().Perform(); 
            Wait(3);
-           Builder4Act.SendKeys(TextCommand, GetSetting("Command_2") ).Build().Perform();
+           Builder_15_Act.SendKeys(TextCommand, GetSetting("Command_2") ).Build().Perform();
 		 }
 		 
 		 return 0;
@@ -1625,10 +1625,10 @@ public class DiscordScript: FaucetScript
         var ElementToEnter = ElementByClass("input-2VB9rf");
 	    if (IsVisible(ElementToEnter))
         {
-        Actions BuilderAct = new Actions(Driver);
-        BuilderAct.MoveToElement(ElementToEnter).Build().Perform(); 
+        Actions Builder_16_Act = new Actions(Driver);
+        Builder_16_Act.MoveToElement(ElementToEnter).Build().Perform(); 
         Wait(3);
-        BuilderAct.SendKeys(Keys.Enter).Build().Perform(); 
+        Builder_16_Act.SendKeys(Keys.Enter).Build().Perform(); 
 		}
 
 		 return 0;
@@ -2380,10 +2380,10 @@ public class DiscordScript: FaucetScript
                   return Fail("ServerCaptchaBot - Fail solving captcha");
               }
 			  
-              Actions Builder9Act = new Actions(Driver);
-              Builder9Act.MoveToElement(TextVAR).Build().Perform(); 
+              Actions Builder_17_Act = new Actions(Driver);
+              Builder_17_Act.MoveToElement(TextVAR).Build().Perform(); 
               Wait(3);
-              Builder9Act.SendKeys(TextVAR, Context.CaptchaResult.Result ).Build().Perform();
+              Builder_17_Act.SendKeys(TextVAR, Context.CaptchaResult.Result ).Build().Perform();
 			  
               Wait(3);
 			  	      
