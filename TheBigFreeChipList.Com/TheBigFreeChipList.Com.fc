@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 18/07/2019 21:09PM - Version 1
-//Last Update: 13/06/2020 14:30PM - Version 2
+//Last Update: 10/10/2020 10:30AM - Version 3
 //==================//
 
 using System;
@@ -116,11 +116,12 @@ public class thebigfreechiplist : FaucetScript
 	 if (!IsVisible(ExitButton))
 	 {
 	
-		GoToUrl("https://www.thebigfreechiplist.com/");
+		GoToUrl("https://thebigfreechiplist.com/");
 		Wait();		
 		Wait(2);
 
-        var StartOpenLogin = ElementByXPath("//span[@class='log-out__open non-user']");
+
+        var StartOpenLogin = ElementByXPath("//div[contains(@class,'log-out__open')] | //span[contains(@class,'log-out__open')]");
 	    //if (IsVisible(StartOpenLogin))
 	    //{ 
         Click(StartOpenLogin);
