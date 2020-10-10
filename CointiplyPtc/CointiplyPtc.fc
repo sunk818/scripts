@@ -1,5 +1,5 @@
-﻿using FaucetCollector.Script;
-using OpenQA.Selenium;
+﻿using Base;
+using FaucetCollector.Script;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -22,19 +22,19 @@ public class CointiplyPtc : FaucetScript
         }
     }
 
-    public override void Start()
+    public override void Start( )
     {
-        Title = "Cointiply";
+        Title="Cointiply";
 
-        SuccessXPath = "//div[contains(@class,'md-snackbar-content')]//span[contains(., 'won')]";
-        FailXPath = "//span[contains(@class, 'md-error') and not(@style)]";
+        SuccessXPath="//div[contains(@class,'md-snackbar-content')]//span[contains(., 'won')]";
+        FailXPath="//span[contains(@class, 'md-error') and not(@style)]";
 
-        base.Start();
+        base.Start( );
     }
 
-    public override bool IsLoggedIn()
+    public override bool IsLoggedIn( )
     {
-        CloseModal();
+        CloseModal( );
 
         Wait(3);
 
@@ -42,74 +42,74 @@ public class CointiplyPtc : FaucetScript
         return IsVisible(ElementByXPath("//a[@href='/activity']"));
     }
 
-    public override int BeforeLogin()
+    public override int BeforeLogin( )
     {
         //Click on the Login link
         OpenQA.Selenium.IWebElement loginLink = ElementByXPath("//a[@href='/login']");
-        if (IsVisible(loginLink))
+        if ( IsVisible(loginLink) )
         {
             Click(loginLink);
         }
-        if (!Driver.Url.Contains("https://cointiply.com/login"))
+        if ( !Driver.Url.Contains("https://cointiply.com/login") )
         {
             GoToUrl("https://cointiply.com/login");
         }
 
         //let Faucet Collector continue.
-        return base.BeforeLogin();
+        return base.BeforeLogin( );
     }
 
-    public override int DoLogin()
+    public override int DoLogin( )
     {
         //Find the input field that holds the email address
         OpenQA.Selenium.IWebElement signInEmail = ElementByXPath("//form//input[@type='text']");
-        if (!IsVisible(signInEmail))
+        if ( !IsVisible(signInEmail) )
         {
             //We couldn't find it. Register it as a fail so it can reload the page and try again in 10-15 seconds.
             return Fail("Email input not found.");
         }
-        SetText(signInEmail, GetSetting("Email"));
+        SetText(signInEmail , GetSetting("Email"));
         OpenQA.Selenium.IWebElement signInPassword = ElementByXPath("//form//input[@type='password']");
-        if (!IsVisible(signInPassword))
+        if ( !IsVisible(signInPassword) )
         {
             //We couldn't find it. Register it as a fail so it can reload the page and try again in 10-15 seconds.
             return Fail("Password input not found.");
         }
-        SetText(signInPassword, GetPassword("Password"));
-        Wait();
+        SetText(signInPassword , GetPassword("Password"));
+        Wait( );
         DateTime t1 = DateTime.Now.AddSeconds(10);
-        while (!IsVisible(ElementByXPath("//span[@class='md-select-value']")))
+        while ( !IsVisible(ElementByXPath("//span[@class='md-select-value']")) )
         {
             Wait(1);
-            if (DateTime.Now > t1) { break; }
+            if ( DateTime.Now>t1 ) { break; }
 
         }
-        if (IsVisible(ElementByXPath("//span[@class='md-select-value']")))
+        if ( IsVisible(ElementByXPath("//span[@class='md-select-value']")) )
         {
             int result = DoSolveCaptcha();
 
-            if (result > 0)
+            if ( result>0 )
             {
                 return Fail("Fail solve captcha login");
             }
         }
-        if (!GetBoolSetting("UseSolvemedia"))
+        if ( !GetBoolSetting("UseSolvemedia") )
         {
             FaucetCollector.Captcha.RecaptchaUtility recaptchaUtility = new FaucetCollector.Captcha.RecaptchaUtility(this);
-            recaptchaUtility.DoSolve();
+            recaptchaUtility.DoSolve( );
         }
         else
         {
             var ResultBox = ElementByXPath("//*[@name='adcopy_response']");
-            if (IsVisible(ResultBox))
+            if ( IsVisible(ResultBox) )
             {
-                SetText(ResultBox, Context.CaptchaResult.Result);
-                Wait();
+                SetText(ResultBox , Context.CaptchaResult.Result);
+                Wait( );
             }
         }
         //Now we search for the login submit button
         OpenQA.Selenium.IWebElement loginButton = ElementByXPath("//form//button[@type='button' and contains(., 'Login')]");
-        if (!IsVisible(loginButton))
+        if ( !IsVisible(loginButton) )
         {
             //We couldn't find it. Register it as a fail so it can reload the page and try again in 10-15 seconds.
             return Fail("Login button not found.");
@@ -119,32 +119,32 @@ public class CointiplyPtc : FaucetScript
 
         //We are ready to click the login button.
         Click(loginButton);
-        Wait();
+        Wait( );
         //Let Faucet Collector continue
-        return base.DoLogin();
+        return base.DoLogin( );
     }
 
-    public override int AfterLogin()
+    public override int AfterLogin( )
     {
-        return base.AfterLogin();
+        return base.AfterLogin( );
     }
 
-    public override int GetFaucetWaitTime()
+    public override int GetFaucetWaitTime( )
     {
-        return base.GetFaucetWaitTime();
+        return base.GetFaucetWaitTime( );
     }
 
-    public override int BeforeSolveCaptcha()
+    public override int BeforeSolveCaptcha( )
     {
-        CloseModal();
+        CloseModal( );
 
         //Let Faucet Collector continue
-        return base.BeforeSolveCaptcha();
+        return base.BeforeSolveCaptcha( );
     }
 
-    public override int DoSolveCaptcha()
+    public override int DoSolveCaptcha( )
     {
-        if (GetBoolSetting("UseSolvemedia"))
+        if ( GetBoolSetting("UseSolvemedia") )
         {
             ChangeCaptcha(true);
         }
@@ -152,27 +152,27 @@ public class CointiplyPtc : FaucetScript
         {
             ChangeCaptcha(false);
         }
-        Wait(5, 6);
+        Wait(5 , 6);
         //Let Faucet Collector continue. It will check for SolveMedia and reCAPTCHA.
-        return base.DoSolveCaptcha();
+        return base.DoSolveCaptcha( );
     }
 
-    public override int AfterSolveCaptcha()
+    public override int AfterSolveCaptcha( )
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.AfterSolveCaptcha();
+        return base.AfterSolveCaptcha( );
     }
 
-    public override int BeforeSolveFaucet()
+    public override int BeforeSolveFaucet( )
     {
-      
+
 
         //Let Faucet Collector Continue.
-        return base.BeforeSolveFaucet();
+        return base.BeforeSolveFaucet( );
     }
     private void ChangeCaptcha(bool ChangeToSolvemedia = false)
     {
-        if (ChangeToSolvemedia)
+        if ( ChangeToSolvemedia )
         {
             ExecuteScript("var a=document.getElementsByClassName('md-select-value');a[0].click();var c=document.getElementsByClassName('md-button md-button-ghost md-theme-default');c[0].click();");
         }
@@ -181,118 +181,114 @@ public class CointiplyPtc : FaucetScript
             ExecuteScript("var a=document.getElementsByClassName('md-select-value');a[0].click();var c=document.getElementsByClassName('md-button md-button-ghost md-theme-default');c[1].click();");
         }
     }
-    public override int DoSolveFaucet()
+    public override int DoSolveFaucet( )
     {
         //find the submit button
-        if (!Driver.Url.Contains("https://cointiply.com/ptc"))
+        if ( !Driver.Url.Contains("https://cointiply.com/ptc") )
         {
             GoToUrl("https://cointiply.com/ptc");
-            Wait();
+            Wait( );
         }
-       
+
         var Ads = ElementsByXPath("//button[@class='md-button md-accent md-raised margin-top-10 md-theme-default']");
-        int Nad = 0;int TotalAds = Ads.Count;
+        int Nad = 0; int TotalAds = Ads.Count;
         var TextMuted = ElementsByXPath("//span[@class='text-muted']");
         int n = 0;
-       
+
         bool Finished = false;
-        while (Ads.Count > n && !Finished)
+        while ( Ads.Count>n&&!Finished )
         {
             try
             {
-             
-                if (!IsVisible(Ads[n]))
+
+                if ( !IsVisible(Ads[n]) )
                 {
                     n++;
                 }
                 else
                 {
                     int TimeWait=15;
-                    if (!int.TryParse(TextMuted[n].Text.Split(' ')[2], out TimeWait))
+                    if ( !int.TryParse(TextMuted[n].Text.Split(' ')[2] , out TimeWait) )
                     {
-                        TimeWait = 15;
+                        TimeWait=15;
                     }
-                    CheckForPopupsEnabled = false;
-                    Click(Ads[n],false);
-                    Wait();
+                    CheckForPopupsEnabled=false;
+                    Click(Ads[n] , false);
                     Driver.SwitchTo( ).Window(Driver.WindowHandles[0]);
-                    Wait(2);
+                    Wait(1);
                     Driver.SwitchTo( ).Window(Driver.WindowHandles.Last( ));
-                    Wait( );
-                    if (WaitUntil(TimeWait))
+
+                    if ( WaitUntil(TimeWait) )
                     {
-                        ValidateClick();
+                        ValidateClick( );
 
                         Wait(2);
                     }
 
                 }
             }
-            catch(Exception ex)
+            catch ( Exception ex )
             {
                 Log(ex.Message);
             }
             finally
             {
-                
-                
-                CheckForPopupsEnabled = true;
-                CheckForPopups();
-                Driver.SwitchTo().Window(Driver.WindowHandles[0]);
-                Ads = ElementsByXPath("//button[@class='md-button md-accent md-raised margin-top-10 md-theme-default']");
-                TextMuted = ElementsByXPath("//span[@class='text-muted']");
-                if(n==Nad && TotalAds == Ads.Count)
+
+
+                CheckForPopupsEnabled=true;
+                CheckForPopups( );
+                Driver.SwitchTo( ).Window(Driver.WindowHandles[0]);
+                Ads=ElementsByXPath("//button[@class='md-button md-accent md-raised margin-top-10 md-theme-default']");
+                TextMuted=ElementsByXPath("//span[@class='text-muted']");
+                if ( n==Nad&&TotalAds==Ads.Count )
                 {
-                    Finished = true;
+                    Finished=true;
                 }
-                Nad = n;
-                TotalAds = Ads.Count;
+                Nad=n;
+                TotalAds=Ads.Count;
             }
         }
 
-        //Let Faucet Collector continue its work
-        return MarkSuccess();
+        return MarkSuccess(n );
     }
-    public int MarkSuccess()
+    public int MarkSuccess( int nAds )
     {
-        ClaimSuccess();
-        IsSuccess = true;
-        return GetWaitSetting();
+        ClaimSuccess( );
+        IsSuccess=true;
+        Log("You successfully viewed " +nAds.ToString(),
+            Level.Payout);
+        return GetWaitSetting( );
     }
     public bool WaitUntil(int TimeWait)
     {
         int cont = 0;
-        while (!IsVisible(ElementByXPath("//span[contains(text(),'Validate Your Click')]")) && cont <5)
+        while ( !IsVisible(ElementByXPath("//span[contains(text(),'Validate Your Click')]"))&&cont<5 )
         {
-            if (Driver.WindowHandles.Count != 2)
+            if ( Driver.WindowHandles.Count!=2 )
             {
                 break;
             }
-                Driver.SwitchTo().Window(Driver.WindowHandles[1]);
-                System.Threading.Thread.Sleep((TimeWait + 2) * 1000);
 
-                Driver.SwitchTo().Window(Driver.WindowHandles[0]);
-                System.Threading.Thread.Sleep(1500);
-                cont++;
-            
-          
-          
+
+            Driver.SwitchTo( ).Window(Driver.WindowHandles[1]);
+            System.Threading.Thread.Sleep(( TimeWait )*1000);
+
+            Driver.SwitchTo( ).Window(Driver.WindowHandles[0]);
+            System.Threading.Thread.Sleep(1500);
+            cont++;
+
+
+
         }
-        if (IsVisible(ElementByXPath("//span[contains(text(),'Validate Your Click')]")))
-        {
-           
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-       
+
+        return IsVisible(ElementByXPath("//span[contains(text(),'Validate Your Click')]"));
+        
+
     }
-    public void ValidateClick()
+    public void ValidateClick( )
     {
         var Actual = ElementByXPath("//span[contains(text(),'Select:')]");
-        if (IsVisible(Actual))
+        if ( IsVisible(Actual) )
         {
             string CorrectOption = Actual.Text.Split(':')[1].Trim();
             string Path = AssetDir("Other") + "\\KnowImages\\" + CorrectOption + ".png";
@@ -300,106 +296,95 @@ public class CointiplyPtc : FaucetScript
             int TimeShuffling;
             try
             {
-                int.TryParse(TimeToShuffling.Text.Split(' ')[3], out TimeShuffling);
+                int.TryParse(TimeToShuffling.Text.Split(' ')[3] , out TimeShuffling);
 
-                if (TimeShuffling > 0 && TimeShuffling < 7)
+                if ( TimeShuffling>0&&TimeShuffling<7 )
                 {
-                    System.Threading.Thread.Sleep((TimeShuffling + 2) * 1000);
+                    System.Threading.Thread.Sleep(( TimeShuffling+2 )*1000);
                 }
             }
-            catch (Exception)
+            catch ( Exception ex )
             {
-
+                Log("Something bad was happenned getting the correct time ex message "+ ex.Message);
             }
-            if (File.Exists(Path)) {
-                Stream img = File.Open(Path, FileMode.Open);
-                Bitmap KnowImage = new Bitmap(img);
-                img.Close();
-                CorrectImages();
-                var ImgC = ElementsByXPath("//img[contains(@src,'/ptc/captcha')]");
-                DateTime TimeOut = DateTime.Now.AddSeconds(10);
-                while (!ImgC.All(x=>IsVisible(x)) && DateTime.Now<TimeOut)
+            if ( File.Exists(Path) )
+            {
+                using ( Stream img = File.Open(Path , FileMode.Open) )
                 {
-                    
-                 
-                    ImgC = ElementsByXPath("//img[contains(@src,'/ptc/captcha')]");
-                }
-                Log("All images visibles");
-                Wait();
-                if (ImgC.Count > 0)
-                {
-                    var Correct = new FaucetCollector.Utilities.ImageProcessing.UsingColors.CorrectImageSelector(new FaucetCollector.Utilities.ImageProcessing.UsingColors.MyImage(KnowImage, 2));
-                    List<Bitmap> CaptchaOption = new List<Bitmap>();
-                    for (int i = 0; i < ImgC.Count; i++)
+                    using ( Bitmap KnowImage = ResizeImage(new Bitmap(img) , new Size(70 , 70)) )
                     {
-                        CaptchaOption.Add(TakeScreenshot(Base.Captcha.CaptchaService.Manual, ImgC[i]));
 
-                        Correct.AddNewSecundaryImg(new FaucetCollector.Utilities.ImageProcessing.UsingColors.MyImage(CaptchaOption[i]), false);
+                        if ( KnowImage==null )
+                        {
+                            Log("We have a problems reading your script assets please check it",Level.Error);
+                            return;
+
+                        }
+                        img.Close( );
+
+                        var ImgC = ElementsByXPath("//img[contains(@src,'/ptc/captcha')]");
+                        DateTime TimeOut = DateTime.Now.AddSeconds(10);
+                        while ( !ImgC.All(x => IsVisible(x))&&DateTime.Now<TimeOut )
+                        {
+
+
+                            ImgC=ElementsByXPath("//img[contains(@src,'/ptc/captcha')]");
+                        }
+
+                        if ( ImgC.Count>0 )
+                        {
+                            var Correct = new FaucetCollector.Utilities.ImageProcessing.UsingColors.CorrectImageSelector(new FaucetCollector.Utilities.ImageProcessing.UsingColors.MyImage(KnowImage, 2));
+                            List<Bitmap> CaptchaOption = new List<Bitmap>();
+                            for ( int i = 0 ; i<ImgC.Count ; i++ )
+                            {
+                                CaptchaOption.Add(TakeScreenshot(Base.Captcha.CaptchaService.Manual , ImgC[i]));
+
+                                Correct.AddNewSecundaryImg(new FaucetCollector.Utilities.ImageProcessing.UsingColors.MyImage(CaptchaOption[i]) , false);
+                            }
+                            Correct.CalculatePosition( );
+
+                            int Solution = Correct.GetPosition()[0];
+                            Log("Clicking on image N| "+Solution.ToString( ));
+                            Click(ImgC[Solution]);
+                            Wait(1);
+
+                            CaptchaOption.ForEach(bitmap =>
+                            {
+                                if ( bitmap!=null )
+                                {
+                                    bitmap.Dispose( );
+                                }
+                            });
+                        }
                     }
-                    Correct.CalculatePosition();
-
-                    int Solution = Correct.GetPosition()[0];
-                    Log("Clicking on image N| "+Solution.ToString( ));
-                    Click(ImgC[Solution]);
-                    Wait(1);
                 }
-
-                
-
-                
-              
-
-
             }
 
         }
     }
-    public void CorrectImages()
-    {
-        var Images = ElementsByXPath("//img[contains(@src,'/ptc/captcha')]");
-       for(int i = 0; i < Images.Count; i++)
-        {
-            if (IsVisible(Images[i]))
-            {
-                ExecuteScript("arguments[0].removeAttribute('width');",Images[i]);
-                System.Threading.Thread.Sleep(10);
-                ExecuteScript("arguments[0].removeAttribute('height');",Images[i]);
-                System.Threading.Thread.Sleep(10);
-                ExecuteScript("arguments[0].removeAttribute('class');",Images[i]);
-                System.Threading.Thread.Sleep(10);
-            }
-        }
-        System.Threading.Thread.Sleep(100);
-    }
-    public override int AfterSolveFaucet()
-    {
-        //Let Faucet Collector continue
-        return base.AfterSolveFaucet();
-    }
-
-    public override int CheckFaucetResult()
+    public override int CheckFaucetResult( )
     {
         int result = base.CheckFaucetResult();
-        if (IsSuccess)
+        if ( IsSuccess )
         {
             //Force a reload when the captcha is solved (so the wait text is displayed)
-            Reload = true;
+            Reload=true;
         }
 
         return result;
     }
 
-    private void CloseModal()
+    private void CloseModal( )
     {
         OpenQA.Selenium.IWebElement maybeLater = ElementByXPath("//button[@type='button' and contains(., 'Maybe Later')]");
-        if (IsVisible(maybeLater))
+        if ( IsVisible(maybeLater) )
         {
             //Close the earn 1000's of coins offerwall
             Click(maybeLater);
             Wait(1);
         }
         OpenQA.Selenium.IWebElement ButtonClose = ElementByXPath("//button[@class='md-button md-accent md-raised md-theme-default' and contains(text(),'Done')]");
-        if (IsVisible(ButtonClose))
+        if ( IsVisible(ButtonClose) )
         {
             Click(ButtonClose);
             Wait(1);
