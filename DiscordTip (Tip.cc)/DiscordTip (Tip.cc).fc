@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 05/12/2018 06:00AM 
-//Last Update: 12/10/2020 13:30PM - Version 71
+//Last Update: 15/10/2020 13:30PM - Version 72
 //==================//
 
 using System;
@@ -56,9 +56,11 @@ public class DiscordScript: FaucetScript
 				
 				new FaucetSetting(){Name="Discordtip_DreamTeam_Airdrop_1_OnOff",Display="DreamTeam - AirDrop 1 - 'give-aways' channel - OnOff",Type=EditorType.CheckBox,Default=true},		
 
+				new FaucetSetting(){Name="Discordtip_Zero_Airdrop_1_OnOff",Display="Zero - AirDrop 1 - 'zero-tip-💸' channel - OnOff",Type=EditorType.CheckBox,Default=true},		
+
                 new FaucetSetting(){Name="Discordtip_FreeCryptoWorld_OnOff",Display="FreeCryptoWorld - Faucet 1 - 'grid_grc' channel - OnOff",Type=EditorType.CheckBox,Default=false},		
 
-                new FaucetSetting(){Name="Discordtip_GridCoin_OnOff",Display="GridCoin - Faucet every 24h - 'wallet-bot' channel - OnOff",Type=EditorType.CheckBox,Default=false},		
+                new FaucetSetting(){Name="Discordtip_GridCoin_OnOff",Display="GridCoin - Faucet - 'wallet-bot' channel - OnOff",Type=EditorType.CheckBox,Default=false},		
  
 				new FaucetSetting(){Name="AutoWithdraw_BTC",Display="AutoWithdraw BTC - On/off",Type=EditorType.CheckBox,Default=false},		
 				new FaucetSetting(){Name="AutoWithdraw_DOGE",Display="AutoWithdraw DOGE - On/off",Type=EditorType.CheckBox,Default=false},	
@@ -86,14 +88,12 @@ public class DiscordScript: FaucetScript
     }
 
 	
-	
     //My ServerNameID
     string TipCC_NameID_String = "tip.cc#7731";
     //==========//
 
     string ServerCaptchaBot_NameID_String = "Server Captcha Bot#3928";
     //==========//
-
 	
 	
 //============================================================//
@@ -104,7 +104,7 @@ public class DiscordScript: FaucetScript
         ad = false;
        
         //Title all in
-        Title = "Discord | Discordtip | Won.pe | TopSite | Dwindly | #reaction-claim"; 
+        Title = "Discord | Discordtip | TopSite"; 
 
 		SuccessXPath = "//*"; //div[@class='reaction-1ELvT8'] //img[contains(@src,'/assets/612f3fc9dedfd368820b55c4cf259c07.svg')] 
         FailXPath = "//*"; //*[text()='']
@@ -117,10 +117,7 @@ public class DiscordScript: FaucetScript
 //============================================================//
 
 
-
  bool ad; //custom bool
-
-	
 
 //========//
 //DoInit
@@ -207,7 +204,6 @@ public class DiscordScript: FaucetScript
 //=============//
 
 
-
     //=============//
     //start DoLogin
     //=============//
@@ -259,49 +255,38 @@ public class DiscordScript: FaucetScript
 
 
 
-
-
-
-    //==========//
-    //AfterLogin
-    //=========//
-    public override int AfterLogin()
+//==========//
+//AfterLogin
+//=========//
+ public override int AfterLogin()
  {
-          //Wait();
-         //Driver.Navigate().Refresh();
 
-        //This faucet has nothing to do here. We will let Faucet Collector handle it.
-        return base.AfterLogin();
+ return base.AfterLogin();
  }
 //==========//
 //AfterLogin
 //=========//
 	
-	
-	
 
 	
 //=============//
 //GetFaucetWaitTime
 //=============//
-    public override int GetFaucetWaitTime()
-    {
+ public override int GetFaucetWaitTime()
+ {
 	   
-        if (ad)
-        {
-		ad=false; //solve the problem in start - after he return to script again
-        return GetWaitSetting();	
-        }
+   if (ad)
+   {
+   ad=false; //solve the problem in start - after he return to script again
+   return GetWaitSetting();	
+   }
 		
-        //let Faucet Collector continue.
-        return base.GetFaucetWaitTime();
-    }
+   //let Faucet Collector continue.
+   return base.GetFaucetWaitTime();
+ }
 //=============//
 //GetFaucetWaitTime
 //=============//
-	
-	
-	
 	
 
     public override int BeforeSolveCaptcha()
@@ -310,7 +295,6 @@ public class DiscordScript: FaucetScript
         return base.BeforeSolveCaptcha();
     }
 
-
     public override int DoSolveCaptcha()
     {
 
@@ -318,14 +302,12 @@ public class DiscordScript: FaucetScript
         return base.DoSolveCaptcha();
     }
 
-
     public override int AfterSolveCaptcha()
     {
         //This faucet has nothing to do here. We will let Faucet Collector handle it.
         return base.AfterSolveCaptcha();
     }
 	
-
     public override int BeforeSolveFaucet()
     {
 
@@ -334,8 +316,6 @@ public class DiscordScript: FaucetScript
     }
 	
 	
-	
-
 
 //=============//
 //DoSolveFaucet
@@ -482,7 +462,7 @@ public class DiscordScript: FaucetScript
 				
           }// end inputDiscord2MessageVar
 
-	    }// end LaccsFaucet_BTC_AutoWithdraw
+	    }// end AutoWithdraw_BTC
         //==============================//
 
 	
@@ -566,10 +546,9 @@ public class DiscordScript: FaucetScript
 				
           }// end inputDiscord2MessageVar
 
-	    }// end LaccsFaucet_DOGE_AutoWithdraw
+	    }// end AutoWithdraw_DOGE
         //==============================//
-
-		
+	
 	
         //================//
         //Discordtip_Main//
@@ -619,19 +598,13 @@ public class DiscordScript: FaucetScript
         Driver.Navigate().Refresh();
 		Wait();	
 		
-        var NitroGamesVAR = ElementByXPath("//div[@class='contents-18-Yxp' and contains(text(),'Cancel')]");
-	    if (IsVisible(NitroGamesVAR))
-        {
-		Log("NitroGamesVAR apper - Cancel this "); 	
-        Click(NitroGamesVAR);
-        }
+        NitroGames_Function(); //call
 		
-		Wait(5);	
+		Wait(2);	
 		
         inviteServer_Elements_Function(); //call
 		
-		Wait();
-        Wait(5);
+        Wait(3);
         Title = "#giveaways";		
         GoToUrl("https://discordapp.com/channels/406508543034916865/566695331295920138");
 		Log("Discordtip_FaucetCollector: go to to claim in 'giveaways' channel | FaucetCollector ");
@@ -654,7 +627,6 @@ public class DiscordScript: FaucetScript
   
         TopSite_Function(); //call
 
-		//first go to server
 	    Title = "Discord";	
 		GoToUrl("https://discord.gg/Rd2PgZy"); //Tip.cc server
 		Wait();	
@@ -663,19 +635,13 @@ public class DiscordScript: FaucetScript
         Driver.Navigate().Refresh();
 		Wait();	
 		
-        var NitroGamesVAR = ElementByXPath("//div[@class='contents-18-Yxp' and contains(text(),'Cancel')]");
-	    if (IsVisible(NitroGamesVAR))
-        {
-		Log("NitroGamesVAR apper - Cancel this "); 	
-        Click(NitroGamesVAR);
-        }
+        NitroGames_Function(); //call
 		
-		Wait(5);	
+		Wait(2);	
 		
         inviteServer_Elements_Function(); //call
 		
-		Wait();
-        Wait(5);
+        Wait(3);
         Title = "#giveaways";		
         GoToUrl("https://discord.com/channels/617034883503620167/639195586070839316");
 		Log("Discordtip_Main_Airdrop_1_OnOff: go to to claim in 'giveaways' channel | Discordtip ");
@@ -696,30 +662,25 @@ public class DiscordScript: FaucetScript
       if (GetBoolSetting("Discordtip_Main_Airdrop_2_OnOff"))
       {		
   
-        TopSite_Function(); //call
+        //TopSite_Function(); //call
 
-		//first go to server
 	    Title = "Discord";	
+		/*
 		GoToUrl("https://discord.gg/Rd2PgZy"); //Tip.cc server
 		Wait();	
 		Wait(5);		
 
         Driver.Navigate().Refresh();
 		Wait();	
+        */
 		
-        var NitroGamesVAR = ElementByXPath("//div[@class='contents-18-Yxp' and contains(text(),'Cancel')]");
-	    if (IsVisible(NitroGamesVAR))
-        {
-		Log("NitroGamesVAR apper - Cancel this "); 	
-        Click(NitroGamesVAR);
-        }
+        NitroGames_Function(); //call
 		
-		Wait(5);	
+		Wait(2);	
 		
         inviteServer_Elements_Function(); //call
-		
-		Wait();
-        Wait(5);
+
+        Wait(3);
         Title = "#drops-and-begging";		
         GoToUrl("https://discord.com/channels/617034883503620167/699702250531979325");
 		Log("Discordtip_Main_Airdrop_2_OnOff: go to to claim in 'drops-and-begging' channel | Discordtip ");
@@ -740,30 +701,25 @@ public class DiscordScript: FaucetScript
       if (GetBoolSetting("Discordtip_Main_Airdrop_3_OnOff"))
       {	
   
-        TopSite_Function(); //call
+        //TopSite_Function(); //call
 
-		//first go to server
-	    Title = "Discord";	
+	    Title = "Discord";
+        /*		
 		GoToUrl("https://discord.gg/Rd2PgZy"); //Tip.cc server
 		Wait();	
 		Wait(5);		
 
         Driver.Navigate().Refresh();
 		Wait();	
+        */	
 		
-        var NitroGamesVAR = ElementByXPath("//div[@class='contents-18-Yxp' and contains(text(),'Cancel')]");
-	    if (IsVisible(NitroGamesVAR))
-        {
-		Log("NitroGamesVAR apper - Cancel this "); 	
-        Click(NitroGamesVAR);
-        }
+        NitroGames_Function(); //call
 		
-		Wait(5);	
+		Wait(2);	
 		
         inviteServer_Elements_Function(); //call
-		
-		Wait();
-        Wait(5);
+
+        Wait(3);
         Title = "#promos";		
         GoToUrl("https://discord.com/channels/617034883503620167/755024910023131167");
 		Log("Discordtip_Main_Airdrop_3_OnOff: go to to claim in 'promos' channel | Discordtip ");
@@ -786,7 +742,6 @@ public class DiscordScript: FaucetScript
   
         TopSite_Function(); //call
 
-		//first go to server
 	    Title = "Discord";	
 		GoToUrl("https://discord.gg/k6K347V"); //Tip.cc server
 		Wait();	
@@ -795,19 +750,13 @@ public class DiscordScript: FaucetScript
         Driver.Navigate().Refresh();
 		Wait();	
 		
-        var NitroGamesVAR = ElementByXPath("//div[@class='contents-18-Yxp' and contains(text(),'Cancel')]");
-	    if (IsVisible(NitroGamesVAR))
-        {
-		Log("NitroGamesVAR apper - Cancel this "); 	
-        Click(NitroGamesVAR);
-        }
+        NitroGames_Function(); //call
 		
-		Wait(5);	
+		Wait(2);	
 		
         inviteServer_Elements_Function(); //call
-		
-		Wait();
-        Wait(5);
+
+        Wait(3);
         Title = "#💲-raining-🏙";		
         GoToUrl("https://discord.com/channels/596834389778759690/683726808616927273");
 		Log("Discordtip_CryptoMoon_Airdrop_1_OnOff: go to to claim in '💲-raining-🏙' channel | Discordtip ");
@@ -828,30 +777,24 @@ public class DiscordScript: FaucetScript
       if (GetBoolSetting("Discordtip_CryptoMoon_Airdrop_2_OnOff"))
       {		
   
-        TopSite_Function(); //call
+        //TopSite_Function(); //call
 
-		//first go to server
 	    Title = "Discord";	
+/*
 		GoToUrl("https://discord.gg/k6K347V"); //Tip.cc server
 		Wait();	
 		Wait(5);		
 
         Driver.Navigate().Refresh();
 		Wait();	
+*/		
+        NitroGames_Function(); //call
 		
-        var NitroGamesVAR = ElementByXPath("//div[@class='contents-18-Yxp' and contains(text(),'Cancel')]");
-	    if (IsVisible(NitroGamesVAR))
-        {
-		Log("NitroGamesVAR apper - Cancel this "); 	
-        Click(NitroGamesVAR);
-        }
-		
-		Wait(5);	
+		Wait(2);	
 		
         inviteServer_Elements_Function(); //call
-		
-		Wait();
-        Wait(5);
+
+        Wait(3);
         Title = "#💲-airdrops-🎉";		
         GoToUrl("https://discord.com/channels/596834389778759690/683726957019791419");
 		Log("Discordtip_CryptoMoon_Airdrop_2_OnOff: go to to claim in '💲-airdrops-🎉' channel | Discordtip ");
@@ -872,30 +815,26 @@ public class DiscordScript: FaucetScript
       if (GetBoolSetting("Discordtip_CryptoMoon_Airdrop_3_OnOff"))
       {		
   
-        TopSite_Function(); //call
+        //TopSite_Function(); //call
 
-		//first go to server
-	    Title = "Discord";	
+	    Title = "Discord";
+		
+		/*
 		GoToUrl("https://discord.gg/k6K347V"); //Tip.cc server
 		Wait();	
 		Wait(5);		
 
         Driver.Navigate().Refresh();
 		Wait();	
+        */	
 		
-        var NitroGamesVAR = ElementByXPath("//div[@class='contents-18-Yxp' and contains(text(),'Cancel')]");
-	    if (IsVisible(NitroGamesVAR))
-        {
-		Log("NitroGamesVAR apper - Cancel this "); 	
-        Click(NitroGamesVAR);
-        }
+        NitroGames_Function(); //call
 		
-		Wait(5);	
+		Wait(2);	
 		
         inviteServer_Elements_Function(); //call
-		
-		Wait();
-        Wait(5);
+
+        Wait(3);
         Title = "#tip-cc";		
         GoToUrl("https://discord.com/channels/596834389778759690/683731676995649700");
 		Log("Discordtip_CryptoMoon_Airdrop_3_OnOff: go to to claim in 'tip-cc' channel | Discordtip ");
@@ -916,30 +855,26 @@ public class DiscordScript: FaucetScript
       if (GetBoolSetting("Discordtip_CryptoMoon_Airdrop_4_OnOff"))
       {		
   
-        TopSite_Function(); //call
+        //TopSite_Function(); //call
 
-		//first go to server
 	    Title = "Discord";	
+		
+        /*		
 		GoToUrl("https://discord.gg/k6K347V"); //Tip.cc server
 		Wait();	
 		Wait(5);		
 
         Driver.Navigate().Refresh();
 		Wait();	
+        */		
 		
-        var NitroGamesVAR = ElementByXPath("//div[@class='contents-18-Yxp' and contains(text(),'Cancel')]");
-	    if (IsVisible(NitroGamesVAR))
-        {
-		Log("NitroGamesVAR apper - Cancel this "); 	
-        Click(NitroGamesVAR);
-        }
+        NitroGames_Function(); //call
 		
-		Wait(5);	
+		Wait(2);	
 		
         inviteServer_Elements_Function(); //call
-		
-		Wait();
-        Wait(5);
+
+        Wait(3);
         Title = "#🌚🌂black-rain-event☂";		
         GoToUrl("https://discord.com/channels/596834389778759690/683726909648928806");
 		Log("Discordtip_CryptoMoon_Airdrop_4_OnOff: go to to claim in '#🌚🌂black-rain-event☂' channel | Discordtip ");
@@ -959,13 +894,19 @@ public class DiscordScript: FaucetScript
         //================//
         if (GetBoolSetting("Discordtip_CryptoMoon_Faucet_1_OnOff"))
         {
+			
+          //TopSite_Function(); //call
+			
 		  Title = "Discord";
+		  
+		  /*
           GoToUrl("https://discord.gg/k6K347V"); // my link never expire
 		  Log("Discordtip_CryptoMoon_Faucet_1");
           Wait();
           Wait(2);
           inviteServer_Elements_Function(); //call
           Wait(2);
+          */	
 		  
 		  Title = "#tipbot-faucet";		  
           GoToUrl("https://discord.com/channels/596834389778759690/691496374658662470");
@@ -985,11 +926,12 @@ public class DiscordScript: FaucetScript
         //================//
         if (GetBoolSetting("Discordtip_DreamTeam_Airdrop_1_OnOff"))
         {
-		  //first go to server
+			
+          TopSite_Function(); //call
+		  
 		  Title = "Discord";
-          GoToUrl("https://discord.gg/TVyN4xF"); // my link never expire
+		  GoToUrl("https://discord.gg/TVyN4xF"); // my link never expire
 		  Log("Discordtip_DreamTeam_Airdrop_1");
-          Wait();
           Wait(2);
           inviteServer_Elements_Function(); //call
           Wait(2);		  
@@ -1030,15 +972,54 @@ public class DiscordScript: FaucetScript
      //========================//
 		
 
+      //=========================//
+      //Discordtip_Zero_Airdrop_1_OnOff//
+      //=========================//
+      if (GetBoolSetting("Discordtip_Zero_Airdrop_1_OnOff"))
+      {		
+  
+        TopSite_Function(); //call
+
+	    Title = "Discord";	
+		GoToUrl("https://discord.gg/cnvbCTZ"); //Tip.cc server
+		Wait();	
+		Wait(5);		
+
+        Driver.Navigate().Refresh();
+		Wait();	
+		
+        NitroGames_Function(); //call
+		
+		Wait(2);	
+		
+        inviteServer_Elements_Function(); //call
+
+        Wait(3);
+        Title = "#zero-tip-💸";		
+        GoToUrl("https://discord.com/channels/473805904957931522/566973676608552972");
+		Log("Discordtip_Zero_Airdrop_1_OnOff: go to to claim in 'zero-tip-💸' channel | Discordtip ");
+		Wait();
+		Wait(8);
+
+        Reaction_while_Function(); //call	  
+		
+        Wait(3);
+
+     } //end Discordtip_Zero_Airdrop_1_OnOff
+     //========================//
+
+
         //================//
         //Discordtip_FreeCryptoWorld_OnOff//
         //================//
         if (GetBoolSetting("Discordtip_FreeCryptoWorld_OnOff"))
         {
+			
+          //TopSite_Function(); //call
+		  
 		  Title = "Discord";		
           GoToUrl("https://discord.gg/v2dWa4E"); // my link never expire
 		  Log("Discordtip_FreeCryptoWorld");
-          Wait();
           Wait(2);
           inviteServer_Elements_Function(); //call
           Wait(2);
@@ -1089,10 +1070,12 @@ public class DiscordScript: FaucetScript
         //================//
         if (GetBoolSetting("Discordtip_GridCoin_OnOff"))
         {
+			
+          //TopSite_Function(); //call
+		  
 		  Title = "Discord";		
           GoToUrl("https://discord.gg/QMJZnEx"); // my link never expire
 		  Log("Discordtip_GridCoin");
-          Wait();
           Wait(2);
           inviteServer_Elements_Function(); //call
           Wait(2);
@@ -1139,13 +1122,12 @@ public class DiscordScript: FaucetScript
 		
 		
 
-        //=========================//
-        //Discordtip_LaccsFaucet_BTC//
-        //=========================//
-        if (GetBoolSetting("Discordtip_LaccsFaucet_BTC_OnOff"))
-        {
+     //=========================//
+     //Discordtip_LaccsFaucet_BTC//
+     //=========================//
+     if (GetBoolSetting("Discordtip_LaccsFaucet_BTC_OnOff"))
+     {
 
-		//first go to server
 	    Title = "Discord";	
 		GoToUrl("https://discord.gg/Dx6eVgt"); // old server https://discord.gg/52zUZaM
 		Wait();	
@@ -1161,16 +1143,13 @@ public class DiscordScript: FaucetScript
         Driver.Navigate().Refresh();
 		Wait();	
 		
-        var NitroGamesVAR = ElementByXPath("//div[@class='contents-18-Yxp' and contains(text(),'Cancel')]");
-	    if (IsVisible(NitroGamesVAR))
-        {
-		Log("NitroGamesVAR apper - Cancel this "); 	
-        Click(NitroGamesVAR);
-        }
+        NitroGames_Function(); //call
 		
-		Wait(5);	
+		Wait(2);	
 				
         inviteServer_Elements_Function(); //call
+
+        Wait(3);
 		
         while (true)
         {
@@ -1403,7 +1382,7 @@ public class DiscordScript: FaucetScript
         Wait();
         Wait(3);
 
-     }	 //end Discordtip_LaccsFaucet_BTC_OnOff
+   } //end Discordtip_LaccsFaucet_BTC_OnOff
 
 
 		//ad = true;  //succeed
@@ -1418,8 +1397,6 @@ public class DiscordScript: FaucetScript
 //============//
 
 
-	
-	
 	
     public override int AfterSolveFaucet()
     {
@@ -1926,8 +1903,6 @@ public class DiscordScript: FaucetScript
   } //end Scroll_Function
    //=================//
    
-   
-   
   
   //=================//
   //Reaction_while_Function
@@ -2024,8 +1999,7 @@ public class DiscordScript: FaucetScript
   } //end Reaction_Function
 
   //====================//
-  
-  
+   
   
   //====================//
   //Notifications_Function
@@ -2059,8 +2033,6 @@ public class DiscordScript: FaucetScript
 
   //====================//
   
-  
-
 
   //====================//
   //ADFunction_String_URL_Discordtip_LaccsFaucet
@@ -2371,7 +2343,6 @@ public class DiscordScript: FaucetScript
   //====================//
 
 
-
         //=================//
        //TopSite_Function
         //=================//
@@ -2386,7 +2357,25 @@ public class DiscordScript: FaucetScript
 		  
 		return 0;
         }//end TopSite_Function
-        //=================//			  
+        //=================//		
+
+
+        //=================//
+       //NitroGames_Function
+        //=================//
+        public int NitroGames_Function()
+        {
+			
+          var NitroGamesVAR = ElementByXPath("//div[@class='contents-18-Yxp' and contains(text(),'Cancel')]");
+	      if (IsVisible(NitroGamesVAR))
+          {
+		    Log("NitroGamesVAR apper - Cancel this "); 	
+            Click(NitroGamesVAR);
+          }
+		  
+		return 0;
+        }//end NitroGames_Function
+        //=================//	
 
 
         //=================//
@@ -2412,7 +2401,6 @@ public class DiscordScript: FaucetScript
 		return 0;
         }//end invisible_Recaptcha_Function
         //=================//	
-
 
 
         //=================//
@@ -2495,6 +2483,5 @@ public class DiscordScript: FaucetScript
 		return 0;
         }//end Captcha_All_Function
         //=================//	
-
 
 } //public class discordapp
