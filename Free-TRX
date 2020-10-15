@@ -4,7 +4,7 @@
 using FaucetCollector.FaucetTemplates;
 using FaucetCollector.Script;
 
-public class Free-trx_ : FaucetScript
+public class Freetrx_ : FaucetScript
 {
     /// <summary>
     /// List of Settings that will be shown in the bot when selecting this Faucet in the bot.
