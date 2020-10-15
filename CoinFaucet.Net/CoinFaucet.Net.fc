@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 13/10/2020 04:30AM - Version 1
-//Last Update: 15/10/2020 03:20PM - Version 4
+//Last Update: 15/10/2020 05:25PM - Version 4
 //==================//
 
 using System;
@@ -329,7 +329,6 @@ public class CoinFaucetNet : FaucetScript
              if (Success_Claim !=null) //visible
 		     {
 		     Log("FaucetClaim - Success " + Success_Claim.Text);  
-		     ClaimSuccess(); //Marks the claim as a success
 		     }
 		   
 		   } //end WaitTimer_2_Text
