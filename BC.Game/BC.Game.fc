@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 30/04/2019 21:09PM - Version 1
-//Last Update: 22/09/2020 17:25AM - Version 38
+//Last Update: 16/10/2020 05:00AM - Version 39
 //==================//
 
 using System;
@@ -37,8 +37,8 @@ public class bcgame : FaucetScript
                 new FaucetSetting(){Name="Pass",Display="Password",Type=EditorType.Password,Required=false},
                 //new FaucetSetting(){Name="DeleteCookies",Display="Delete Cookies - Sometimes solves problems (in login) if you have (Recommended)",Type=EditorType.CheckBox,Default=false},
                 new FaucetSetting(){Name="FaucetClaim",Display="FaucetClaim - LuckySpin",Type=EditorType.CheckBox,Default=true},	
-                new FaucetSetting(){Name="ToiletPaper",Display="ToiletPaper - Claim Token",Type=EditorType.CheckBox,Default=true},	
-
+                //new FaucetSetting(){Name="ToiletPaper",Display="ToiletPaper - Claim Token",Type=EditorType.CheckBox,Default=false},	
+                new FaucetSetting(){Name="Tredump_Bidgreen",Display="Tredump_Bidgreen - Claim Token",Type=EditorType.CheckBox,Default=true},
 				 
 				new FaucetSetting(){Name="MenuCoins",Display="MenuCoins - Select Favorite Coins",Type=EditorType.ComboBox,Default="JB",Items=new System.Collections.Generic.List<string>{"TRTL","EOS","TRX","VSYS","BCG","BKBT","DOGE","LTC","JB"}},
                 
@@ -763,6 +763,36 @@ public class bcgame : FaucetScript
 	     }		
 		//===========================//
  
+
+
+     //=============//
+     //Tredump_Bidgreen
+     //=============//
+     if (GetBoolSetting("Tredump_Bidgreen"))
+     {
+
+		GoToUrl("https://tbbattle.bc.game/");
+		Wait();		
+		Wait(2);
+
+        var VoteStart = ElementByXPath("//div[contains(@class,'vote-bg')]//button[contains(@class,'left')]"); 
+		
+        if (!IsVisible(VoteStart))
+        {
+          Log("Tredump_Bidgreen - not here");
+		  Wait();
+		}
+	
+        if (IsVisible(VoteStart))
+        {
+          Log("Tredump_Bidgreen - here - click to Vote");
+	      Click(VoteStart);
+		  Wait();				
+        } //end GrabStart
+
+
+     } //end Tredump_Bidgreen
+	 //===========================//
  
 
      //=============//
