@@ -1,0 +1,207 @@
+﻿using FaucetCollector.Script;
+using System.Linq;
+
+//css_ref FaucetCollector.Utilities
+//css_ref FaucetCollector.Captcha
+public class DarkCoinScript : FaucetScript
+
+{
+
+    public override FaucetSettings Settings
+    {
+
+        get
+        {
+
+            return new FaucetSettings("https://darkusd.com/")
+            {
+                new FaucetSetting( )
+                {
+                    Name="User",
+                    Type=EditorType.TextBox,
+                    Required=true,
+                    Display="Usename"
+                },
+                new FaucetSetting( )
+                {
+                    Name="Pass",
+                    Type=EditorType.Password,
+                    Required=true,
+                    Display="Password"
+                }
+
+            };
+
+        }
+    }
+
+
+
+    public override bool IsLoggedIn( )
+    {
+        return ElementByXPath("//a[contains(@href,'logout')]")!=null;
+    }
+
+    public override int GetFaucetWaitTime( )
+    {
+        if ( Driver.Url!="https://darkusd.com/faucet" )
+        {
+
+            GoToUrl("https://darkusd.com/faucet");
+            Wait(2);
+        }
+        var timeElement=ElementByXPath("//h1[@id='demo']");
+        if ( IsVisible(timeElement) )
+        {
+            string timerText= timeElement.Text.Trim().Replace("m","").Replace("s","");
+
+
+            var splitedText=timerText.Split(' ');
+            int m,s;
+            if ( splitedText.Length==2&&int.TryParse(splitedText[0] , out m)&&int.TryParse(splitedText[1] , out s) )
+            {
+
+                return m*60+s;
+
+            }
+
+        }
+        return base.GetFaucetWaitTime( );
+    }
+    public override void Start( )
+    {
+        FailXPath="//span[contains(@style,'color:red')]";
+        SuccessXPath="//div[@id='newClaim']//h3//b";
+
+        Title="DarkUSD";
+
+        base.Start( );
+    }
+    public override int DoLogin( )
+    {
+        GoToUrl("https://darkusd.com/login");
+        Wait(2);
+
+        var userBox=ElementByXPath("//input[@name='Funame']");
+
+        if ( !IsVisible(userBox) )
+        {
+            return Fail("username box not visible");
+        }
+        SetText(userBox , GetSetting("User"));
+
+
+        var passwordBox=ElementByXPath("//input[@name='Fpass']");
+        if ( !IsVisible(passwordBox) )
+        {
+            return Fail("password box is not visible");
+        }
+
+
+        SetText(passwordBox , GetSetting("Pass"));
+
+        var rememberMe=ElementByXPath("//input[@name='Freme']");
+        if ( IsVisible(rememberMe) )
+        {
+            Click(rememberMe);
+            Wait(1);
+        }
+
+        var loginBtn=ElementByXPath("//input[@value='Login']");
+        if ( !IsVisible(loginBtn) )
+        {
+            return Fail("login button is not visible");
+        }
+
+
+        Click(loginBtn);
+
+        Wait(1);
+
+
+        var errorElement=ElementsByXPath("//span[@class='error']").FirstOrDefault(elemento=> IsVisible(elemento));
+
+
+        if ( IsVisible(errorElement) )
+        {
+            string errorText=errorElement.Text;
+
+            if ( errorText.Contains("Enter valid login details") )
+            {
+                Disable( );
+                return Fail(errorText);
+            }
+            else
+            {
+                Log(errorText , Level.Warning);
+
+            }
+
+
+        }
+
+
+
+
+
+        return base.DoLogin( );
+    }
+
+    public override int DoSolveCaptcha( )
+    {
+        var result=  base.DoSolveCaptcha( );
+
+        if ( result>0 )
+        {
+            return result;
+        }
+
+        FaucetCollector.Captcha.RecaptchaUtility recaptchaUtility=new FaucetCollector.Captcha.RecaptchaUtility(this);
+
+        recaptchaUtility.DoSolve( );
+
+        return result;
+
+    }
+    public override int BeforeSolveFaucet( )
+    {
+        if ( Driver.Url!="https://darkusd.com/faucet" )
+        {
+
+            GoToUrl("https://darkusd.com/faucet");
+            Wait(2);
+        }
+        return base.BeforeSolveFaucet( );
+    }
+
+
+    public override int DoSolveFaucet( )
+    {
+
+        var claimBtn=ElementByXPath("//button[@id='fbtn']");
+        if ( !IsVisible(claimBtn) )
+        {
+            return Fail("claim button is not visible");
+        }
+
+
+
+        var result=DoSolveCaptcha();
+        if ( result>0 )
+        {
+            return result;
+        }
+
+        Click(claimBtn);
+
+        return base.DoSolveFaucet( );
+    }
+
+    public override int CheckFaucetResult( )
+    {
+        Reload=true;
+
+        return base.CheckFaucetResult( );
+    }
+}
+
