@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 03/10/2020 03:00AM - Version 1
-//Last Update: 11/10/2020 18:00PM - Version 3
+//Last Update: 20/10/2020 17:00PM - Version 4
 //==================//
 
 using System;
@@ -64,10 +64,10 @@ public class PipeFlare : FaucetScript
 		
         //Title that shows in the browser. Is used to identify and close popup windows
         Title = "PipeFlare";
-
+		
         //After we did try to claim on the faucet we search for these elements to determine if it was a success or a fail
-        SuccessXPath = "//*";  //*[text()='']
-        FailXPath = "//*"; //*[text()='']
+        SuccessXPath = "//div[@class='claim-result']//h5 | //div[contains(@class,'claim-result') and contains(text(),'RELOAD THE PAGE F5')]";  //*[text()='']
+        FailXPath = "//div[contains(@class,'claim-result') and contains(text(),'has claimed')]"; //*[text()='']
 
         //Let Faucet Collector start up everything
         base.Start();
@@ -75,7 +75,7 @@ public class PipeFlare : FaucetScript
 //============================================================//
 //the number of "successes" in the script - when are finished  
 //============================================================//
-	
+
 	
 	
 	bool ad;
@@ -418,16 +418,13 @@ public class PipeFlare : FaucetScript
 			  Wait(2);
               Click(Claim_Available_ZEC);		  
 	          Wait(3);
-              if (IsVisible(ElementByXPath ("//div[contains(@id,'ZEC')]//div[@class='grecaptcha-badge']") )) 
-              {	
-              invisible_Recaptcha_Function(); //call	
-			  }			  
-	          Wait(5);
               var Claim_Start_ZEC = ElementByXPath("//div[contains(@id,'ZEC')]//button[@type='submit']");       
               Click(Claim_Start_ZEC);
-			  Wait(5);
+	          Wait(2);
+              invisible_Recaptcha_Function(); //call to check
+			  Wait(4);
               FaucetClaim_END_Function(); //call		   
-			  Wait(2);  
+			  Wait(2);
 		   } //end ZEC
 		   
 		   if (!IsVisible(Claim_Available_ZEC))
@@ -443,14 +440,11 @@ public class PipeFlare : FaucetScript
 			  Wait(2);
               Click(Claim_Available_PIVX);		  
 	          Wait(3);
-              if (IsVisible(ElementByXPath ("//div[contains(@id,'PIVX')]//div[@class='grecaptcha-badge']") )) 
-              {	
-              invisible_Recaptcha_Function(); //call		  
-			  }
-			  Wait(5);
               var Claim_Start_PIVX = ElementByXPath("//div[contains(@id,'PIVX')]//button[@type='submit']");       
               Click(Claim_Start_PIVX);
-			  Wait(5);
+	          Wait(2);
+              invisible_Recaptcha_Function(); //call to check
+			  Wait(4);
               FaucetClaim_END_Function(); //call		   
 			  Wait(2);
 		   } //end PIVX
@@ -468,14 +462,11 @@ public class PipeFlare : FaucetScript
 			  Wait(2);
               Click(Claim_Available_DASH);		  
 	          Wait(3);
-              if (IsVisible(ElementByXPath ("//div[contains(@id,'DASH')]//div[@class='grecaptcha-badge']") )) 
-              {		
-              invisible_Recaptcha_Function(); //call	
-			  }			  
-	          Wait(5);
               var Claim_Start_DASH = ElementByXPath("//div[contains(@id,'DASH')]//button[@type='submit']");       
               Click(Claim_Start_DASH);
-			  Wait(5);
+	          Wait(2);
+              invisible_Recaptcha_Function(); //call to check
+			  Wait(4);
               FaucetClaim_END_Function(); //call		   
 			  Wait(2);
 		   } //end DASH
@@ -493,14 +484,11 @@ public class PipeFlare : FaucetScript
 			  Wait(2);
               Click(Claim_Available_FLR);		  
 	          Wait(3);
-              if (IsVisible(ElementByXPath ("//div[contains(@id,'FLR')]//div[@class='grecaptcha-badge']") )) 
-              {			  			  
-              invisible_Recaptcha_Function(); //call
-	          Wait(5);			  
-			  }			  
               var Claim_Start_FLR = ElementByXPath("//div[contains(@id,'FLR')]//button[@type='submit']");       
               Click(Claim_Start_FLR);
-			  Wait(5);
+	          Wait(2);
+              invisible_Recaptcha_Function(); //call to check
+			  Wait(4);
               FaucetClaim_END_Function(); //call		   
 			  Wait(2);
 		   } //end FLR
@@ -607,16 +595,30 @@ public class PipeFlare : FaucetScript
           Log("ProceedToClaimButton");
           Click(ProceedToClaimButton);
 		 }
-
+		 Wait(2);
+		 
+         invisible_Recaptcha_Function(); //call to check
+		 
 		 Wait(5);
 		 
-         //var StatusCheck_Success = ElementByXPath("//td[text()='You Won:']");       
-		 //if (IsVisible(StatusCheck_Success))
-         //{
-          var SuccessAmountMessage = ElementByXPath("//div[@id='result1']//tr[1]/td[2] | //div[@id='result1']//strong ");        
-          Log("success "+SuccessAmountMessage.Text);		
-		  ClaimSuccess(); //Marks the claim as a success
-		 //}
+         var StatusCheck_Success = ElementByXPath("//h4[contains(text(),'Congratulations')] | //div[contains(@class,'claim-result') and contains(text(),'RELOAD THE PAGE F5')]");       
+		 if (StatusCheck_Success !=null) //Found / Visible
+         {
+            var SuccessAmountMessage = ElementByXPath("//div[@class='claim-result']//h5"); 
+		    
+			if (IsVisible(SuccessAmountMessage))
+            {
+            Log("success " + SuccessAmountMessage.Text);
+		    }
+			
+		    if (!IsVisible(SuccessAmountMessage))
+            {		  
+            Log("success");
+		    }
+		  
+		    ClaimSuccess(); //Marks the claim as a success	  
+			
+		 }//end StatusCheck_Success
 	      
 	    return 0;
       }//end FaucetClaim_END_Function
@@ -660,25 +662,25 @@ public class PipeFlare : FaucetScript
         public int invisible_Recaptcha_Function()
         {
 			
-          //var RecaptchaOpen_Iframe = ElementByXPath("//div[contains(@class,'active')]//div[@class='grecaptcha-badge']"); //("//button[contains(@class,'reload')] | //button[contains(@id,'reload')] | //input[contains(@id,'recaptcha-token') ] | //div[contains(@id,'rc-imageselect') ] ")  
-          //if (RecaptchaOpen_Iframe !=null)          
-		  //{
+          var RecaptchaOpen_Iframe = ElementByXPath ("//div[contains(@style,'opacity: 1')]//iframe[contains(@src,'recaptcha')]");  
+          if (RecaptchaOpen_Iframe !=null)          
+		  {
             //SolveCaptcha if apper
             Log("DO invisible_Recaptcha");	  
-
-			var result = base.DoSolveCaptcha();
+            var result = base.DoSolveCaptcha();
             if (result > 0)
             {
                 return Fail("Recaptcha - Fail solving captcha");
             }
 		    RecaptchaUtility utility = new RecaptchaUtility(this);
             utility.DoSolve();
-			
-            Wait();
 		    
-            ExecuteScript("afterResolveCaptcha");
-		  //}
-		
+            Wait();
+			
+            ExecuteScript("afterResolveCaptcha();");
+
+		  }
+		  
 		return 0;
         }//end invisible_Recaptcha_Function
         //=================//	
