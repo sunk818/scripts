@@ -1,7 +1,7 @@
 
 //==================//
 //script Written by: ••AviramDayan•• 26/05/2019 04:00PM
-//Last Update: 05/10/2020 07:20AM - Version 21
+//Last Update: 20/10/2020 17:10AM - Version 22
 //==================//
 
 using System;
@@ -35,6 +35,7 @@ public class stake : FaucetScript
             {
                 new FaucetSetting(){Name="Email",Display="Email OR UserName",Type=EditorType.TextBox,Required=false},
                 new FaucetSetting(){Name="Password",Display="Password",Type=EditorType.Password,Required=false},
+                new FaucetSetting(){Name="CustomWaitForCode",Display="Custom Wait For Code in Login - in sec ",Type=EditorType.Numeric,Default=60},
 
                 new FaucetSetting() { Name = "ExclusiveBonusDrop_Telegram", Display = "Exclusive Bonus Drop - ON/OFF - in Telegram - 'Stake.com - Play Smarter' - Public Channel", Type = EditorType.CheckBox, Default =true},	
 				
@@ -190,7 +191,7 @@ public class stake : FaucetScript
 
 		Wait(3);
 		
-        var RecaptchaOpen_Iframe = ElementByXPath ("//iframe[contains(@src,'recaptcha/api2')]"); 
+        var RecaptchaOpen_Iframe = ElementByXPath ("//div[contains(@style,'opacity: 1')]//iframe[contains(@src,'recaptcha')]"); 
         if (IsVisible(RecaptchaOpen_Iframe))
         {
           //SolveCaptcha if apper
@@ -205,8 +206,22 @@ public class stake : FaucetScript
         }
 
         Click(ButtonLog); //click again
+		
+        var EmailCode = ElementByXPath("//span[contains(text(),'Email Code')]"); 
+        if (IsVisible(EmailCode))
+        {		
+		  Log("Login: we waiting " + GetSetting("CustomWaitForCode") + " sec - Please enter the code that sent to your email " + GetSetting("Email") );			  
+          int MyCustomTimeINT;
+          MyCustomTimeINT = GetIntSetting("CustomWaitForCode"); 
+          Wait(MyCustomTimeINT);
+        }
+		
 		Wait();	
 
+        Click(ButtonLog); //click again
+
+		Wait();	
+		
 	 } // end ExitButton
 
         
@@ -577,7 +592,7 @@ public class stake : FaucetScript
               Click(Claim1VAR);
               Log("claim 1 - try");
 			  
-              var ReCaptchaIframe = ElementByXPath("//iframe[contains(@src,'recaptcha/api2')]"); 
+              var ReCaptchaIframe = ElementByXPath("//div[contains(@style,'opacity: 1')]//iframe[contains(@src,'recaptcha')]"); 
               if (IsVisible(ReCaptchaIframe))
               {	
 		        Log("Reload - call to solve captch");
@@ -973,9 +988,6 @@ public class stake : FaucetScript
 		//=========//
 
 	
-
-
-
 
       //=========//
       //Recent_Function
