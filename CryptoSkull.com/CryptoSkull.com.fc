@@ -1,6 +1,6 @@
 //==================//
 //script Written by: ••AviramDayan•• 19/10/2020 20:00PM - Version 1
-//Last Update: 19/10/2020 21:20PM - Version 1
+//Last Update: 20/10/2020 15:00PM - Version 1
 //==================//
 
 using System;
@@ -42,8 +42,8 @@ public class CryptoSkull : FaucetScript
                 new FaucetSetting(){Name="Email",Display="Normal Login - Email",Type=EditorType.TextBox,Required=true},
                 new FaucetSetting(){Name="Password",Display="Normal Login - Password",Type=EditorType.Password,Required=true},
 				
-                new FaucetSetting(){Name="FacebookEmail",Display="Facebook Login - Email ",Type=EditorType.TextBox,Required=true},
-                new FaucetSetting(){Name="FacebookPassword",Display="Facebook Login - Password",Type=EditorType.Password,Required=true},
+                new FaucetSetting(){Name="FacebookEmail",Display="Facebook Login - Email ",Type=EditorType.TextBox,Required=false},
+                new FaucetSetting(){Name="FacebookPassword",Display="Facebook Login - Password",Type=EditorType.Password,Required=false},
 
                 new FaucetSetting() { Name = "FaucetClaim", Display = "FaucetClaim", Type = EditorType.CheckBox, Default = true},	
                 new FaucetSetting() { Name = "AutoGame", Display = "Auto Game - Medium - play on Medium level", Type = EditorType.CheckBox, Default = true},	
