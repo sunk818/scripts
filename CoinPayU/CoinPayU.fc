@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 
 //css_ref FaucetCollector.Utilities
+//css_ref FaucetCollector.Captcha
 class ScriptCoinPayU: FaucetScript
 {
    
@@ -60,6 +61,11 @@ class ScriptCoinPayU: FaucetScript
         {
             Driver.Navigate().Refresh();
         }
+
+        FaucetCollector.Utilities.CloudFlareUtilities cloudUtils=new FaucetCollector.Utilities.CloudFlareUtilities( this);
+        cloudUtils.DoSolve( );
+        Wait(1);
+
         return base.BeforeLogin();
     }
 
