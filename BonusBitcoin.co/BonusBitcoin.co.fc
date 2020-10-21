@@ -17,17 +17,20 @@ public class BonusBitcoinScript : FaucetScript
             return new FaucetSettings("http://bonusbitcoin.co/faucet/")
             {
                 //We have a setting to get the email address used for bonusbitcoin
-                new FaucetSetting() { Name = "Email", Display = "Email", Type = EditorType.TextBox, Required = true },
-                new FaucetSetting(){Name="Adblock",Display="Use code adblock",Type=EditorType.CheckBox,Default=true},
+                new FaucetSetting() {Name = "Email", Display = "Email", Type = EditorType.TextBox, Required = true },
+
                 //And we also need the password
-                new FaucetSetting() { Name = "Password", Display = "Password", Type = EditorType.Password, Required = true },
-                new FaucetSetting(){Name="SwitchC",Display="SwitchCaptcha if the other is not visible",Type=EditorType.CheckBox,Default=true},
+                new FaucetSetting() {Name = "Password", Display = "Password", Type = EditorType.Password, Required = true },
+
+                new FaucetSetting() {Name = "Adblock", Display = "Use code adblock",Type=EditorType.CheckBox, Default = true},
 
                 //Option to use SolveMedia or reCAPTCHA
-                new FaucetSetting() { Name = "UseSolveMedia", Display = "Use SolveMedia (instead of reCAPTCHA)", Type = EditorType.CheckBox, Default = true },
-                 new FaucetSetting(){Name="SolveMediaRetry", Display="Do three SolveMedia attempts when failed to answer",Type=EditorType.CheckBox,Default=true},
+                new FaucetSetting() {Name = "UseSolveMedia", Display = "Use SolveMedia (instead of reCAPTCHA)", Type = EditorType.CheckBox, Default = true },
+                new FaucetSetting() {Name = "SolveMediaRetry", Display = "Do three SolveMedia attempts when failed to answer", Type = EditorType.CheckBox, Default = true},
+                new FaucetSetting() {Name = "SwitchC", Display = "SwitchCaptcha if the other is not visible", Type = EditorType.CheckBox, Default = true},
+
                 //Option to select the claim amount - random or average
-                new FaucetSetting() { Name = "ClaimAverage", Display = "Receive the average claim amount (instead of random)", Type = EditorType.CheckBox }
+                new FaucetSetting() {Name = "ClaimAverage", Display = "Receive the average claim amount (instead of random)", Type = EditorType.CheckBox }
             };
         }
     }
