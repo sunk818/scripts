@@ -64,10 +64,15 @@ class RollerCoin : FaucetScript
             return Enum.GetNames ( typeof ( Games ) ).ToList ( );
         }
     }
+
     public override int DoLogin ( )
     {
         GoToUrl ( "https://rollercoin.com/sign-in" );
         Wait ( 1 );
+        
+        FaucetCollector.Utilities.CloudFlareUtilities cloudUtils=new FaucetCollector.Utilities.CloudFlareUtilities( this);
+        cloudUtils.DoSolve( );
+        Wait(1);
 
         var UserBox=ElementByXPath("//input[@id='mail']");
         if ( !IsVisible ( UserBox ) )
